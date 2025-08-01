@@ -1,0 +1,1630 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Orçamento de Custas - TJRO</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --primary-color-dark: #004085;
+            --secondary-color: #6c757d;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #495057;
+            --text-color: #212529;
+            --white: #fff;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .input-section, .budget-section {
+            padding: 2rem;
+        }
+
+        .input-section {
+            flex: 1 1 450px;
+            border-right: 1px solid var(--medium-gray);
+        }
+
+        .budget-section {
+            flex: 1 1 550px;
+            background-color: var(--light-gray);
+        }
+
+        .input-section h2, .budget-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color-dark);
+        }
+
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-link {
+            padding: 0.75rem 1rem;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            border-bottom: 3px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .tab-link:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-link.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.25);
+        }
+
+        select:disabled {
+            background-color: var(--medium-gray);
+            cursor: not-allowed;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 1.2em;
+            height: 1.2em;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color-dark);
+        }
+
+        .btn-print {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .btn-print:hover {
+            background-color: var(--dark-gray);
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary-color);
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .btn-icon:hover {
+            color: var(--text-color);
+            background-color: var(--medium-gray);
+        }
+
+        /* Budget Section */
+        #budget-placeholder {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--secondary-color);
+            border: 2px dashed var(--medium-gray);
+            border-radius: var(--border-radius);
+        }
+
+        #budget-items-table, #summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #budget-items-table thead {
+            border-bottom: 2px solid var(--medium-gray);
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        #budget-items-table th, #budget-items-table td {
+            padding: 0.75rem;
+        }
+
+        .item-row, .details-row {
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .item-row:last-of-type {
+            border-bottom: none;
+        }
+        .details-row {
+             display: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+        .item-identifier {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-top: 4px;
+        }
+        .item-value {
+            text-align: right;
+            font-weight: 500;
+        }
+        .details-row {
+            background-color: var(--light-gray);
+        }
+        .details-content table {
+            width: 100%;
+        }
+        .details-content td {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        #summary-table {
+            margin-top: 1.5rem;
+            border-top: 2px solid var(--dark-gray);
+        }
+        .summary-total td {
+            padding: 1rem 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* INCRA Result */
+        #incra-result-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--success-color);
+            color: var(--white);
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+        #incra-result-container .result-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+        #incra-result-container .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.25rem 0 1rem;
+        }
+        #incra-result-container .btn {
+            background-color: var(--white);
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-box {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.show .modal-box {
+            transform: translateY(0);
+        }
+        .modal-box h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .modal-box p {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+        .btn-secondary:hover {
+            background-color: var(--dark-gray);
+        }
+        .btn-cancel {
+            background-color: transparent;
+            color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-gray);
+            color: var(--light-gray);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .author-credit {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: linear-gradient(
+                -45deg, 
+                #f8f9fa, 
+                #a7c5eb, 
+                #e9ecef, 
+                #f8f9fa
+            );
+            background-size: 400% 400%;
+            animation: gradient-flow 8s ease infinite;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* Print Styles */
+        @media print {
+            body {
+                padding: 0;
+            }
+            .no-print, header, footer, .input-section, .budget-header button {
+                display: none !important;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .main-content {
+                display: block;
+            }
+            .budget-section {
+                border: none;
+                padding: 0;
+            }
+            .budget-header h2 {
+                margin-bottom: 1rem;
+            }
+            body.print-simplified .details-row,
+            body.print-simplified .details-toggle-btn {
+                display: none !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid var(--medium-gray);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            header, .input-section, .budget-section {
+                padding: 1rem;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .tabs {
+                gap: 0.5rem;
+            }
+            .tab-link {
+                flex-grow: 1;
+                text-align: center;
+                padding: 0.5rem;
+            }
+            .modal-actions {
+                flex-direction: column;
+            }
+            .modal-actions .btn {
+                width: 100%;
+            }
+        }
+        
+        #construction-fields label a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.8em;
+            margin-left: 4px;
+        }
+        #construction-fields label a:hover {
+            text-decoration: underline;
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Orçamento de Custas</h1>
+            <p>Tribunal de Justiça de Rondônia (Tabela 2025)</p>
+        </header>
+
+        <main class="main-content">
+            <section class="input-section">
+                <h2>Adicionar Ato ao Orçamento</h2>
+                <div class="tabs">
+                    <button class="tab-link active" data-tab="tab-variavel">Atos com Valor Variável</button>
+                    <button class="tab-link" data-tab="tab-fixo">Atos com Valor Fixo</button>
+                    <button class="tab-link" data-tab="tab-manual">Lançamentos Manuais</button>
+                    <button class="tab-link" data-tab="tab-incra">Avaliação INCRA</button>
+                </div>
+
+                <div class="tab-contents-wrapper">
+                    <!-- Tab Variável -->
+                    <div id="tab-variavel" class="tab-content active">
+                        <div class="form-group">
+                            <label for="ato-variavel">Tipo de Ato</label>
+                            <select id="ato-variavel"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao-variavel">Identificação do Ato (Opcional)</label>
+                            <input type="text" id="descricao-variavel" placeholder="Ex: Apto 101, Bairro Centro">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor-ato">Valor do Ato/Imóvel (R$)</label>
+                            <input type="text" id="valor-ato" placeholder="150.000,00">
+                        </div>
+
+                        <div id="construction-subtool-container" class="form-group" style="display: none;">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="is-construction-checkbox">
+                                <label for="is-construction-checkbox">É averbação de construção?</label>
+                            </div>
+                            <div id="construction-fields" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 1rem; border-radius: 6px; background-color: #f8f9fa;">
+                                <p style="font-size: 0.9rem; color: #6c757d; margin-bottom: 1rem; text-align: center;">Calcule o valor da obra para usar como base de cálculo.</p>
+                                <div class="form-group">
+                                    <label for="construction-area">Área da construção (m²)</label>
+                                    <input type="number" id="construction-area" placeholder="Ex: 120">
+                                </div>
+                                <div class="form-group">
+                                    <label for="construction-cub">Valor do CUB/m² (R$) 
+                                        <a href="https://sindusconro.com.br/home/?page_id=378" target="_blank" title="Consultar CUB no SINDUSCON/RO">(Consultar Tabela)</a>
+                                    </label>
+                                    <input type="text" id="construction-cub" placeholder="Ex: 2.500,00">
+                                </div>
+                                <button id="calculate-construction-value" class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;">Calcular e Preencher Valor da Obra</button>
+                                <div id="construction-result" style="text-align: center; font-weight: bold; color: var(--primary-color-dark);"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox-group" id="combo-option-container" style="display: none;">
+                            <input type="checkbox" id="add-combo">
+                            <label for="add-combo">Adicionar ato correspondente (Registro/Escritura) com a mesma base de cálculo</label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="incluir-itbi">
+                            <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
+                        </div>
+                        <button id="add-variavel" class="btn btn-primary">Adicionar ao Orçamento</button>
+                    </div>
+
+                    <!-- Tab Fixo -->
+                    <div id="tab-fixo" class="tab-content">
+                        <div class="form-group">
+                            <label for="ato-fixo">Tipo de Ato</label>
+                            <select id="ato-fixo"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidade-fixo">Quantidade</label>
+                            <input type="number" id="quantidade-fixo" value="1" min="1">
+                        </div>
+                         <button id="add-fixo" class="btn btn-primary">Adicionar ao Orçamento</button>
+                    </div>
+
+                    <!-- Tab Manual -->
+                    <div id="tab-manual" class="tab-content">
+                        <div class="form-group">
+                            <label for="descricao-manual">Descrição do Serviço</label>
+                            <input type="text" id="descricao-manual" placeholder="Ex: Serviço de consultoria">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor-manual">Valor do Serviço (R$)</label>
+                            <input type="text" id="valor-manual" placeholder="100,00">
+                        </div>
+                         <button id="add-manual" class="btn btn-primary">Adicionar ao Orçamento</button>
+                    </div>
+
+                    <!-- Tab INCRA -->
+                    <div id="tab-incra" class="tab-content">
+                        <div class="form-group">
+                            <label for="incra-municipio">1. Município</label>
+                            <select id="incra-municipio"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="incra-level">2. Nível Categórico</label>
+                            <select id="incra-level" disabled></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="incra-typology">3. Tipologia de Uso</label>
+                            <select id="incra-typology" disabled></select>
+                        </div>
+                         <div class="form-group">
+                            <label for="incra-value-column">4. Coluna de Valor de Referência</label>
+                            <select id="incra-value-column" disabled></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="incra-area">5. Área (em hectares)</label>
+                            <input type="number" id="incra-area" placeholder="Ex: 50">
+                        </div>
+                        <button id="calculate-incra-btn" class="btn btn-primary">Calcular Valor de Referência</button>
+                        <div id="incra-result-container" style="display: none;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="budget-section">
+                <div class="budget-header">
+                    <h2>Meu Orçamento</h2>
+                    <button id="print-button" class="btn btn-print" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                        </svg>
+                        Imprimir
+                    </button>
+                </div>
+                <div id="budget-items-container"></div>
+                <div id="budget-summary-container"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Esta é uma ferramenta de simulação. Valores baseados no Diário da Justiça Nº 001 de 02/01/2025 e no Relatório RAMT/RO 2021/2022 do INCRA. Custos adicionais podem ser aplicáveis.</p>
+            <p class="author-credit">Desenvolvido por Richer Della Torre</p>
+        </footer>
+    </div>
+    
+    <!-- Print Modal -->
+    <div id="print-modal-container" class="modal-overlay">
+        <div class="modal-box">
+            <h4>Opções de Impressão</h4>
+            <p>Escolha como deseja imprimir o orçamento.</p>
+            <div class="modal-actions">
+                <button id="print-simplified-btn" class="btn btn-secondary">Imprimir Resumido</button>
+                <button id="print-detailed-btn" class="btn btn-primary">Imprimir Detalhado</button>
+                <button id="print-cancel-btn" class="btn btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="incra-raw-data" style="display:none;">
+        <!-- === INÍCIO: Mercado Regional de Terras Cone Sul === -->
+        <div class="regional-market" 
+             data-region-name="Zona Cone Sul" 
+             data-municipalities="Vilhena,Colorado do Oeste,Cabixi,Cerejeiras,Pimenteiras D'Oeste,Corumbiara,Primavera de Rondônia,Pimenta Bueno,Chupinguaia,Parecis">
+            
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="10904.50" data-media-vti="13720.01" data-limite-inferior-vti="11662.01" data-limite-superior-vti="15778.01" data-mediana-vtn="7633.15" data-media-vtn="9604.01" data-limite-inferior-vtn="8163.41" data-limite-superior-vtn="11044.61"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="46487.60" data-media-vti="45257.71" data-limite-inferior-vti="38469.06" data-limite-superior-vti="52046.37" data-mediana-vtn="32541.32" data-media-vtn="31680.40" data-limite-inferior-vtn="26928.34" data-limite-superior-vtn="36432.46"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="30878.82" data-media-vti="28790.99" data-limite-inferior-vti="24472.34" data-limite-superior-vti="33109.64" data-mediana-vtn="21615.17" data-media-vtn="20153.69" data-limite-inferior-vtn="17130.64" data-limite-superior-vtn="23176.75"></div>
+                <div class="typology" data-typology-name="Vegetação Nativa" data-mediana-vti="1447.88" data-media-vti="1350.96" data-limite-inferior-vti="1148.31" data-limite-superior-vti="1553.60" data-mediana-vtn="1013.51" data-media-vtn="945.67" data-limite-inferior-vtn="803.82" data-limite-superior-vtn="1087.52"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="10987.11" data-media-vti="13013.73" data-limite-inferior-vti="10767.98" data-limite-superior-vti="14842.07" data-mediana-vtn="7592.98" data-media-vtn="8816.99" data-limite-inferior-vtn="7494.11" data-limite-superior-vtn="10197.08"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="46487.60" data-media-vti="43639.02" data-limite-inferior-vti="37093.37" data-limite-superior-vti="50184.66" data-mediana-vtn="32541.32" data-media-vtn="30547.31" data-limite-inferior-vtn="25965.36" data-limite-superior-vtn="35129.27"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="46487.60" data-media-vti="46487.60" data-limite-inferior-vti="39514.46" data-limite-superior-vti="53460.74" data-mediana-vtn="32541.32" data-media-vtn="32541.32" data-limite-inferior-vtn="27660.12" data-limite-superior-vtn="37422.52"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="39882.00" data-media-vti="30120.20" data-limite-inferior-vti="25602.17" data-limite-superior-vti="34638.22" data-mediana-vtn="27917.40" data-media-vtn="21084.14" data-limite-inferior-vtn="18146.92" data-limite-superior-vtn="24021.36"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="30789.74" data-media-vti="29438.86" data-limite-inferior-vti="25019.03" data-limite-superior-vti="33858.69" data-mediana-vtn="21694.22" data-media-vtn="20604.40" data-limite-inferior-vtn="17513.55" data-limite-superior-vtn="23695.26"></div>
+                <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="1353.38" data-media-vti="1375.71" data-limite-inferior-vti="1169.36" data-limite-superior-vti="1582.07" data-mediana-vtn="947.36" data-media-vtn="963.00" data-limite-inferior-vtn="818.55" data-limite-superior-vtn="1107.45"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="5473.06" data-media-vti="5514.51" data-limite-inferior-vti="4687.33" data-limite-superior-vti="6341.68" data-mediana-vtn="3831.56" data-media-vtn="3860.15" data-limite-inferior-vtn="3281.13" data-limite-superior-vtn="4439.18"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="14961.53" data-media-vti="16146.59" data-limite-inferior-vti="13724.77" data-limite-superior-vti="18568.45" data-mediana-vtn="10473.07" data-media-vtn="11302.61" data-limite-inferior-vtn="9642.34" data-limite-superior-vtn="12952.52"></div>
+            </div>
+            
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - Cabixi" data-mediana-vti="39256.20" data-media-vti="40205.59" data-limite-inferior-vti="34124.60" data-limite-superior-vti="46166.58" data-mediana-vtn="27479.34" data-media-vtn="28102.61" data-limite-inferior-vtn="23887.22" data-limite-superior-vtn="32318.00"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Pimenteiras do Oeste" data-mediana-vti="55785.12" data-media-vti="51977.84" data-limite-inferior-vti="44181.16" data-limite-superior-vti="59774.51" data-mediana-vtn="39049.58" data-media-vtn="36384.49" data-limite-inferior-vtn="30926.81" data-limite-superior-vtn="41842.16"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Cerejeiras" data-mediana-vti="46487.60" data-media-vti="46487.60" data-limite-inferior-vti="39514.46" data-limite-superior-vti="53460.74" data-mediana-vtn="32541.32" data-media-vtn="32541.32" data-limite-inferior-vtn="27660.12" data-limite-superior-vtn="37422.52"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Chupinguaia" data-mediana-vti="42885.42" data-media-vti="46693.01" data-limite-inferior-vti="39689.06" data-limite-superior-vti="53696.96" data-mediana-vtn="30019.80" data-media-vtn="32685.11" data-limite-inferior-vtn="27782.35" data-limite-superior-vtn="37587.86"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Corumbiara" data-mediana-vti="52378.80" data-media-vti="52378.80" data-limite-inferior-vti="44522.00" data-limite-superior-vti="60235.60" data-mediana-vtn="36665.16" data-media-vtn="36665.16" data-limite-inferior-vtn="31165.40" data-limite-superior-vtn="42164.92"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Parecis" data-mediana-vti="52378.80" data-media-vti="52378.80" data-limite-inferior-vti="44522.00" data-limite-superior-vti="60235.60" data-mediana-vtn="36665.16" data-media-vtn="36665.16" data-limite-inferior-vtn="31165.40" data-limite-superior-vtn="42164.92"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Colorado do Oeste" data-mediana-vti="30878.82" data-media-vti="28352.14" data-limite-inferior-vti="24100.00" data-limite-superior-vti="32604.28" data-mediana-vtn="21615.17" data-media-vtn="19846.50" data-limite-inferior-vtn="16870.00" data-limite-superior-vtn="22822.99"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Parecis" data-mediana-vti="30090.74" data-media-vti="28526.56" data-limite-inferior-vti="24247.58" data-limite-superior-vti="32805.55" data-mediana-vtn="21063.52" data-media-vtn="19968.59" data-limite-inferior-vtn="16973.30" data-limite-superior-vtn="22963.88"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Cabixi" data-mediana-vti="4100.00" data-media-vti="4182.56" data-limite-inferior-vti="3555.18" data-limite-superior-vti="4809.95" data-mediana-vtn="2870.00" data-media-vtn="2927.79" data-limite-inferior-vtn="2488.62" data-limite-superior-vtn="3366.96"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Colorado do Oeste" data-mediana-vti="6483.00" data-media-vti="6199.38" data-limite-inferior-vti="5269.48" data-limite-superior-vti="7129.29" data-mediana-vtn="4538.10" data-media-vtn="4339.57" data-limite-inferior-vtn="3688.63" data-limite-superior-vtn="4990.50"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Cerejeiras" data-mediana-vti="4159.49" data-media-vti="4349.39" data-limite-inferior-vti="3701.21" data-limite-superior-vti="4997.57" data-mediana-vtn="2911.64" data-media-vtn="3044.57" data-limite-inferior-vtn="2590.85" data-limite-superior-vtn="3498.30"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Parecis" data-mediana-vti="7157.53" data-media-vti="5709.49" data-limite-inferior-vti="4853.07" data-limite-superior-vti="6565.92" data-mediana-vtn="5010.27" data-media-vtn="3996.64" data-limite-inferior-vtn="3397.15" data-limite-superior-vtn="4596.14"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Pimenta Bueno" data-mediana-vti="5800.00" data-media-vti="5251.49" data-limite-inferior-vti="4463.77" data-limite-superior-vti="6039.22" data-mediana-vtn="3686.18" data-media-vtn="3676.05" data-limite-inferior-vtn="3124.64" data-limite-superior-vtn="4227.45"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Pimenteiras do Oeste" data-mediana-vti="3800.00" data-media-vti="3726.50" data-limite-inferior-vti="3167.53" data-limite-superior-vti="4285.48" data-mediana-vtn="2660.00" data-media-vtn="2608.55" data-limite-inferior-vtn="2217.27" data-limite-superior-vtn="2999.84"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Vilhena" data-mediana-vti="6044.84" data-media-vti="5842.84" data-limite-inferior-vti="4966.50" data-limite-superior-vti="6719.38" data-mediana-vtn="4231.39" data-media-vtn="4090.00" data-limite-inferior-vtn="3476.55" data-limite-superior-vtn="4703.57"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cabixi" data-mediana-vti="19816.85" data-media-vti="20526.31" data-limite-inferior-vti="17447.36" data-limite-superior-vti="23605.25" data-mediana-vtn="13871.79" data-media-vtn="14368.42" data-limite-inferior-vtn="12208.52" data-limite-superior-vtn="16537.41"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cerejeiras" data-mediana-vti="21482.96" data-media-vti="23514.31" data-limite-inferior-vti="19987.16" data-limite-superior-vti="27041.46" data-mediana-vtn="15038.07" data-media-vtn="16460.02" data-limite-inferior-vtn="13991.01" data-limite-superior-vtn="18929.02"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Chupinguaia" data-mediana-vti="10446.06" data-media-vti="10516.74" data-limite-inferior-vti="8939.23" data-limite-superior-vti="12094.25" data-mediana-vtn="7312.24" data-media-vtn="7361.72" data-limite-inferior-vtn="6257.36" data-limite-superior-vtn="8466.08"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Colorado do Oeste" data-mediana-vti="10446.06" data-media-vti="10019.53" data-limite-inferior-vti="8516.60" data-limite-superior-vti="11522.46" data-mediana-vtn="7034.06" data-media-vtn="6992.52" data-limite-inferior-vtn="5959.96" data-limite-superior-vtn="8025.08"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Corumbiara" data-mediana-vti="19097.72" data-media-vti="24815.21" data-limite-inferior-vti="21093.00" data-limite-superior-vti="28537.43" data-mediana-vtn="16487.60" data-media-vtn="17370.65" data-limite-inferior-vtn="14765.10" data-limite-superior-vtn="19976.20"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Parecis" data-mediana-vti="19097.72" data-media-vti="19266.09" data-limite-inferior-vti="16376.18" data-limite-superior-vti="22156.01" data-mediana-vtn="13368.41" data-media-vtn="13486.27" data-limite-inferior-vtn="11463.32" data-limite-superior-vtn="15509.21"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Pimenta Bueno" data-mediana-vti="23553.72" data-media-vti="23880.37" data-limite-inferior-vti="20298.31" data-limite-superior-vti="27462.42" data-mediana-vtn="16487.60" data-media-vtn="16716.26" data-limite-inferior-vtn="14208.82" data-limite-superior-vtn="19223.70"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Primavera de Rondônia" data-mediana-vti="17622.02" data-media-vti="15729.30" data-limite-inferior-vti="13369.91" data-limite-superior-vti="18088.70" data-mediana-vtn="12335.42" data-media-vtn="11010.51" data-limite-inferior-vtn="9358.93" data-limite-superior-vtn="12662.08"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Vilhena" data-mediana-vti="13699.77" data-media-vti="15918.93" data-limite-inferior-vti="13531.09" data-limite-superior-vti="18306.77" data-mediana-vtn="9589.84" data-media-vtn="11143.25" data-limite-inferior-vtn="9471.77" data-limite-superior-vtn="12814.74"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Colorado do Oeste" data-mediana-vti="14800.77" data-media-vti="16117.30" data-limite-inferior-vti="13699.74" data-limite-superior-vti="18534.85" data-mediana-vtn="10360.54" data-media-vtn="11282.11" data-limite-inferior-vtn="9589.82" data-limite-superior-vtn="12974.40"></div>
+                <div class="typology" data-typology-name="Mata Explorada - Vilhena" data-mediana-vti="1376.81" data-media-vti="1332.25" data-limite-inferior-vti="1132.41" data-limite-superior-vti="1532.09" data-mediana-vtn="945.60" data-media-vtn="932.58" data-limite-inferior-vtn="792.69" data-limite-superior-vtn="1072.46"></div>
+                <div class="typology" data-typology-name="Mata Explorada - Pimenta Bueno" data-mediana-vti="1581.08" data-media-vti="1633.84" data-limite-inferior-vti="1388.76" data-limite-superior-vti="1878.92" data-mediana-vtn="1107.18" data-media-vtn="1143.69" data-limite-inferior-vtn="972.13" data-limite-superior-vtn="1315.24"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Cone Sul === -->
+
+        <!-- === INÍCIO: Mercado Regional de Terras Zona da Mata === -->
+        <div class="regional-market" 
+             data-region-name="Zona da Mata" 
+             data-municipalities="Rolim de Moura,Novo Horizonte do Oeste,Nova Brasilândia D'Oeste,Alta Floresta D'Oeste,Castanheiras,Alto Alegre dos Parecis,Santa Luzia D'Oeste,São Felipe D'Oeste">
+            
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="21694.21" data-media-vti="22584.14" data-limite-inferior-vti="19196.51" data-limite-superior-vti="25971.76" data-mediana-vtn="15185.95" data-media-vtn="15808.89" data-limite-inferior-vtn="13437.56" data-limite-superior-vtn="18180.23"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="39256.20" data-media-vti="40460.22" data-limite-inferior-vti="34391.19" data-limite-superior-vti="46529.25" data-mediana-vtn="27479.34" data-media-vtn="28322.15" data-limite-inferior-vtn="24073.83" data-limite-superior-vtn="32570.48"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="30991.74" data-media-vti="32618.78" data-limite-inferior-vti="27725.96" data-limite-superior-vti="37511.60" data-mediana-vtn="21694.22" data-media-vtn="22833.15" data-limite-inferior-vtn="19408.18" data-limite-superior-vtn="26258.12"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="17820.25" data-media-vti="18036.76" data-limite-inferior-vti="15331.25" data-limite-superior-vti="20742.28" data-mediana-vtn="12474.18" data-media-vtn="12625.73" data-limite-inferior-vtn="10731.87" data-limite-superior-vtn="14519.59"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="42140.02" data-media-vti="42868.09" data-limite-inferior-vti="36437.87" data-limite-superior-vti="49298.30" data-mediana-vtn="29498.01" data-media-vtn="30007.66" data-limite-inferior-vtn="25506.51" data-limite-superior-vtn="34508.81"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="38997.94" data-media-vti="37989.81" data-limite-inferior-vti="32291.34" data-limite-superior-vti="43688.28" data-mediana-vtn="27298.55" data-media-vtn="26592.87" data-limite-inferior-vtn="22603.94" data-limite-superior-vtn="30581.80"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="34090.91" data-media-vti="34914.35" data-limite-inferior-vti="29677.19" data-limite-superior-vti="40151.50" data-mediana-vtn="23863.64" data-media-vtn="24440.04" data-limite-inferior-vtn="20774.04" data-limite-superior-vtn="28106.05"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="29880.08" data-media-vti="29713.91" data-limite-inferior-vti="25256.82" data-limite-superior-vti="34171.00" data-mediana-vtn="20916.05" data-media-vtn="20799.74" data-limite-inferior-vtn="17679.78" data-limite-superior-vtn="23919.70"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="7747.93" data-media-vti="7170.98" data-limite-inferior-vti="6095.33" data-limite-superior-vti="8246.62" data-mediana-vtn="5423.55" data-media-vtn="5019.68" data-limite-inferior-vtn="4266.73" data-limite-superior-vtn="5772.64"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="18910.96" data-media-vti="18928.73" data-limite-inferior-vti="16089.42" data-limite-superior-vti="21768.04" data-mediana-vtn="13237.67" data-media-vtn="13250.11" data-limite-inferior-vtn="11262.59" data-limite-superior-vtn="15237.63"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - Alto Alegre dos Parecis" data-mediana-vti="60958.72" data-media-vti="60459.26" data-limite-inferior-vti="51390.37" data-limite-superior-vti="69528.15" data-mediana-vtn="42671.10" data-media-vtn="42321.48" data-limite-inferior-vtn="35973.26" data-limite-superior-vtn="48669.71"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Santa Luzia D'Oeste" data-mediana-vti="40433.88" data-media-vti="41426.68" data-limite-inferior-vti="35212.68" data-limite-superior-vti="47640.68" data-mediana-vtn="28303.72" data-media-vtn="28998.67" data-limite-inferior-vtn="24648.87" data-limite-superior-vtn="33348.47"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - São Felipe D'Oeste" data-mediana-vti="46487.60" data-media-vti="54752.07" data-limite-inferior-vti="46539.26" data-limite-superior-vti="62964.88" data-mediana-vtn="32541.32" data-media-vtn="38326.45" data-limite-inferior-vtn="32577.48" data-limite-superior-vtn="44075.41"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - São Felipe D'Oeste" data-mediana-vti="38997.94" data-media-vti="38513.22" data-limite-inferior-vti="32736.24" data-limite-superior-vti="44290.21" data-mediana-vtn="27298.55" data-media-vtn="26959.26" data-limite-inferior-vtn="22915.37" data-limite-superior-vtn="31003.15"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alta Floresta D'Oeste" data-mediana-vti="30431.19" data-media-vti="32350.90" data-limite-inferior-vti="27498.27" data-limite-superior-vti="37203.54" data-mediana-vtn="21301.83" data-media-vtn="22645.63" data-limite-inferior-vtn="19248.79" data-limite-superior-vtn="26042.47"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alto Alegre dos Parecis" data-mediana-vti="37190.08" data-media-vti="39616.95" data-limite-inferior-vti="33674.41" data-limite-superior-vti="45559.49" data-mediana-vtn="26033.06" data-media-vtn="27731.87" data-limite-inferior-vtn="23572.09" data-limite-superior-vtn="31891.64"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Nova Brasilândia D'Oeste" data-mediana-vti="34090.91" data-media-vti="33306.19" data-limite-inferior-vti="28310.27" data-limite-superior-vti="38302.12" data-mediana-vtn="23863.64" data-media-vtn="23314.34" data-limite-inferior-vtn="19817.19" data-limite-superior-vtn="26811.49"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Castanheiras" data-mediana-vti="27892.56" data-media-vti="27892.56" data-limite-inferior-vti="23708.68" data-limite-superior-vti="32076.45" data-mediana-vtn="19524.79" data-media-vtn="19524.79" data-limite-inferior-vtn="16596.08" data-limite-superior-vtn="22453.51"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Rolim de Moura" data-mediana-vti="30991.74" data-media-vti="31283.69" data-limite-inferior-vti="26591.13" data-limite-superior-vti="35976.24" data-mediana-vtn="21694.22" data-media-vtn="21898.58" data-limite-inferior-vtn="18613.79" data-limite-superior-vtn="25183.37"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Felipe D'Oeste" data-mediana-vti="30991.74" data-media-vti="32024.80" data-limite-inferior-vti="27221.08" data-limite-superior-vti="36828.52" data-mediana-vtn="21694.22" data-media-vtn="22417.36" data-limite-inferior-vtn="19054.75" data-limite-superior-vtn="25779.96"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Alta Floresta D'Oeste" data-mediana-vti="7747.93" data-media-vti="6912.31" data-limite-inferior-vti="5875.46" data-limite-superior-vti="7949.15" data-mediana-vtn="5423.55" data-media-vtn="4838.61" data-limite-inferior-vtn="4112.82" data-limite-superior-vtn="5564.41"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Alta Floresta D'Oeste" data-mediana-vti="13946.28" data-media-vti="15972.27" data-limite-inferior-vti="13576.43" data-limite-superior-vti="18368.11" data-mediana-vtn="9762.40" data-media-vtn="11180.59" data-limite-inferior-vtn="9503.50" data-limite-superior-vtn="12857.67"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Alto Alegre dos Parecis" data-mediana-vti="16263.28" data-media-vti="18457.24" data-limite-inferior-vti="15688.65" data-limite-superior-vti="21225.82" data-mediana-vtn="11384.30" data-media-vtn="12920.06" data-limite-inferior-vtn="10982.05" data-limite-superior-vtn="14858.07"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Castanheiras" data-mediana-vti="24793.39" data-media-vti="24008.26" data-limite-inferior-vti="20407.02" data-limite-superior-vti="27609.50" data-mediana-vtn="17355.37" data-media-vtn="16805.78" data-limite-inferior-vtn="14284.92" data-limite-superior-vtn="19326.65"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Nova Brasilândia D'Oeste" data-mediana-vti="15922.01" data-media-vti="16443.54" data-limite-inferior-vti="13977.01" data-limite-superior-vti="18910.07" data-mediana-vtn="11145.40" data-media-vtn="11510.48" data-limite-inferior-vtn="9783.91" data-limite-superior-vtn="13237.05"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Novo Horizonte do Oeste" data-mediana-vti="15376.13" data-media-vti="18274.21" data-limite-inferior-vti="15533.08" data-limite-superior-vti="21015.34" data-mediana-vtn="10763.29" data-media-vtn="12791.95" data-limite-inferior-vtn="10873.16" data-limite-superior-vtn="14710.74"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Rolim de Moura" data-mediana-vti="23553.72" data-media-vti="23550.90" data-limite-inferior-vti="20018.27" data-limite-superior-vti="27083.54" data-mediana-vtn="16487.60" data-media-vtn="16485.63" data-limite-inferior-vtn="14012.79" data-limite-superior-vtn="18958.48"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Santa Luzia D'Oeste" data-mediana-vti="21590.91" data-media-vti="22314.05" data-limite-inferior-vti="18966.94" data-limite-superior-vti="25661.16" data-mediana-vtn="15113.64" data-media-vtn="15619.84" data-limite-inferior-vtn="13276.86" data-limite-superior-vtn="17962.81"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - São Felipe D'Oeste" data-mediana-vti="19886.36" data-media-vti="20840.15" data-limite-inferior-vti="17714.13" data-limite-superior-vti="23966.17" data-mediana-vtn="13920.45" data-media-vtn="14588.11" data-limite-inferior-vtn="12399.89" data-limite-superior-vtn="16776.32"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Zona da Mata === -->
+
+        <!-- === INÍCIO: Mercado Regional de Terras BR-429 === -->
+        <div class="regional-market" 
+             data-region-name="BR-429" 
+             data-municipalities="São Miguel do Guaporé,Alvorada do Oeste,Seringueiras,São Francisco do Guaporé,Costa Marques">
+
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="13946.28" data-media-vti="14421.22" data-limite-inferior-vti="12258.04" data-limite-superior-vti="16584.40" data-mediana-vtn="9762.40" data-media-vtn="10094.85" data-limite-inferior-vtn="8580.63" data-limite-superior-vtn="11609.08"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="29442.15" data-media-vti="29067.97" data-limite-inferior-vti="24707.77" data-limite-superior-vti="33428.16" data-mediana-vtn="20609.51" data-media-vtn="20347.58" data-limite-inferior-vtn="17295.44" data-limite-superior-vtn="23399.71"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="21732.52" data-media-vti="21223.73" data-limite-inferior-vti="18040.17" data-limite-superior-vti="24407.29" data-mediana-vtn="15212.76" data-media-vtn="14856.61" data-limite-inferior-vtn="12628.12" data-limite-superior-vtn="17085.10"></div>
+                <div class="typology" data-typology-name="Vegetação Nativa" data-mediana-vti="2829.97" data-media-vti="2637.39" data-limite-inferior-vti="2241.78" data-limite-superior-vti="3033.00" data-mediana-vtn="1980.98" data-media-vtn="1846.18" data-limite-inferior-vtn="1569.25" data-limite-superior-vtn="2123.10"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="12400.00" data-media-vti="12632.45" data-limite-inferior-vti="10737.58" data-limite-superior-vti="14527.31" data-mediana-vtn="8680.00" data-media-vtn="8842.71" data-limite-inferior-vtn="7516.31" data-limite-superior-vtn="10169.12"></div>
+            </div>
+            
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="27846.08" data-media-vti="27526.98" data-limite-inferior-vti="23397.93" data-limite-superior-vti="31656.03" data-mediana-vtn="19492.25" data-media-vtn="19268.89" data-limite-inferior-vtn="16378.55" data-limite-superior-vtn="22159.22"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="30991.74" data-media-vti="29508.25" data-limite-inferior-vti="25082.01" data-limite-superior-vti="33934.49" data-mediana-vtn="21694.22" data-media-vtn="20655.78" data-limite-inferior-vtn="17557.41" data-limite-superior-vtn="23754.14"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="25091.39" data-media-vti="24791.40" data-limite-inferior-vti="21072.69" data-limite-superior-vti="28510.10" data-mediana-vtn="17563.97" data-media-vtn="17353.98" data-limite-inferior-vtn="14750.88" data-limite-superior-vtn="19957.07"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="21694.21" data-media-vti="21009.31" data-limite-inferior-vti="17857.92" data-limite-superior-vti="24160.71" data-mediana-vtn="15185.95" data-media-vtn="14706.52" data-limite-inferior-vtn="12500.54" data-limite-superior-vtn="16912.50"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro" data-mediana-vti="2832.21" data-media-vti="3192.34" data-limite-inferior-vti="2713.49" data-limite-superior-vti="3671.19" data-mediana-vtn="1982.55" data-media-vtn="2234.64" data-limite-inferior-vtn="1899.44" data-limite-superior-vtn="2569.83"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="6419.72" data-media-vti="6267.25" data-limite-inferior-vti="5327.16" data-limite-superior-vti="7207.34" data-mediana-vtn="4493.80" data-media-vtn="4387.07" data-limite-inferior-vtn="3729.01" data-limite-superior-vtn="5045.13"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="13946.28" data-media-vti="13984.35" data-limite-inferior-vti="11886.70" data-limite-superior-vti="16082.00" data-mediana-vtn="9762.40" data-media-vtn="9789.04" data-limite-inferior-vtn="8320.69" data-limite-superior-vtn="11257.40"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - São Miguel do Guaporé" data-mediana-vti="29442.15" data-media-vti="31064.05" data-limite-inferior-vti="26404.44" data-limite-superior-vti="35723.66" data-mediana-vtn="20609.51" data-media-vtn="21744.84" data-limite-inferior-vtn="18483.11" data-limite-superior-vtn="25006.56"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alvorada do Oeste" data-mediana-vti="26342.98" data-media-vti="25108.59" data-limite-inferior-vti="21342.30" data-limite-superior-vti="28874.88" data-mediana-vtn="18440.09" data-media-vtn="17576.02" data-limite-inferior-vtn="14939.61" data-limite-superior-vtn="20212.42"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Alvorada do Oeste" data-mediana-vti="30991.74" data-media-vti="31416.86" data-limite-inferior-vti="26704.33" data-limite-superior-vti="36129.39" data-mediana-vtn="21694.22" data-media-vtn="21991.80" data-limite-inferior-vtn="18693.03" data-limite-superior-vtn="25290.57"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Costa Marques" data-mediana-vti="30991.74" data-media-vti="28512.40" data-limite-inferior-vti="24235.54" data-limite-superior-vti="32789.26" data-mediana-vtn="21694.22" data-media-vtn="19958.68" data-limite-inferior-vtn="16964.88" data-limite-superior-vtn="22952.48"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - São Francisco do Guaporé" data-mediana-vti="31290.87" data-media-vti="31002.08" data-limite-inferior-vti="26351.77" data-limite-superior-vti="35652.39" data-mediana-vtn="21903.61" data-media-vtn="21701.46" data-limite-inferior-vtn="18446.24" data-limite-superior-vtn="24956.67"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Miguel do Guaporé" data-mediana-vti="29442.15" data-media-vti="27376.03" data-limite-inferior-vti="23269.63" data-limite-superior-vti="31482.44" data-mediana-vtn="20609.51" data-media-vtn="19163.22" data-limite-inferior-vtn="16288.74" data-limite-superior-vtn="22037.71"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Costa Marques" data-mediana-vti="21146.72" data-media-vti="21102.91" data-limite-inferior-vti="17937.47" data-limite-superior-vti="24268.35" data-mediana-vtn="14802.70" data-media-vtn="14772.04" data-limite-inferior-vtn="12556.23" data-limite-superior-vtn="16987.84"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Francisco do Guaporé" data-mediana-vti="21694.21" data-media-vti="21227.18" data-limite-inferior-vti="18043.10" data-limite-superior-vti="24411.26" data-mediana-vtn="15185.95" data-media-vtn="14859.03" data-limite-inferior-vtn="12630.17" data-limite-superior-vtn="17087.88"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Alvorada do Oeste" data-mediana-vti="6641.09" data-media-vti="6776.87" data-limite-inferior-vti="5760.34" data-limite-superior-vti="7793.40" data-mediana-vtn="4648.76" data-media-vtn="4743.81" data-limite-inferior-vtn="4032.24" data-limite-superior-vtn="5455.38"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Costa Marques" data-mediana-vti="5654.33" data-media-vti="5661.14" data-limite-inferior-vti="4811.97" data-limite-superior-vti="6510.32" data-mediana-vtn="3958.03" data-media-vtn="3962.80" data-limite-inferior-vtn="3368.38" data-limite-superior-vtn="4557.22"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - São Francisco do Guaporé" data-mediana-vti="6446.08" data-media-vti="6166.99" data-limite-inferior-vti="5241.94" data-limite-superior-vti="7092.04" data-mediana-vtn="4512.25" data-media-vtn="4316.89" data-limite-inferior-vtn="3669.36" data-limite-superior-vtn="4964.43"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - São Miguel do Guaporé" data-mediana-vti="6641.09" data-media-vti="5863.83" data-limite-inferior-vti="4984.26" data-limite-superior-vti="6743.41" data-mediana-vtn="4648.76" data-media-vtn="4104.68" data-limite-inferior-vtn="3488.98" data-limite-superior-vtn="4720.39"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Seringueiras" data-mediana-vti="8057.85" data-media-vti="7089.12" data-limite-inferior-vti="6025.75" data-limite-superior-vti="8152.49" data-mediana-vtn="5640.50" data-media-vtn="4962.38" data-limite-inferior-vtn="4218.03" data-limite-superior-vtn="5706.74"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Alvorada do Oeste" data-mediana-vti="15495.87" data-media-vti="14941.02" data-limite-inferior-vti="12699.86" data-limite-superior-vti="17182.17" data-mediana-vtn="10847.11" data-media-vtn="10458.71" data-limite-inferior-vtn="8889.90" data-limite-superior-vtn="12027.52"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Costa Marques" data-mediana-vti="11621.90" data-media-vti="12619.81" data-limite-inferior-vti="10726.84" data-limite-superior-vti="14512.78" data-mediana-vtn="8135.33" data-media-vtn="8833.87" data-limite-inferior-vtn="7508.79" data-limite-superior-vtn="10158.95"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - São Francisco do Guaporé" data-mediana-vti="13946.28" data-media-vti="14315.81" data-limite-inferior-vti="12168.44" data-limite-superior-vti="16463.19" data-mediana-vtn="9762.40" data-media-vtn="10021.07" data-limite-inferior-vtn="8517.91" data-limite-superior-vtn="11524.23"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - São Miguel do Guaporé" data-mediana-vti="13739.67" data-media-vti="13239.02" data-limite-inferior-vti="11253.17" data-limite-superior-vti="15224.88" data-mediana-vtn="9617.77" data-media-vtn="9267.32" data-limite-inferior-vtn="7877.22" data-limite-superior-vtn="10657.41"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Seringueiras" data-mediana-vti="14705.85" data-media-vti="14885.73" data-limite-inferior-vti="12652.87" data-limite-superior-vti="17118.59" data-mediana-vtn="10294.09" data-media-vtn="10420.01" data-limite-inferior-vtn="8857.01" data-limite-superior-vtn="11983.02"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras BR-429 === -->
+        
+        <!-- === INÍCIO: Mercado Regional de Terras Vale do Mamoré === -->
+        <div class="regional-market"
+             data-region-name="Vale do Mamoré"
+             data-municipalities="Guajará-Mirim,Nova Mamoré">
+            
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="10555.56" data-media-vti="10689.33" data-limite-inferior-vti="9085.93" data-limite-superior-vti="12292.73" data-mediana-vtn="7388.89" data-media-vtn="7482.53" data-limite-inferior-vtn="6360.15" data-limite-superior-vtn="8604.91"></div>
+            </div>
+            
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="22598.14" data-media-vti="21531.39" data-limite-inferior-vti="18301.68" data-limite-superior-vti="24761.10" data-mediana-vtn="15818.70" data-media-vtn="15071.97" data-limite-inferior-vtn="12811.18" data-limite-superior-vtn="17332.77"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="18237.45" data-media-vti="17509.22" data-limite-inferior-vti="14882.84" data-limite-superior-vti="20135.61" data-mediana-vtn="12766.21" data-media-vtn="12256.46" data-limite-inferior-vtn="10417.99" data-limite-superior-vti="14094.92"></div>
+                <div class="typology" data-typology-name="Vegetação Nativa" data-mediana-vti="1532.16" data-media-vti="1668.27" data-limite-inferior-vti="1418.03" data-limite-superior-vti="1918.51" data-mediana-vtn="1072.51" data-media-vtn="1167.79" data-limite-inferior-vtn="992.62" data-limite-superior-vtn="1342.96"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="9455.87" data-media-vti="9591.41" data-limite-inferior-vti="8152.69" data-limite-superior-vti="11030.12" data-mediana-vtn="6619.11" data-media-vtn="6713.98" data-limite-inferior-vtn="5706.89" data-limite-superior-vtn="7721.08"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="23553.72" data-media-vti="24448.46" data-limite-inferior-vti="20781.19" data-limite-superior-vti="28115.73" data-mediana-vtn="16487.60" data-media-vtn="17113.92" data-limite-inferior-vtn="14546.84" data-limite-superior-vtn="19681.01"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="21952.48" data-media-vti="20234.58" data-limite-inferior-vti="17199.39" data-limite-superior-vti="23269.77" data-mediana-vtn="15366.74" data-media-vtn="14164.21" data-limite-inferior-vtn="12039.58" data-limite-superior-vtn="16288.84"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="13171.49" data-media-vti="15396.69" data-limite-inferior-vti="13087.18" data-limite-superior-vti="17706.19" data-mediana-vtn="9220.04" data-media-vtn="10777.68" data-limite-inferior-vtn="9161.03" data-limite-superior-vtn="12394.33"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="18595.04" data-media-vti="18776.74" data-limite-inferior-vti="15960.23" data-limite-superior-vti="21593.26" data-mediana-vtn="13016.53" data-media-vtn="13143.72" data-limite-inferior-vtn="11172.16" data-limite-superior-vtn="15115.28"></div>
+                <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="1376.81" data-media-vti="1449.36" data-limite-inferior-vti="1231.96" data-limite-superior-vti="1666.77" data-mediana-vtn="963.77" data-media-vtn="1014.55" data-limite-inferior-vtn="862.37" data-limite-superior-vtn="1166.74"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="4750.00" data-media-vti="4868.86" data-limite-inferior-vti="4138.53" data-limite-superior-vti="5599.18" data-mediana-vtn="3325.00" data-media-vtn="3408.20" data-limite-inferior-vtn="2896.97" data-limite-superior-vtn="3919.43"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="11222.02" data-media-vti="11343.32" data-limite-inferior-vti="9641.82" data-limite-superior-vti="13044.82" data-mediana-vtn="7855.41" data-media-vtn="7940.32" data-limite-inferior-vtn="6749.27" data-limite-superior-vtn="9131.37"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - Nova Mamoré" data-mediana-vti="23553.72" data-media-vti="24448.46" data-limite-inferior-vti="20781.19" data-limite-superior-vti="28115.73" data-mediana-vtn="16487.60" data-media-vtn="17113.92" data-limite-inferior-vtn="14546.84" data-limite-superior-vtn="19681.01"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Nova Mamoré" data-mediana-vti="13171.49" data-media-vti="15396.69" data-limite-inferior-vti="13087.18" data-limite-superior-vti="17706.19" data-mediana-vtn="9220.04" data-media-vtn="10777.68" data-limite-inferior-vtn="9161.03" data-limite-superior-vtn="12394.33"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Guajará-Mirim" data-mediana-vti="20245.86" data-media-vti="24906.51" data-limite-inferior-vti="21170.54" data-limite-superior-vti="28642.49" data-mediana-vtn="14172.10" data-media-vtn="17434.56" data-limite-inferior-vtn="14819.38" data-limite-superior-vtn="20049.74"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Nova Mamoré" data-mediana-vti="23541.80" data-media-vti="23414.97" data-limite-inferior-vti="19902.72" data-limite-superior-vti="26927.22" data-mediana-vtn="16479.26" data-media-vtn="16390.48" data-limite-inferior-vtn="13931.91" data-limite-superior-vtn="18849.05"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Nova Mamoré" data-mediana-vti="17879.85" data-media-vti="17864.82" data-limite-inferior-vti="15185.10" data-limite-superior-vti="20544.54" data-mediana-vtn="12515.90" data-media-vtn="12505.37" data-limite-inferior-vtn="10629.57" data-limite-superior-vtn="14381.18"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Guajará-Mirim" data-mediana-vti="4750.00" data-media-vti="4767.20" data-limite-inferior-vti="4052.12" data-limite-superior-vti="5482.28" data-mediana-vtn="3325.00" data-media-vtn="3337.04" data-limite-inferior-vtn="2836.48" data-limite-superior-vtn="3837.59"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Nova Mamoré" data-mediana-vti="5534.24" data-media-vti="5101.22" data-limite-inferior-vti="4336.04" data-limite-superior-vti="5866.40" data-mediana-vtn="3873.97" data-media-vtn="3570.85" data-limite-inferior-vtn="3035.23" data-limite-superior-vtn="4106.48"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Guajará-Mirim" data-mediana-vti="8655.72" data-media-vti="8733.20" data-limite-inferior-vti="7423.22" data-limite-superior-vti="10043.18" data-mediana-vtn="6059.00" data-media-vtn="6113.24" data-limite-inferior-vtn="5196.26" data-limite-superior-vtn="7030.23"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Nova Mamoré" data-mediana-vti="11776.86" data-media-vti="11790.16" data-limite-inferior-vti="10021.63" data-limite-superior-vti="13558.68" data-mediana-vtn="8243.80" data-media-vtn="8253.11" data-limite-inferior-vtn="7015.14" data-limite-superior-vtn="9491.08"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Vale do Mamoré === -->
+
+        <!-- === INÍCIO: Mercado Regional de Terras Região Central === -->
+        <div class="regional-market"
+             data-region-name="Região Central"
+             data-municipalities="Ji-Paraná,Cacoal,Espigão D'Oeste,Ministro Andreazza,Presidente Médici,Ouro Preto do Oeste,Jaru,Teixeirópolis,Vale do Paraíso,Urupá,Nova União,Mirante da Serra,Governador Jorge Teixeira,Theobroma">
+
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="23243.80" data-media-vti="24745.63" data-limite-inferior-vti="21033.78" data-limite-superior-vti="28457.47" data-mediana-vtn="16270.66" data-media-vtn="17321.94" data-limite-inferior-vtn="14723.65" data-limite-superior-vtn="19920.23"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="46487.60" data-media-vti="46487.60" data-limite-inferior-vti="39514.46" data-limite-superior-vti="53460.74" data-mediana-vtn="32541.32" data-media-vtn="32541.32" data-limite-inferior-vtn="27660.12" data-limite-superior-vtn="37422.52"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="39256.20" data-media-vti="38651.52" data-limite-inferior-vti="32853.80" data-limite-superior-vti="44449.25" data-mediana-vtn="27479.34" data-media-vtn="27056.07" data-limite-inferior-vtn="22997.66" data-limite-superior-vtn="31114.48"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="20799.82" data-media-vti="21300.77" data-limite-inferior-vti="18105.65" data-limite-superior-vti="24495.88" data-mediana-vtn="14559.87" data-media-vtn="14910.54" data-limite-inferior-vtn="12673.96" data-limite-superior-vti="17147.12"></div>
+            </div>
+            
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="46487.60" data-media-vti="47578.91" data-limite-inferior-vti="40442.07" data-limite-superior-vti="54715.74" data-mediana-vtn="32541.32" data-media-vtn="33305.24" data-limite-inferior-vtn="28309.45" data-limite-superior-vtn="38301.02"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="47896.32" data-media-vti="47847.74" data-limite-inferior-vti="40670.58" data-limite-superior-vti="55024.90" data-mediana-vtn="33527.42" data-media-vtn="33493.42" data-limite-inferior-vtn="28469.41" data-limite-superior-vtn="38517.43"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="40231.87" data-media-vti="40475.22" data-limite-inferior-vti="34403.94" data-limite-superior-vti="46546.50" data-mediana-vtn="28162.31" data-media-vtn="28332.65" data-limite-inferior-vtn="24082.76" data-limite-superior-vtn="32582.55"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="30991.74" data-media-vti="32221.57" data-limite-inferior-vti="27388.33" data-limite-superior-vti="37054.81" data-mediana-vtn="21694.22" data-media-vtn="22555.10" data-limite-inferior-vtn="19171.83" data-limite-superior-vtn="25938.36"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="8040.31" data-media-vti="8054.81" data-limite-inferior-vti="6846.59" data-limite-superior-vti="9263.03" data-mediana-vtn="5628.22" data-media-vtn="5638.37" data-limite-inferior-vtn="4792.61" data-limite-superior-vtn="6484.12"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="21694.21" data-media-vti="22005.44" data-limite-inferior-vti="18704.63" data-limite-superior-vti="25306.26" data-mediana-vtn="15185.95" data-media-vtn="15403.81" data-limite-inferior-vtn="13093.24" data-limite-superior-vtn="17714.38"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - Cacoal" data-mediana-vti="52685.95" data-media-vti="50883.34" data-limite-inferior-vti="43250.83" data-limite-superior-vti="58515.84" data-mediana-vtn="36880.17" data-media-vtn="35618.33" data-limite-inferior-vtn="30275.58" data-limite-superior-vtn="40961.08"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Jaru" data-mediana-vti="40399.94" data-media-vti="39877.33" data-limite-inferior-vti="33895.73" data-limite-superior-vti="45858.93" data-mediana-vtn="28279.96" data-media-vtn="27914.13" data-limite-inferior-vtn="23727.01" data-limite-superior-vtn="32101.25"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Ji-Paraná" data-mediana-vti="61983.47" data-media-vti="59400.82" data-limite-inferior-vti="50490.70" data-limite-superior-vti="68310.95" data-mediana-vtn="43388.43" data-media-vtn="41580.58" data-limite-inferior-vtn="35343.49" data-limite-superior-vtn="47817.66"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Cacoal" data-mediana-vti="42676.88" data-media-vti="44582.24" data-limite-inferior-vti="37894.90" data-limite-superior-vti="51269.58" data-mediana-vtn="29873.81" data-media-vtn="31207.57" data-limite-inferior-vtn="26526.43" data-limite-superior-vtn="35888.70"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Jaru" data-mediana-vti="37190.08" data-media-vti="37923.70" data-limite-inferior-vti="32235.15" data-limite-superior-vti="43612.26" data-mediana-vtn="26033.06" data-media-vtn="26546.59" data-limite-inferior-vtn="22564.60" data-limite-superior-vtn="30528.58"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Ji-Paraná" data-mediana-vti="44679.75" data-media-vti="45576.16" data-limite-inferior-vti="38739.73" data-limite-superior-vti="52412.58" data-mediana-vtn="31275.83" data-media-vtn="31903.31" data-limite-inferior-vtn="27117.81" data-limite-superior-vtn="36688.80"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Ministro Andreazza" data-mediana-vti="35330.58" data-media-vti="35247.94" data-limite-inferior-vti="29960.75" data-limite-superior-vti="40535.13" data-mediana-vtn="24731.41" data-media-vtn="24673.56" data-limite-inferior-vtn="20972.52" data-limite-superior-vtn="28374.59"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Espigão D'Oeste" data-mediana-vti="5820.44" data-media-vti="6086.87" data-limite-inferior-vti="5173.84" data-limite-superior-vti="6999.90" data-mediana-vtn="4074.30" data-media-vtn="4260.81" data-limite-inferior-vtn="3621.69" data-limite-superior-vtn="4899.93"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Ji-Paraná" data-mediana-vti="10330.58" data-media-vti="10674.93" data-limite-inferior-vti="9073.69" data-limite-superior-vti="12276.17" data-mediana-vtn="7231.41" data-media-vtn="7472.45" data-limite-inferior-vtn="6351.58" data-limite-superior-vtn="8593.32"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Theobroma" data-mediana-vti="9297.52" data-media-vti="8887.86" data-limite-inferior-vti="7554.68" data-limite-superior-vti="10221.04" data-mediana-vtn="6508.26" data-media-vtn="6221.50" data-limite-inferior-vtn="5288.27" data-limite-superior-vtn="7154.72"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cacoal" data-mediana-vti="25826.45" data-media-vti="25962.92" data-limite-inferior-vti="22068.49" data-limite-superior-vti="29857.36" data-mediana-vtn="18078.52" data-media-vtn="18174.05" data-limite-inferior-vtn="15447.94" data-limite-superior-vtn="20900.15"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Espigão D'Oeste" data-mediana-vti="13946.28" data-media-vti="14401.47" data-limite-inferior-vti="12241.25" data-limite-superior-vti="16561.69" data-mediana-vtn="9762.40" data-media-vtn="10081.03" data-limite-inferior-vtn="8568.87" data-limite-superior-vtn="11593.18"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Governador Jorge Teixeira" data-mediana-vti="19935.56" data-media-vti="21245.64" data-limite-inferior-vti="18058.79" data-limite-superior-vti="24432.48" data-mediana-vtn="13954.89" data-media-vtn="14871.94" data-limite-inferior-vtn="12641.15" data-limite-superior-vtn="17102.74"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Jaru" data-mediana-vti="27892.56" data-media-vti="26964.61" data-limite-inferior-vti="22919.92" data-limite-superior-vti="31009.30" data-mediana-vtn="19524.79" data-media-vtn="18875.23" data-limite-inferior-vtn="16043.94" data-limite-superior-vtn="21706.51"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Ji-Paraná" data-mediana-vti="24960.91" data-media-vti="26092.30" data-limite-inferior-vti="22178.45" data-limite-superior-vti="30006.14" data-mediana-vtn="17472.64" data-media-vtn="18264.61" data-limite-inferior-vtn="15524.92" data-limite-superior-vtn="21004.30"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Ministro Andreazza" data-mediana-vti="18881.49" data-media-vti="19543.46" data-limite-inferior-vti="16611.94" data-limite-superior-vti="22474.98" data-mediana-vtn="13217.04" data-media-vtn="13680.42" data-limite-inferior-vtn="11628.36" data-limite-superior-vtn="15732.49"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Mirante da Serra" data-mediana-vti="22300.47" data-media-vti="21922.87" data-limite-inferior-vti="18634.44" data-limite-superior-vti="25211.30" data-mediana-vtn="15610.33" data-media-vtn="15346.01" data-limite-inferior-vtn="13044.11" data-limite-superior-vtn="17647.91"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Nova União" data-mediana-vti="31404.96" data-media-vti="30619.84" data-limite-inferior-vti="26026.86" data-limite-superior-vti="35212.81" data-mediana-vtn="21983.47" data-media-vtn="21433.89" data-limite-inferior-vtn="18218.80" data-limite-superior-vtn="24648.97"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Ouro Preto do Oeste" data-mediana-vti="22500.00" data-media-vti="23413.59" data-limite-inferior-vti="19901.55" data-limite-superior-vti="26925.63" data-mediana-vtn="15750.00" data-media-vtn="16389.51" data-limite-inferior-vtn="13931.09" data-limite-superior-vtn="18847.94"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Presidente Médici" data-mediana-vti="17665.29" data-media-vti="17769.94" data-limite-inferior-vti="15104.45" data-limite-superior-vti="20435.44" data-mediana-vtn="12365.70" data-media-vtn="12438.96" data-limite-inferior-vtn="10573.12" data-limite-superior-vtn="14304.81"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Teixeirópolis" data-mediana-vti="25516.53" data-media-vti="24152.30" data-limite-inferior-vti="20529.45" data-limite-superior-vti="27775.14" data-mediana-vtn="17861.57" data-media-vtn="16906.61" data-limite-inferior-vtn="14370.62" data-limite-superior-vtn="19442.60"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Theobroma" data-mediana-vti="15495.87" data-media-vti="16240.03" data-limite-inferior-vti="13804.02" data-limite-superior-vti="18676.03" data-mediana-vtn="10847.11" data-media-vtn="11368.02" data-limite-inferior-vtn="9662.82" data-limite-superior-vtn="13073.22"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Urupá" data-mediana-vti="21338.97" data-media-vti="21127.25" data-limite-inferior-vti="17958.17" data-limite-superior-vti="24296.34" data-mediana-vtn="14937.28" data-media-vtn="14789.08" data-limite-inferior-vtn="12570.72" data-limite-superior-vtn="17007.44"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Vale do Paraíso" data-mediana-vti="21590.91" data-media-vti="22376.98" data-limite-inferior-vti="19020.44" data-limite-superior-vti="25733.53" data-mediana-vtn="15113.64" data-media-vtn="15663.89" data-limite-inferior-vtn="13314.31" data-limite-superior-vtn="18013.47"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Região Central === -->
+
+        <!-- === INÍCIO: Mercado Regional de Terras Vale do Jamari === -->
+        <div class="regional-market"
+             data-region-name="Vale do Jamari"
+             data-municipalities="Ariquemes,Cacaulândia,Monte Negro,Vale do Anari,Campo Novo de Rondônia,Buritis,Machadinho D'Oeste,Alto Paraíso,Cujubim,Rio Crespo">
+            
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="13946.28" data-media-vti="14008.52" data-limite-inferior-vti="11907.24" data-limite-superior-vti="16109.80" data-mediana-vtn="9762.40" data-media-vtn="9805.96" data-limite-inferior-vtn="8335.07" data-limite-superior-vtn="11276.86"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="13171.49" data-media-vti="13663.45" data-limite-inferior-vti="11613.93" data-limite-superior-vti="15712.96" data-mediana-vtn="9220.04" data-media-vtn="9564.41" data-limite-inferior-vtn="8129.75" data-limite-superior-vtn="10999.08"></div>
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="34686.91" data-media-vti="37407.64" data-limite-inferior-vti="31796.50" data-limite-superior-vti="43018.79" data-mediana-vtn="24280.84" data-media-vtn="26185.35" data-limite-inferior-vtn="22257.55" data-limite-superior-vtn="30113.15"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="23726.28" data-media-vti="24051.78" data-limite-inferior-vti="20444.01" data-limite-superior-vti="27659.54" data-mediana-vtn="16608.40" data-media-vtn="16836.24" data-limite-inferior-vtn="14310.81" data-limite-superior-vtn="19361.68"></div>
+                <div class="typology" data-typology-name="Vegetação Nativa" data-mediana-vti="1864.29" data-media-vti="1973.47" data-limite-inferior-vti="1677.45" data-limite-superior-vti="2269.49" data-mediana-vtn="1305.00" data-media-vtn="1381.43" data-limite-inferior-vtn="1174.22" data-limite-superior-vtn="1588.64"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="13967.93" data-media-vti="14421.57" data-limite-inferior-vti="12258.33" data-limite-superior-vti="16584.80" data-mediana-vtn="9777.55" data-media-vtn="10095.10" data-limite-inferior-vtn="8580.83" data-limite-superior-vtn="11609.36"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="7641.46" data-media-vti="7289.47" data-limite-inferior-vti="6196.05" data-limite-superior-vti="8382.89" data-mediana-vtn="5349.02" data-media-vtn="5102.63" data-limite-inferior-vtn="4337.24" data-limite-superior-vtn="5868.02"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="30991.74" data-media-vti="30661.16" data-limite-inferior-vti="26061.99" data-limite-superior-vti="35260.33" data-mediana-vtn="21694.21" data-media-vtn="21462.81" data-limite-inferior-vtn="18243.39" data-limite-superior-vtn="24682.23"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="23726.28" data-media-vti="23945.24" data-limite-inferior-vti="20353.45" data-limite-superior-vti="27537.03" data-mediana-vtn="16608.40" data-media-vtn="16761.67" data-limite-inferior-vtn="14247.42" data-limite-superior-vtn="19275.92"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="23243.80" data-media-vti="23317.59" data-limite-inferior-vti="19819.95" data-limite-superior-vti="26815.23" data-mediana-vtn="16270.66" data-media-vtn="16322.31" data-limite-inferior-vtn="13873.97" data-limite-superior-vtn="18770.66"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="39256.20" data-media-vti="42871.90" data-limite-inferior-vti="36441.12" data-limite-superior-vti="49302.69" data-mediana-vtn="27479.34" data-media-vtn="30010.33" data-limite-inferior-vtn="25508.78" data-limite-superior-vtn="34511.88"></div>
+                <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="1800.00" data-media-vti="1804.85" data-limite-inferior-vti="1534.12" data-limite-superior-vti="2075.57" data-mediana-vtn="1260.00" data-media-vtn="1263.39" data-limite-inferior-vtn="1073.88" data-limite-superior-vtn="1452.90"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Alto Paraíso" data-mediana-vti="26949.34" data-media-vti="25605.95" data-limite-inferior-vti="21765.06" data-limite-superior-vti="29446.85" data-mediana-vtn="18864.53" data-media-vtn="17924.16" data-limite-inferior-vtn="15235.54" data-limite-superior-vtn="20612.79"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Ariquemes" data-mediana-vti="24793.39" data-media-vti="23823.84" data-limite-inferior-vti="20250.27" data-limite-superior-vti="27397.42" data-mediana-vtn="17355.37" data-media-vtn="16676.69" data-limite-inferior-vtn="14175.18" data-limite-superior-vtn="19178.19"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Cacaulândia" data-mediana-vti="23478.59" data-media-vti="23445.05" data-limite-inferior-vti="19928.29" data-limite-superior-vti="26961.80" data-mediana-vtn="16435.01" data-media-vtn="16411.53" data-limite-inferior-vtn="13949.80" data-limite-superior-vtn="18873.26"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Machadinho D'Oeste" data-mediana-vti="23839.80" data-media-vti="23693.41" data-limite-inferior-vti="20139.40" data-limite-superior-vti="27247.42" data-mediana-vtn="16687.86" data-media-vtn="16585.38" data-limite-inferior-vtn="14097.58" data-limite-superior-vti="19073.19"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Ariquemes" data-mediana-vti="7747.93" data-media-vti="7461.90" data-limite-inferior-vti="6342.61" data-limite-superior-vti="8581.18" data-mediana-vtn="5423.55" data-media-vtn="5223.33" data-limite-inferior-vtn="4439.83" data-limite-superior-vtn="6006.83"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Buritis" data-mediana-vti="8804.47" data-media-vti="8763.26" data-limite-inferior-vti="7448.77" data-limite-superior-vti="10077.75" data-mediana-vtn="6163.13" data-media-vtn="6134.28" data-limite-inferior-vtn="5214.14" data-limite-superior-vtn="7054.43"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Cujubim" data-mediana-vti="6256.10" data-media-vti="6487.22" data-limite-inferior-vti="5514.13" data-limite-superior-vti="7460.30" data-mediana-vtn="4379.27" data-media-vtn="4541.05" data-limite-inferior-vtn="3859.89" data-limite-superior-vtn="5222.21"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Machadinho D'Oeste" data-mediana-vti="7747.93" data-media-vti="7514.74" data-limite-inferior-vti="6387.53" data-limite-superior-vti="8641.95" data-mediana-vtn="5423.55" data-media-vtn="5260.32" data-limite-inferior-vtn="4471.27" data-limite-superior-vtn="6049.37"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Alto Paraíso" data-mediana-vti="15495.87" data-media-vti="14750.32" data-limite-inferior-vti="12537.77" data-limite-superior-vti="16962.87" data-mediana-vtn="10847.11" data-media-vtn="10325.22" data-limite-inferior-vtn="8776.44" data-limite-superior-vtn="11874.01"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Ariquemes" data-mediana-vti="17808.77" data-media-vti="17118.39" data-limite-inferior-vti="14550.63" data-limite-superior-vti="19686.15" data-mediana-vtn="12466.14" data-media-vtn="11982.88" data-limite-inferior-vtn="10185.44" data-limite-superior-vtn="13780.31"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Buritis" data-mediana-vti="13946.28" data-media-vti="14461.49" data-limite-inferior-vti="12292.27" data-limite-superior-vti="16630.72" data-mediana-vtn="9762.40" data-media-vtn="10123.05" data-limite-inferior-vtn="8604.59" data-limite-superior-vtn="11641.50"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cacaulândia" data-mediana-vti="15495.87" data-media-vti="16265.63" data-limite-inferior-vti="13825.79" data-limite-superior-vti="18705.47" data-mediana-vtn="10847.11" data-media-vtn="11385.94" data-limite-inferior-vtn="9678.05" data-limite-superior-vtn="13093.83"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Campo Novo de Rondônia" data-mediana-vti="10419.13" data-media-vti="9838.89" data-limite-inferior-vti="8363.05" data-limite-superior-vti="11314.72" data-mediana-vtn="7293.39" data-media-vtn="5260.32" data-limite-inferior-vtn="4471.27" data-limite-superior-vtn="6049.37"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cujubim" data-mediana-vti="12347.50" data-media-vti="12804.30" data-limite-inferior-vti="10883.65" data-limite-superior-vti="14724.94" data-mediana-vtn="8643.26" data-media-vtn="8963.01" data-limite-inferior-vtn="7618.56" data-limite-superior-vtn="10307.46"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Machadinho D'Oeste" data-mediana-vti="12396.69" data-media-vti="12675.10" data-limite-inferior-vti="10773.83" data-limite-superior-vti="14576.36" data-mediana-vtn="8677.69" data-media-vtn="8872.57" data-limite-inferior-vtn="7541.68" data-limite-superior-vtn="10203.45"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Monte Negro" data-mediana-vti="17765.09" data-media-vti="17647.14" data-limite-inferior-vti="15000.07" data-limite-superior-vti="20294.21" data-mediana-vtn="12435.57" data-media-vtn="12353.00" data-limite-inferior-vtn="10500.05" data-limite-superior-vtn="14205.95"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Rio Crespo" data-mediana-vti="18750.00" data-media-vti="19037.75" data-limite-inferior-vti="16182.09" data-limite-superior-vti="21893.41" data-mediana-vtn="13125.00" data-media-vtn="13326.43" data-limite-inferior-vtn="11327.46" data-limite-superior-vtn="15325.39"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Vale do Anari" data-mediana-vti="14021.78" data-media-vti="14307.88" data-limite-inferior-vti="12161.70" data-limite-superior-vti="16454.07" data-mediana-vtn="9815.24" data-media-vtn="10015.52" data-limite-inferior-vtn="8513.19" data-limite-superior-vtn="11517.85"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Vale do Jamari === -->
+
+        <!-- === INÍCIO: Mercado Regional de Terras Porto Velho, Alto Madeira e Ponta do Abunã === -->
+        <div class="regional-market"
+             data-region-name="Porto Velho, Alto Madeira e Ponta do Abunã"
+             data-municipalities="Porto Velho,Candeias do Jamari,Itapuã do Oeste">
+            
+            <div class="categorical-level" data-level-name="Todas as tipologias">
+                <div class="typology" data-typology-name="Geral" data-mediana-vti="8243.80" data-media-vti="8587.83" data-limite-inferior-vti="7299.66" data-limite-superior-vti="9876.00" data-mediana-vtn="5770.66" data-media-vtn="6011.48" data-limite-inferior-vtn="5109.76" data-limite-superior-vtn="6913.20"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="1º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura" data-mediana-vti="26382.98" data-media-vti="26108.02" data-limite-inferior-vti="22201.82" data-limite-superior-vti="30014.22" data-mediana-vtn="18468.09" data-media-vtn="18275.61" data-limite-inferior-vtn="15541.27" data-limite-superior-vtn="21009.96"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="18332.07" data-media-vti="18787.08" data-limite-inferior-vti="15969.02" data-limite-superior-vti="21605.14" data-mediana-vtn="12832.45" data-media-vtn="13150.96" data-limite-inferior-vtn="11178.31" data-limite-superior-vtn="15123.60"></div>
+                <div class="typology" data-typology-name="Vegetação Nativa" data-mediana-vti="1293.23" data-media-vti="1294.94" data-limite-inferior-vti="1099.10" data-limite-superior-vti="1488.98" data-mediana-vtn="905.26" data-media-vtn="905.26" data-limite-inferior-vtn="737.17" data-limite-superior-vtn="997.35"></div>
+                <div class="typology" data-typology-name="Pecuária" data-mediana-vti="8872.77" data-media-vti="8949.72" data-limite-inferior-vti="7633.91" data-limite-superior-vti="10265.52" data-mediana-vtn="6083.44" data-media-vtn="6221.10" data-limite-inferior-vtn="5319.54" data-limite-superior-vtn="7231.77"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="2º Nível Categórico">
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="28875.00" data-media-vti="33992.87" data-limite-inferior-vti="28894.04" data-limite-superior-vti="39091.70" data-mediana-vtn="20212.50" data-media-vtn="23792.21" data-limite-inferior-vtn="20229.33" data-limite-superior-vtn="27365.09"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="29411.76" data-media-vti="28190.43" data-limite-inferior-vti="24006.86" data-limite-superior-vti="32374.01" data-mediana-vtn="20588.23" data-media-vtn="19804.53" data-limite-inferior-vtn="16833.85" data-limite-superior-vtn="22775.21"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="20000.00" data-media-vti="16281.48" data-limite-inferior-vti="13460.50" data-limite-superior-vti="19102.47" data-mediana-vtn="14000.00" data-media-vtn="11460.52" data-limite-inferior-vtn="9434.02" data-limite-superior-vtn="13436.97"></div>
+                <div class="typology" data-typology-name="Pecuária de Médio Suporte" data-mediana-vti="18126.33" data-media-vti="18654.35" data-limite-inferior-vti="15856.20" data-limite-superior-vti="21452.50" data-mediana-vtn="12688.29" data-media-vtn="13058.04" data-limite-inferior-vtn="11099.34" data-limite-superior-vtn="15016.75"></div>
+                <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="969.00" data-media-vti="1024.00" data-limite-inferior-vti="870.40" data-limite-superior-vti="1177.60" data-mediana-vtn="678.30" data-media-vtn="716.80" data-limite-inferior-vtn="609.28" data-limite-superior-vtn="824.32"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro" data-mediana-vti="2720.00" data-media-vti="1930.33" data-limite-inferior-vti="1640.78" data-limite-superior-vti="2219.88" data-mediana-vtn="1330.00" data-media-vtn="1351.23" data-limite-inferior-vtn="1148.55" data-limite-superior-vtn="1553.92"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="4354.42" data-media-vti="4400.17" data-limite-inferior-vti="3740.15" data-limite-superior-vti="5060.19" data-mediana-vtn="3048.09" data-media-vtn="3080.12" data-limite-inferior-vtr="2618.10" data-limite-superior-vtn="3542.13"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="10239.31" data-media-vti="11200.04" data-limite-inferior-vti="9477.13" data-limite-superior-vti="12748.94" data-mediana-vtn="7175.53" data-media-vtn="7760.23" data-limite-inferior-vtn="6596.19" data-limite-superior-vtn="8924.26"></div>
+            </div>
+
+            <div class="categorical-level" data-level-name="3º Nível Categórico">
+                <div class="typology" data-typology-name="Agricultura Familiar - Itapuã do Oeste" data-mediana-vti="44842.86" data-media-vti="44842.86" data-limite-inferior-vti="38116.43" data-limite-superior-vti="51569.29" data-mediana-vtn="26490.00" data-media-vtn="26490.00" data-limite-inferior-vtn="22516.50" data-limite-superior-vtn="30463.50"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Porto Velho (Ponta do Abunã)" data-mediana-vti="4957.50" data-media-vti="43875.00" data-limite-inferior-vti="37293.75" data-limite-superior-vti="50456.25" data-mediana-vtn="3000.00" data-media-vtn="27500.00" data-limite-inferior-vtn="23375.00" data-limite-superior-vtn="31625.00"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Candeias do Jamari" data-mediana-vti="27500.00" data-media-vti="27500.00" data-limite-inferior-vti="23375.00" data-limite-superior-vti="31625.00" data-mediana-vtn="19250.00" data-media-vtn="19250.00" data-limite-inferior-vtn="16362.50" data-limite-superior-vtn="22137.50"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Porto Velho (Alto Madeira)" data-mediana-vti="29411.76" data-media-vti="29411.76" data-limite-inferior-vti="24999.90" data-limite-superior-vti="33823.63" data-mediana-vtn="20588.23" data-media-vtn="20588.23" data-limite-inferior-vtn="17499.91" data-limite-superior-vtn="23676.54"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Candeias do Jamari" data-mediana-vti="27809.54" data-media-vti="28022.69" data-limite-inferior-vti="24108.00" data-limite-superior-vti="32479.29" data-mediana-vtn="19444.01" data-media-vtn="17015.46" data-limite-inferior-vtn="17015.46" data-limite-superior-vtn="23015.46"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Porto Velho (Alto Madeira)" data-mediana-vti="27834.90" data-media-vti="28243.15" data-limite-inferior-vti="24006.68" data-limite-superior-vti="32479.62" data-mediana-vtn="19520.00" data-media-vtn="19770.21" data-limite-inferior-vtn="16804.68" data-limite-superior-vtn="22735.74"></div>
+                <div class="typology" data-typology-name="Pecuária de Médio Suporte - Candeias do Jamari" data-mediana-vti="20135.87" data-media-vti="19169.22" data-limite-inferior-vti="16293.84" data-limite-superior-vti="22044.60" data-mediana-vtn="14095.11" data-media-vtn="13418.45" data-limite-inferior-vtn="11405.68" data-limite-superior-vtn="15431.22"></div>
+                <div class="typology" data-typology-name="Pecuária de Médio Suporte - Itapuã do Oeste" data-mediana-vti="18381.94" data-media-vti="18674.60" data-limite-inferior-vti="16092.47" data-limite-superior-vti="21703.95" data-mediana-vtn="12867.36" data-media-vtn="13125.09" data-limite-inferior-vtn="11315.33" data-limite-superior-vtn="15187.77"></div>
+                <div class="typology" data-typology-name="Pecuária de Médio Suporte - Porto Velho (Ponta do Abunã)" data-mediana-vti="16810.34" data-media-vti="16378.60" data-limite-inferior-vti="13921.81" data-limite-superior-vti="18835.39" data-mediana-vtn="11767.24" data-media-vtn="11465.02" data-limite-inferior-vtn="9745.26" data-limite-superior-vtn="13184.77"></div>
+                <div class="typology" data-typology-name="Mata Explorada - Candeias do Jamari" data-mediana-vti="1156.00" data-media-vti="1156.00" data-limite-inferior-vti="982.60" data-limite-superior-vti="1329.40" data-mediana-vtn="809.20" data-media-vtn="809.20" data-limite-inferior-vtn="687.82" data-limite-superior-vtn="930.58"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro - Candeias do Jamari" data-mediana-vti="1425.00" data-media-vti="1329.96" data-limite-inferior-vti="1130.47" data-limite-superior-vti="1529.46" data-mediana-vtn="997.50" data-media-vtn="930.97" data-limite-inferior-vtn="791.33" data-limite-superior-vtn="1070.62"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro - Itapuã do Oeste" data-mediana-vti="922.33" data-media-vti="982.41" data-limite-inferior-vti="835.05" data-limite-superior-vti="1129.77" data-mediana-vtn="645.63" data-media-vtn="687.69" data-limite-inferior-vtn="584.53" data-limite-superior-vtn="790.84"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro - Porto Velho (Alto Madeira)" data-mediana-vti="2444.90" data-media-vti="2215.86" data-limite-inferior-vti="1883.49" data-limite-superior-vti="2548.24" data-mediana-vtn="1431.43" data-media-vtn="1551.10" data-limite-inferior-vtn="1318.44" data-limite-superior-vtn="1783.77"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro - Porto Velho (Baixo Madeira)" data-mediana-vti="1716.80" data-media-vti="1884.00" data-limite-inferior-vti="1601.40" data-limite-superior-vti="2166.60" data-mediana-vtn="1480.00" data-media-vtn="1318.80" data-limite-inferior-vtn="1120.98" data-limite-superior-vtn="1516.62"></div>
+                <div class="typology" data-typology-name="Potencial Madeireiro - Porto Velho (Ponta do Abunã)" data-mediana-vti="1473.82" data-media-vti="1674.31" data-limite-inferior-vti="1423.16" data-limite-superior-vti="1925.46" data-mediana-vtn="1031.67" data-media-vtn="1172.01" data-limite-inferior-vtn="996.22" data-limite-superior-vtn="1347.81"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Candeias do Jamari" data-mediana-vti="5874.48" data-media-vti="5627.04" data-limite-inferior-vti="4782.98" data-limite-superior-vti="6471.09" data-mediana-vtn="4112.13" data-media-vtn="3938.93" data-limite-inferior-vtn="3348.09" data-limite-superior-vtn="4529.77"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Itapuã do Oeste" data-mediana-vti="4874.48" data-media-vti="4756.22" data-limite-inferior-vti="4042.79" data-limite-superior-vti="5469.65" data-mediana-vtn="3412.13" data-media-vtn="3329.35" data-limite-inferior-vtn="2829.95" data-limite-superior-vtn="3828.76"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Porto Velho (Alto Madeira)" data-mediana-vti="4976.33" data-media-vti="4609.12" data-limite-inferior-vti="3917.75" data-limite-superior-vti="5300.49" data-mediana-vtn="3483.43" data-media-vtn="3226.38" data-limite-inferior-vtn="2742.43" data-limite-superior-vtn="3710.34"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Porto Velho (Ponta do Abunã)" data-mediana-vti="3857.14" data-media-vti="4003.33" data-limite-inferior-vti="3402.83" data-limite-superior-vti="4603.83" data-mediana-vtn="2700.00" data-media-vtn="2802.33" data-limite-inferior-vtn="2381.98" data-limite-superior-vtn="3222.68"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Candeias do Jamari" data-mediana-vti="12450.00" data-media-vti="12870.07" data-limite-inferior-vti="10939.56" data-limite-superior-vti="14800.58" data-mediana-vtn="8715.00" data-media-vtn="9009.05" data-limite-inferior-vtn="7657.69" data-limite-superior-vtn="10360.41"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Itapuã do Oeste" data-mediana-vti="10206.00" data-media-vti="11031.70" data-limite-inferior-vti="9376.95" data-limite-superior-vti="12686.46" data-mediana-vtn="7144.24" data-media-vtn="7722.19" data-limite-inferior-vtn="6563.86" data-limite-superior-vtn="8880.52"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Porto Velho (Alto Madeira)" data-mediana-vti="12306.09" data-media-vti="13329.01" data-limite-inferior-vti="11329.66" data-limite-superior-vti="15328.36" data-mediana-vtn="8636.30" data-media-vtn="9330.30" data-limite-inferior-vtn="7930.76" data-limite-superior-vtn="10729.85"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Porto Velho (Baixo Madeira)" data-mediana-vti="10909.09" data-media-vti="11611.00" data-limite-inferior-vti="9870.00" data-limite-superior-vti="13353.53" data-mediana-vtn="7636.36" data-media-vtn="8128.24" data-limite-inferior-vtn="6909.00" data-limite-superior-vtn="9347.47"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Porto Velho (Ponta do Abunã)" data-mediana-vti="8432.95" data-media-vti="9362.52" data-limite-inferior-vti="7958.26" data-limite-superior-vti="10767.70" data-mediana-vtn="5892.56" data-media-vtn="6198.17" data-limite-inferior-vtn="5268.44" data-limite-superior-vtn="7127.89"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Porto Velho (Baixo Madeira)" data-mediana-vti="9292.44" data-media-vti="8854.88" data-limite-inferior-vti="7526.65" data-limite-superior-vti="10182.50" data-mediana-vtn="6504.71" data-media-vtn="6198.42" data-limite-inferior-vtn="5268.66" data-limite-superior-vtn="7128.18"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Porto Velho (Ponta do Abunã)" data-mediana-vti="8417.95" data-media-vti="8699.54" data-limite-inferior-vti="7528.45" data-limite-superior-vti="10182.31" data-mediana-vtn="5892.56" data-media-vtn="6554.02" data-limite-inferior-vtn="5570.91" data-limite-superior-vtn="7537.12"></div>
+            </div>
+        </div>
+        <!-- === FIM: Mercado Regional de Terras Porto Velho, Alto Madeira e Ponta do Abunã === -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const feeTables = {
+                notas: {
+                    name: 'Tabelionato de Notas',
+                    atosVariaveis: {
+                        'notas_escritura_valor': {
+                            name: 'Escritura com valor declarado (205b)', selo: 1.51,
+                            ranges: [
+                                { from: 0.01, to: 28493.00, oficial: 301.74 }, { from: 28493.01, to: 37806.00, oficial: 583.42 },
+                                { from: 37806.01, to: 47116.00, oficial: 724.21 }, { from: 47116.01, to: 56428.00, oficial: 865.05 },
+                                { from: 56428.01, to: 65739.00, oficial: 1005.89 }, { from: 65739.01, to: 75052.00, oficial: 1146.68 },
+                                { from: 75052.01, to: 93675.00, oficial: 1428.32 }, { from: 93675.01, to: 112298.00, oficial: 1669.73 },
+                                { from: 112298.01, to: 130921.00, oficial: 1911.13 }, { from: 130921.01, to: 149546.00, oficial: 2132.41 },
+                                { from: 149546.01, to: 168169.00, oficial: 2333.59 }, { from: 168169.01, to: 205414.00, oficial: 2776.18 },
+                                { from: 205414.01, to: 242661.00, oficial: 3198.64 }, { from: 242661.01, to: 279909.00, oficial: 3600.99 },
+                                { from: 279909.01, to: 317153.00, oficial: 3963.08 }, { from: 317153.01, to: 354400.00, oficial: 4305.07 },
+                                { from: 354400.01, to: 447517.00, oficial: 5290.81 }, { from: 447517.01, to: 540633.00, oficial: 6216.19 },
+                                { from: 540633.01, to: 633747.00, oficial: 7081.24 }, { from: 633747.01, to: 726865.00, oficial: 7885.95 },
+                                { from: 726865.01, to: 819981.00, oficial: 8429.10 }, { from: 819981.01, to: 1006213.00, oficial: 9817.21 },
+                                { from: 1006213.01, to: 1192445.00, oficial: 10963.87 }, { from: 1192445.01, to: 1378677.00, oficial: 11929.52 },
+                                { from: 1378677.01, to: 1564910.00, oficial: 12693.95 }, { from: 1564910.01, to: 1751140.00, oficial: 13257.23 },
+                                { from: 1751140.01, to: 1937376.00, oficial: 13639.48 }, { from: 1937376.01, to: 2123605.00, oficial: 13800.39 },
+                                { from: 2123605.01, to: 2309842.00, oficial: 14122.28 }, { from: 2309842.01, to: 2496071.00, oficial: 14564.89 },
+                                { from: 2496071.01, to: 2682304.00, oficial: 15108.04 }, { from: 2682304.01, to: Infinity, oficial: 15651.20 }
+                            ]
+                        }
+                    },
+                    atosFixos: {
+                        'notas_recon_semelhanca_sem_valor': { name: 'Reconhecimento de firma por semelhança s/ valor (201a)', oficial: 3.65, selo: 1.51 },
+                        'notas_recon_semelhanca_com_valor': { name: 'Reconhecimento de firma por semelhança c/ valor (201b)', oficial: 9.13, selo: 1.51 },
+                        'notas_recon_verdadeiro': { name: 'Reconhecimento de firma por verdadeiro (201c)', oficial: 12.78, selo: 1.51 },
+                        'notas_autenticacao': { name: 'Autenticação (por folha) (202)', oficial: 3.66, selo: 1.51 },
+                        'notas_publica_forma_1': { name: 'Pública forma (1ª folha) (203a)', oficial: 1.36, selo: 1.51 },
+                        'notas_publica_forma_sub': { name: 'Pública forma (folha subsequente) (203b)', oficial: 4.99, selo: 0 },
+                        'notas_proc_prev': { name: 'Procuração para fins previdenciários (204a)', oficial: 18.31, selo: 1.51 },
+                        'notas_proc_geral': { name: 'Procuração para foro em geral (204b)', oficial: 27.42, selo: 1.51 },
+                        'notas_proc_sem_valor': { name: 'Procuração sem valor econômico (204c)', oficial: 36.55, selo: 1.51 },
+                        'notas_escritura_sem_valor': { name: 'Escritura sem valor declarado (205a)', oficial: 274.24, selo: 1.51 },
+                        'notas_certidao': { name: 'Certidão (por 5 folhas) (206a)', oficial: 19.49, selo: 1.51 },
+                        'notas_desarq_ate_5': { name: 'Desarquivamento (até 5 anos) (207a)', oficial: 9.13, selo: 1.51 },
+                        'notas_desarq_mais_5': { name: 'Desarquivamento (mais de 5 anos) (207b)', oficial: 18.31, selo: 1.51 },
+                    }
+                },
+                imoveis: {
+                    name: 'Registro de Imóveis',
+                    atosVariaveis: {
+                        'imoveis_registro_valor': {
+                            name: 'Registro com valor declarado (302a)', selo: 1.51,
+                            ranges: [
+                                { from: 0.01, to: 28493.00, oficial: 173.15 }, { from: 28493.01, to: 37806.00, oficial: 323.45 },
+                                { from: 37806.01, to: 47116.00, oficial: 408.88 }, { from: 47116.01, to: 56428.00, oficial: 489.66 },
+                                { from: 56428.01, to: 65739.00, oficial: 570.48 }, { from: 65739.01, to: 75052.00, oficial: 651.29 },
+                                { from: 75052.01, to: 93675.00, oficial: 812.88 }, { from: 93675.01, to: 112298.00, oficial: 953.03 },
+                                { from: 112298.01, to: 130921.00, oficial: 1086.10 }, { from: 130921.01, to: 149546.00, oficial: 1212.10 },
+                                { from: 149546.01, to: 168169.00, oficial: 1331.02 }, { from: 168169.01, to: 205414.00, oficial: 1586.77 },
+                                { from: 205414.01, to: 242661.00, oficial: 1828.40 }, { from: 242661.01, to: 279909.00, oficial: 2055.93 },
+                                { from: 279909.01, to: 317153.00, oficial: 2269.43 }, { from: 317153.01, to: 354400.00, oficial: 2468.88 },
+                                { from: 354400.01, to: 447517.00, oficial: 3032.97 }, { from: 447517.01, to: 540633.00, oficial: 3561.96 },
+                                { from: 540633.01, to: 633747.00, oficial: 4055.95 }, { from: 633747.01, to: 726865.00, oficial: 4514.99 },
+                                { from: 726865.01, to: 819981.00, oficial: 4836.35 }, { from: 819981.01, to: 1006213.00, oficial: 5622.30 },
+                                { from: 1006213.01, to: 1192445.00, oficial: 6290.47 }, { from: 1192445.01, to: 1378677.00, oficial: 6843.16 },
+                                { from: 1378677.01, to: 1564910.00, oficial: 7280.75 }, { from: 1564910.01, to: 1751140.00, oficial: 7606.61 },
+                                { from: 1751140.01, to: 1937376.00, oficial: 7818.17 }, { from: 1937376.01, to: 2123605.00, oficial: 7915.70 },
+                                { from: 2123605.01, to: 2309842.00, oficial: 8095.40 }, { from: 2309842.01, to: 2496071.00, oficial: 8350.17 },
+                                { from: 2496071.01, to: 2682304.00, oficial: 8666.91 }, { from: 2682304.01, to: Infinity, oficial: 8983.62 }
+                            ]
+                        },
+                        'imoveis_averbacao_valor': {
+                            name: 'Averbação com valor declarado (303b)', selo: 1.51,
+                            ranges: [
+                                { from: 0.01, to: 28493.00, oficial: 51.96 }, { from: 28493.01, to: 37806.00, oficial: 97.04 },
+                                { from: 37806.01, to: 47116.00, oficial: 122.66 }, { from: 47116.01, to: 56428.00, oficial: 146.90 },
+                                { from: 56428.01, to: 65739.00, oficial: 171.15 }, { from: 65739.01, to: 75052.00, oficial: 195.38 },
+                                { from: 75052.01, to: 93675.00, oficial: 243.87 }, { from: 93675.01, to: 112298.00, oficial: 285.91 },
+                                { from: 112298.01, to: 130921.00, oficial: 325.84 }, { from: 130921.01, to: 149546.00, oficial: 363.63 },
+                                { from: 149546.01, to: 168169.00, oficial: 399.31 }, { from: 168169.01, to: 205414.00, oficial: 476.02 },
+                                { from: 205414.01, to: 242661.00, oficial: 548.50 }, { from: 242661.01, to: 279909.00, oficial: 616.76 },
+                                { from: 279909.01, to: 317153.00, oficial: 680.84 }, { from: 317153.01, to: 354400.00, oficial: 740.68 },
+                                { from: 354400.01, to: 447517.00, oficial: 909.91 }, { from: 447517.01, to: 540633.00, oficial: 1068.59 },
+                                { from: 540633.01, to: 633747.00, oficial: 1216.78 }, { from: 633747.01, to: 726865.00, oficial: 1354.51 },
+                                { from: 726865.01, to: 819981.00, oficial: 1450.94 }, { from: 819981.01, to: 1006213.00, oficial: 1686.67 },
+                                { from: 1006213.01, to: 1192445.00, oficial: 1887.14 }, { from: 1192445.01, to: 1378677.00, oficial: 2052.95 },
+                                { from: 1378677.01, to: 1564910.00, oficial: 2184.22 }, { from: 1564910.01, to: 1751140.00, oficial: 2281.98 },
+                                { from: 1751140.01, to: 1937376.00, oficial: 2345.44 }, { from: 1937376.01, to: 2123605.00, oficial: 2374.72 },
+                                { from: 2123605.01, to: 2309842.00, oficial: 2428.63 }, { from: 2309842.01, to: 2496071.00, oficial: 2505.06 },
+                                { from: 2496071.01, to: 2682304.00, oficial: 2600.07 }, { from: 2682304.01, to: Infinity, oficial: 2695.11 }
+                            ]
+                        }
+                    },
+                    atosFixos: {
+                        'imoveis_prenotacao': { name: 'Prenotação, Exame e Cálculo (301)', oficial: 57.15, selo: 1.51 },
+                        'imoveis_abertura_matricula': { name: 'Abertura de Matrícula (ato autônomo) (302d)', oficial: 173.19, selo: 1.51 },
+                        'imoveis_averbacao_sem_valor': { name: 'Averbação sem valor declarado (303a)', oficial: 51.96, selo: 1.51 },
+                        'imoveis_certidao_negativa': { name: 'Certidão Negativa ou Breve Relatório (até 5 folhas) (304a1)', oficial: 21.53, selo: 1.51 },
+                        'imoveis_certidao_inteiro_teor': { name: 'Certidão de Inteiro Teor com Negativa de Ônus (304d)', oficial: 28.24, selo: 1.51 },
+                    }
+                }
+            };
+            
+            const incraValueColumns = {
+                vti_mediana: "Mediana VTI/ha", vti_media: "Média VTI/ha", vti_limite_inferior: "Limite Inferior VTI/ha", vti_limite_superior: "Limite Superior VTI/ha",
+                vtn_mediana: "Mediana VTN/ha", vtn_media: "Média VTN/ha", vtn_limite_inferior: "Limite Inferior VTN/ha", vtn_limite_superior: "Limite Superior VTN/ha"
+            };
+
+            let budgetItems = [];
+
+            // UI Elements
+            const tabs = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const budgetItemsContainer = document.getElementById('budget-items-container');
+            const budgetSummaryContainer = document.getElementById('budget-summary-container');
+            const printButton = document.getElementById('print-button');
+            const atoVariavelSelect = document.getElementById('ato-variavel');
+            const atoFixoSelect = document.getElementById('ato-fixo');
+            const comboOptionContainer = document.getElementById('combo-option-container');
+            const printModalContainer = document.getElementById('print-modal-container');
+            const incraMunicipioSelect = document.getElementById('incra-municipio');
+            const incraLevelSelect = document.getElementById('incra-level');
+            const incraTypologySelect = document.getElementById('incra-typology');
+            const incraValueColumnSelect = document.getElementById('incra-value-column');
+            const incraAreaInput = document.getElementById('incra-area');
+            const calculateIncraBtn = document.getElementById('calculate-incra-btn');
+            const incraResultContainer = document.getElementById('incra-result-container');
+            const valorAtoInput = document.getElementById('valor-ato');
+
+            // Sub-tool elements
+            const constructionSubtoolContainer = document.getElementById('construction-subtool-container');
+            const isConstructionCheckbox = document.getElementById('is-construction-checkbox');
+            const constructionFields = document.getElementById('construction-fields');
+            const calculateConstructionValueBtn = document.getElementById('calculate-construction-value');
+            
+            // --- DATA BUILDERS ---
+            function buildIncraData() {
+                const db = {};
+                const dataContainer = document.getElementById('incra-raw-data');
+                if (!dataContainer) {
+                    console.error("INCRA data container not found!");
+                    return {};
+                }
+                const keyMap = {
+                    medianaVti: 'vti_mediana', mediaVti: 'vti_media', limiteInferiorVti: 'vti_limite_inferior', limiteSuperiorVti: 'vti_limite_superior',
+                    medianaVtn: 'vtn_mediana', mediaVtn: 'vtn_media', limiteInferiorVtn: 'vtn_limite_inferior', limiteSuperiorVtn: 'vtn_limite_superior'
+                };
+                const regioes = dataContainer.querySelectorAll('.regional-market');
+                regioes.forEach(regiaoEl => {
+                    const regionName = regiaoEl.dataset.regionName;
+                    db[regionName] = {};
+                    const niveis = regiaoEl.querySelectorAll('.categorical-level');
+                    niveis.forEach(nivelEl => {
+                        const levelName = nivelEl.dataset.levelName;
+                        db[regionName][levelName] = {};
+                        const tipologias = nivelEl.querySelectorAll('.typology');
+                        tipologias.forEach(tipoEl => {
+                            const typologyName = tipoEl.dataset.typologyName;
+                            const data = {};
+                            for (const key in tipoEl.dataset) {
+                                if (keyMap[key]) {
+                                    data[keyMap[key]] = parseFloat(tipoEl.dataset[key]) || 0;
+                                }
+                            }
+                            db[regionName][levelName][typologyName] = data;
+                        });
+                    });
+                });
+                return db;
+            }
+
+            function buildMunicipalityMap() {
+                const map = {};
+                const dataContainer = document.getElementById('incra-raw-data');
+                if (!dataContainer) {
+                    console.error("INCRA data container not found!");
+                    return {};
+                }
+                const regioes = dataContainer.querySelectorAll('.regional-market');
+                regioes.forEach(regiaoEl => {
+                    const regionName = regiaoEl.dataset.regionName;
+                    const municipalities = regiaoEl.dataset.municipalities.split(',');
+                    municipalities.forEach(mun => {
+                        map[mun] = regionName;
+                    });
+                });
+                return map;
+            }
+            
+            const incraData = buildIncraData();
+            const municipalityToRegionMap = buildMunicipalityMap();
+
+            // --- UTILITY FUNCTIONS ---
+            const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+            const parseCurrency = (value) => {
+                if (typeof value !== 'string' || value.trim() === '') return 0;
+                const number = parseFloat(value.replace(/[R$\.\s]/g, '').replace(',', '.').trim());
+                return isNaN(number) ? 0 : number;
+            };
+            const round = (value, decimals = 2) => Number(Math.round(parseFloat(value + 'e' + decimals)) + 'e-' + decimals);
+
+            // --- CORE LOGIC ---
+            const calculateCosts = (oficial, selo = 0) => {
+                const fuju = round(oficial * 0.20);
+                const fundimper = round(oficial * 0.075);
+                const fundep = round(oficial * 0.04);
+                const fumorpge = round(oficial * 0.03);
+                const subtotal = oficial + fuju + fundimper + fundep + fumorpge + selo;
+                return { oficial, fuju, fundimper, fundep, fumorpge, selo, subtotal };
+            };
+
+            const findVariableFee = (table, value) => {
+                const range = table.ranges.find(r => value >= r.from && value <= r.to);
+                return range ? { oficial: range.oficial, selo: table.selo } : { oficial: 0, selo: 0 };
+            };
+
+            const renderBudget = () => {
+                if (budgetItems.length === 0) {
+                    budgetItemsContainer.innerHTML = `<div id="budget-placeholder">Seu orçamento está vazio. Adicione um ato acima.</div>`;
+                    budgetSummaryContainer.innerHTML = '';
+                    printButton.style.display = 'none';
+                    return;
+                }
+
+                printButton.style.display = 'inline-flex';
+
+                let itemsHtml = `
+                    <table id="budget-items-table">
+                        <thead>
+                            <tr>
+                                <th>Descrição do Ato</th>
+                                <th style="text-align: right;">Subtotal</th>
+                                <th style="width: 1%;" class="no-print"></th>
+                                <th style="width: 1%;" class="no-print"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                budgetItems.forEach(item => {
+                    const identifierHtml = item.identifier ? `<span class="item-identifier">${item.identifier}</span>` : '';
+                    
+                    itemsHtml += `
+                        <tr class="item-row" data-id="${item.id}">
+                            <td class="item-description">
+                                <span class="item-name">${item.name}</span>
+                                ${identifierHtml}
+                            </td>
+                            <td class="item-value">${formatCurrency(item.costs.subtotal)}</td>
+                            <td>
+                                ${item.type !== 'itbi' && item.type !== 'manual' ? `
+                                <button class="btn-icon details-toggle-btn" title="Ver detalhes">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
+                                </button>
+                                ` : ''}
+                            </td>
+                            <td>
+                                <button class="btn-icon remove-btn" title="Remover item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="details-row" data-details-for="${item.id}">
+                            <td colspan="4">
+                                <div class="details-content">
+                                    <table>
+                                        <tbody>
+                                            <tr><td>Emolumentos (Oficial)</td><td class="item-value">${formatCurrency(item.costs.oficial)}</td></tr>
+                                            <tr><td>FUJU (20%)</td><td class="item-value">${formatCurrency(item.costs.fuju)}</td></tr>
+                                            <tr><td>FUNDIMPER (7.5%)</td><td class="item-value">${formatCurrency(item.costs.fundimper)}</td></tr>
+                                            <tr><td>FUNDEP (4%)</td><td class="item-value">${formatCurrency(item.costs.fundep)}</td></tr>
+                                            <tr><td>FUMORPGE (3%)</td><td class="item-value">${formatCurrency(item.costs.fumorpge)}</td></tr>
+                                            <tr><td>Selo de Fiscalização</td><td class="item-value">${formatCurrency(item.costs.selo)}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                itemsHtml += '</tbody></table>';
+                budgetItemsContainer.innerHTML = itemsHtml;
+
+                const grandTotal = budgetItems.reduce((acc, item) => acc + item.costs.subtotal, 0);
+                budgetSummaryContainer.innerHTML = `
+                    <table id="summary-table">
+                         <tbody>
+                            <tr class="summary-total"><td>TOTAL GERAL DO ORÇAMENTO</td><td class="item-value">${formatCurrency(grandTotal)}</td></tr>
+                        </tbody>
+                    </table>
+                `;
+            };
+
+            const addItemToBudget = (item) => {
+                budgetItems.push(item);
+                renderBudget();
+            };
+
+            const removeItemFromBudget = (id) => {
+                budgetItems = budgetItems.filter(item => item.id !== id);
+                renderBudget();
+            };
+            
+            const switchTab = (tabId) => {
+                const tabToActivate = document.querySelector(`.tab-link[data-tab="${tabId}"]`);
+                if (tabToActivate) {
+                    tabToActivate.click();
+                }
+            };
+
+            // --- INITIALIZATION AND EVENT LISTENERS ---
+
+            const populateSelects = () => {
+                atoVariavelSelect.innerHTML = '<option value="">-- Selecione o ato --</option>';
+                atoFixoSelect.innerHTML = '<option value="">-- Selecione o ato --</option>';
+
+                for (const serventiaKey in feeTables) {
+                    const varOptgroup = document.createElement('optgroup');
+                    varOptgroup.label = feeTables[serventiaKey].name;
+                    for (const atoKey in feeTables[serventiaKey].atosVariaveis) {
+                        const option = document.createElement('option');
+                        option.value = atoKey;
+                        option.textContent = feeTables[serventiaKey].atosVariaveis[atoKey].name;
+                        varOptgroup.appendChild(option);
+                    }
+                    atoVariavelSelect.appendChild(varOptgroup);
+                    
+                    const fixOptgroup = document.createElement('optgroup');
+                    fixOptgroup.label = feeTables[serventiaKey].name;
+                    for (const atoKey in feeTables[serventiaKey].atosFixos) {
+                        const option = document.createElement('option');
+                        option.value = atoKey;
+                        option.textContent = feeTables[serventiaKey].atosFixos[atoKey].name;
+                        fixOptgroup.appendChild(option);
+                    }
+                    atoFixoSelect.appendChild(fixOptgroup);
+                }
+            };
+
+            const populateIncraSelects = () => {
+                const municipios = Object.keys(municipalityToRegionMap).sort((a, b) => a.localeCompare(b));
+                incraMunicipioSelect.innerHTML = '<option value="">-- Selecione o município --</option>';
+                municipios.forEach(mun => {
+                    const option = document.createElement('option');
+                    option.value = mun;
+                    option.textContent = mun;
+                    incraMunicipioSelect.appendChild(option);
+                });
+
+                incraValueColumnSelect.innerHTML = '<option value="">-- Selecione a coluna --</option>';
+                for (const key in incraValueColumns) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = incraValueColumns[key];
+                    incraValueColumnSelect.appendChild(option);
+                }
+            };
+
+            const setupEventListeners = () => {
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const targetTabId = tab.dataset.tab;
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById(targetTabId).classList.add('active');
+                    });
+                });
+
+                document.getElementById('add-variavel').addEventListener('click', () => {
+                    const selectedKey = atoVariavelSelect.value;
+                    if (!selectedKey) return;
+                    const serventiaKey = selectedKey.split('_')[0];
+                    const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
+                    const valorAto = parseCurrency(valorAtoInput.value);
+                    if (valorAto <= 0) { alert('Por favor, insira um valor válido para o ato.'); return; }
+
+                    const { oficial, selo } = findVariableFee(atoInfo, valorAto);
+                    if (oficial <= 0) { alert('Não foi possível encontrar uma faixa de valor correspondente.'); return; }
+
+                    const costs = calculateCosts(oficial, selo);
+                    const descricaoInput = document.getElementById('descricao-variavel');
+                    const identifier = descricaoInput.value.trim();
+                    addItemToBudget({ id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, costs });
+                    
+                    const addComboCheckbox = document.getElementById('add-combo');
+                    if (addComboCheckbox.checked && comboOptionContainer.style.display !== 'none') {
+                        const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
+                        const correspondingServentiaKey = correspondingKey.split('_')[0];
+                        const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
+                        const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, valorAto);
+                        if (corrOficial > 0) {
+                            addItemToBudget({
+                                id: Date.now() + 1, type: 'variavel',
+                                name: correspondingAtoInfo.name, identifier,
+                                costs: calculateCosts(corrOficial, corrSelo)
+                            });
+                        }
+                    }
+
+                    const incluirItbiCheckbox = document.getElementById('incluir-itbi');
+                    if (incluirItbiCheckbox.checked) {
+                        const itbiValue = round(valorAto * 0.02);
+                        const itbiIdentifier = identifier ? `Ref: ${identifier}` : `Ref: ${formatCurrency(valorAto)}`;
+                        addItemToBudget({
+                            id: Date.now() + 2, type: 'itbi',
+                            name: 'ITBI (Imposto de Transmissão de Bens Imóveis)', identifier: itbiIdentifier,
+                            costs: { oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0, subtotal: itbiValue }
+                        });
+                    }
+                    
+                    valorAtoInput.value = '';
+                    descricaoInput.value = '';
+                    incluirItbiCheckbox.checked = false;
+                    addComboCheckbox.checked = false;
+                });
+
+                document.getElementById('add-fixo').addEventListener('click', () => {
+                    const selectedKey = atoFixoSelect.value;
+                    if (!selectedKey) return;
+                    const serventiaKey = selectedKey.split('_')[0];
+                    const atoInfo = feeTables[serventiaKey].atosFixos[selectedKey];
+                    const quantidadeInput = document.getElementById('quantidade-fixo');
+                    const quantidade = parseInt(quantidadeInput.value) || 1;
+                    const costs = calculateCosts(atoInfo.oficial * quantidade, atoInfo.selo * quantidade);
+                    const name = `${atoInfo.name} (x${quantidade})`;
+                    addItemToBudget({ id: Date.now(), type: 'fixo', name, identifier: '', costs });
+                });
+                
+                document.getElementById('add-manual').addEventListener('click', () => {
+                    const valorManualInput = document.getElementById('valor-manual');
+                    const manualValue = parseCurrency(valorManualInput.value);
+                    const descricaoManualInput = document.getElementById('descricao-manual');
+                    const name = descricaoManualInput.value.trim();
+                    if (manualValue <= 0) { alert('Por favor, insira um valor válido para o serviço.'); return; }
+                    if (!name) { alert('Por favor, insira uma descrição para o serviço manual.'); return; }
+                    const costs = { oficial: manualValue, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0, subtotal: manualValue };
+                    addItemToBudget({ id: Date.now(), type: 'manual', name, identifier: '', costs });
+                    descricaoManualInput.value = '';
+                    valorManualInput.value = '';
+                });
+                
+                calculateIncraBtn.addEventListener('click', () => {
+                    const region = municipalityToRegionMap[incraMunicipioSelect.value];
+                    const level = incraLevelSelect.value;
+                    const typology = incraTypologySelect.value;
+                    const column = incraValueColumnSelect.value;
+                    const area = parseFloat(incraAreaInput.value);
+                    if (!region || !level || !typology || !column || isNaN(area) || area <= 0) {
+                        alert('Por favor, preencha todos os campos da avaliação INCRA.');
+                        return;
+                    }
+                    const valuePerHa = incraData[region]?.[level]?.[typology]?.[column];
+                    if (typeof valuePerHa !== 'number') {
+                        alert('Dados não encontrados para a seleção. Verifique o relatório INCRA.');
+                        incraResultContainer.style.display = 'none';
+                        return;
+                    }
+                    const totalValue = area * valuePerHa;
+                    incraResultContainer.innerHTML = `
+                        <div class="result-label">Valor Total Estimado</div>
+                        <div class="result-value">${formatCurrency(totalValue)}</div>
+                        <button id="use-incra-value-btn" class="btn btn-primary" data-value="${totalValue}">Usar este Valor</button>
+                    `;
+                    incraResultContainer.style.display = 'block';
+                });
+                
+                incraResultContainer.addEventListener('click', e => {
+                    const target = e.target;
+                    if (target && target.id === 'use-incra-value-btn') {
+                        const value = parseFloat(target.dataset.value);
+                        valorAtoInput.value = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        switchTab('tab-variavel');
+                    }
+                });
+
+                incraMunicipioSelect.addEventListener('change', function() {
+                    const selectedMunicipio = this.value;
+                    incraLevelSelect.innerHTML = '<option value="">-- Aguardando município --</option>';
+                    incraLevelSelect.disabled = true;
+                    incraTypologySelect.innerHTML = '<option value="">-- Aguardando nível --</option>';
+                    incraTypologySelect.disabled = true;
+                    incraValueColumnSelect.disabled = true;
+                    if (!selectedMunicipio) return;
+                    const region = municipalityToRegionMap[selectedMunicipio];
+                    if (region && incraData[region]) {
+                        const levels = Object.keys(incraData[region]).sort();
+                        incraLevelSelect.innerHTML = '<option value="">-- Escolha um nível --</option>';
+                        levels.forEach(level => {
+                            const option = document.createElement('option');
+                            option.value = level;
+                            option.textContent = level;
+                            incraLevelSelect.appendChild(option);
+                        });
+                        incraLevelSelect.disabled = false;
+                    }
+                });
+
+                incraLevelSelect.addEventListener('change', function() {
+                    const selectedMunicipio = incraMunicipioSelect.value;
+                    const selectedLevel = this.value;
+                    incraTypologySelect.innerHTML = '<option value="">-- Aguardando nível --</option>';
+                    incraTypologySelect.disabled = true;
+                    incraValueColumnSelect.disabled = true;
+                    if (!selectedMunicipio || !selectedLevel) return;
+                    const region = municipalityToRegionMap[selectedMunicipio];
+                    if (region && incraData[region]?.[selectedLevel]) {
+                        const typologies = Object.keys(incraData[region][selectedLevel]).sort();
+                        incraTypologySelect.innerHTML = '<option value="">-- Escolha uma tipologia --</option>';
+                        typologies.forEach(typology => {
+                            const option = document.createElement('option');
+                            option.value = typology;
+                            option.textContent = typology;
+                            incraTypologySelect.appendChild(option);
+                        });
+                        incraTypologySelect.disabled = false;
+                    }
+                });
+
+                incraTypologySelect.addEventListener('change', function() {
+                    incraValueColumnSelect.disabled = !this.value;
+                });
+
+                budgetItemsContainer.addEventListener('click', (e) => {
+                    const target = e.target;
+                    const removeButton = target.closest('.remove-btn');
+                    const detailsButton = target.closest('.details-toggle-btn');
+                    if (removeButton) {
+                        const row = removeButton.closest('.item-row');
+                        removeItemFromBudget(parseInt(row.dataset.id));
+                    } else if (detailsButton) {
+                        const row = detailsButton.closest('.item-row');
+                        const detailsRow = document.querySelector(`.details-row[data-details-for='${row.dataset.id}']`);
+                        if (detailsRow) {
+                            detailsRow.style.display = detailsRow.style.display === 'table-row' ? 'none' : 'table-row';
+                        }
+                    }
+                });
+
+                atoVariavelSelect.addEventListener('change', () => {
+                    const selectedKey = atoVariavelSelect.value;
+                    
+                    // Handle combo option
+                    if (selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor') {
+                        comboOptionContainer.style.display = 'flex';
+                    } else {
+                        comboOptionContainer.style.display = 'none';
+                        document.getElementById('add-combo').checked = false;
+                    }
+                    
+                    // Handle construction subtool
+                    if (selectedKey === 'imoveis_averbacao_valor') {
+                        constructionSubtoolContainer.style.display = 'block';
+                    } else {
+                        constructionSubtoolContainer.style.display = 'none';
+                        isConstructionCheckbox.checked = false;
+                        constructionFields.style.display = 'none';
+                    }
+                });
+
+                isConstructionCheckbox.addEventListener('change', () => {
+                    constructionFields.style.display = isConstructionCheckbox.checked ? 'block' : 'none';
+                });
+
+                calculateConstructionValueBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const areaInput = document.getElementById('construction-area');
+                    const cubInput = document.getElementById('construction-cub');
+                    const resultDiv = document.getElementById('construction-result');
+
+                    const area = parseFloat(areaInput.value);
+                    const cub = parseCurrency(cubInput.value);
+
+                    if (isNaN(area) || area <= 0 || isNaN(cub) || cub <= 0) {
+                        alert('Por favor, insira valores válidos para a área e o CUB.');
+                        resultDiv.textContent = '';
+                        return;
+                    }
+
+                    const totalValue = round(area * cub);
+                    resultDiv.textContent = `Valor Calculado: ${formatCurrency(totalValue)}`;
+                    valorAtoInput.value = totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                });
+
+                printButton.addEventListener('click', () => printModalContainer.classList.add('show'));
+                document.getElementById('print-cancel-btn').addEventListener('click', () => printModalContainer.classList.remove('show'));
+                document.getElementById('print-detailed-btn').addEventListener('click', () => {
+                    printModalContainer.classList.remove('show');
+                    window.print();
+                });
+                document.getElementById('print-simplified-btn').addEventListener('click', () => {
+                    printModalContainer.classList.remove('show');
+                    document.body.classList.add('print-simplified');
+                    window.print();
+                });
+                window.addEventListener('afterprint', () => document.body.classList.remove('print-simplified'));
+            };
+
+            // --- App Start ---
+            const init = () => {
+                populateSelects();
+                populateIncraSelects();
+                setupEventListeners();
+                renderBudget();
+            };
+
+            init();
+        });
+    </script>
+
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
