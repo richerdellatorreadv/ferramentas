@@ -251,6 +251,24 @@
             border: 2px dashed var(--medium-gray);
             border-radius: var(--border-radius);
         }
+        
+        #budgeter-name-group {
+            margin-bottom: 1.5rem;
+        }
+        #print-header-info {
+            display: none; /* Hidden by default */
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--medium-gray);
+        }
+        #print-header-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        #print-header-info p:last-child {
+            margin-top: 0.25rem;
+        }
 
         #budget-items-table, #summary-table {
             width: 100%;
@@ -282,11 +300,27 @@
         .item-name {
             font-weight: 600;
         }
-        .item-identifier {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--secondary-color);
+        .item-tags-container {
+            margin-top: 6px;
+        }
+        .item-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3em;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 14px;
+            margin-right: 6px;
             margin-top: 4px;
+        }
+        .tag-identifier {
+            background-color: var(--medium-gray);
+            color: var(--dark-gray);
+        }
+        .tag-base-value {
+            background-color: rgba(0, 86, 179, 0.1);
+            color: var(--primary-color-dark);
         }
         .item-value {
             text-align: right;
@@ -433,8 +467,11 @@
             body {
                 padding: 0;
             }
-            .no-print, header, footer, .input-section, .budget-header button {
+            .no-print, header, footer, .input-section, .budget-header button, #budgeter-name-group {
                 display: none !important;
+            }
+            #print-header-info {
+                display: block !important;
             }
             .container {
                 box-shadow: none;
@@ -445,7 +482,7 @@
             }
             .budget-section {
                 border: none;
-                padding: 0;
+                padding: 1rem;
             }
             .budget-header h2 {
                 margin-bottom: 1rem;
@@ -629,7 +666,7 @@
             <section class="budget-section">
                 <div class="budget-header">
                     <h2>Meu Orçamento</h2>
-                    <button id="print-button" class="btn btn-print" style="display: none;">
+                    <button id="print-button" class="btn btn-print no-print" style="display: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
                             <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
@@ -637,19 +674,30 @@
                         Imprimir
                     </button>
                 </div>
+                
+                <div class="form-group no-print" id="budgeter-name-group">
+                    <label for="budgeter-name">Orçamento por:</label>
+                    <input type="text" id="budgeter-name" placeholder="Digite seu nome (aparecerá na impressão)">
+                </div>
+
+                <div id="print-header-info">
+                    <p><strong id="print-budgeter-name-label" style="display: none;">Orçamento por: </strong><span id="print-budgeter-name"></span></p>
+                    <p><strong>Data: </strong><span id="print-date"></span></p>
+                </div>
+
                 <div id="budget-items-container"></div>
                 <div id="budget-summary-container"></div>
             </section>
         </main>
 
-        <footer>
+        <footer class="no-print">
             <p>Esta é uma ferramenta de simulação. Valores baseados no Diário da Justiça Nº 001 de 02/01/2025 e no Relatório RAMT/RO 2021/2022 do INCRA. Custos adicionais podem ser aplicáveis.</p>
             <p class="author-credit">Desenvolvido por Richer Della Torre</p>
         </footer>
     </div>
     
     <!-- Print Modal -->
-    <div id="print-modal-container" class="modal-overlay">
+    <div id="print-modal-container" class="modal-overlay no-print">
         <div class="modal-box">
             <h4>Opções de Impressão</h4>
             <p>Escolha como deseja imprimir o orçamento.</p>
@@ -731,7 +779,7 @@
 
             <div class="categorical-level" data-level-name="1º Nível Categórico">
                 <div class="typology" data-typology-name="Agricultura" data-mediana-vti="39256.20" data-media-vti="40460.22" data-limite-inferior-vti="34391.19" data-limite-superior-vti="46529.25" data-mediana-vtn="27479.34" data-media-vtn="28322.15" data-limite-inferior-vtn="24073.83" data-limite-superior-vtn="32570.48"></div>
-                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="30991.74" data-media-vti="32618.78" data-limite-inferior-vti="27725.96" data-limite-superior-vti="37511.60" data-mediana-vtn="21694.22" data-media-vtn="22833.15" data-limite-inferior-vtn="19408.18" data-limite-superior-vtn="26258.12"></div>
+                <div class="typology" data-typology-name="Exploração Mista" data-mediana-vti="30991.74" data-media-vti="32618.78" data-limite-inferior-vti="27725.96" data-limite-superior-vti="37511.60" data-mediana-vtn="21694.22" data-media-vtn="22833.15" data-limite-inferior-vtn="19408.18" data-limite-superior-vti="26258.12"></div>
                 <div class="typology" data-typology-name="Pecuária" data-mediana-vti="17820.25" data-media-vti="18036.76" data-limite-inferior-vti="15331.25" data-limite-superior-vti="20742.28" data-mediana-vtn="12474.18" data-media-vtn="12625.73" data-limite-inferior-vtn="10731.87" data-limite-superior-vtn="14519.59"></div>
             </div>
 
@@ -938,9 +986,9 @@
 
             <div class="categorical-level" data-level-name="3º Nível Categórico">
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Alto Paraíso" data-mediana-vti="26949.34" data-media-vti="25605.95" data-limite-inferior-vti="21765.06" data-limite-superior-vti="29446.85" data-mediana-vtn="18864.53" data-media-vtn="17924.16" data-limite-inferior-vtn="15235.54" data-limite-superior-vtn="20612.79"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Ariquemes" data-mediana-vti="24793.39" data-media-vti="23823.84" data-limite-inferior-vti="20250.27" data-limite-superior-vti="27397.42" data-mediana-vtn="17355.37" data-media-vtn="16676.69" data-limite-inferior-vtn="14175.18" data-limite-superior-vtn="19178.19"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Ariquemes" data-mediana-vti="24793.39" data-media-vti="23823.84" data-limite-inferior-vti="20250.27" data-limite-superior-vti="27397.42" data-mediana-vtn="17355.37" data-media-vtn="16676.69" data-limite-inferior-vtn="14175.18" data-limite-superior-vti="19178.19"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Cacaulândia" data-mediana-vti="23478.59" data-media-vti="23445.05" data-limite-inferior-vti="19928.29" data-limite-superior-vti="26961.80" data-mediana-vtn="16435.01" data-media-vtn="16411.53" data-limite-inferior-vtn="13949.80" data-limite-superior-vtn="18873.26"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Machadinho D'Oeste" data-mediana-vti="23839.80" data-media-vti="23693.41" data-limite-inferior-vti="20139.40" data-limite-superior-vti="27247.42" data-mediana-vtn="16687.86" data-media-vtn="16585.38" data-limite-inferior-vtn="14097.58" data-limite-superior-vti="19073.19"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Machadinho D'Oeste" data-mediana-vti="23839.80" data-media-vti="23693.41" data-limite-inferior-vti="20139.40" data-limite-superior-vti="27247.42" data-mediana-vtn="16687.86" data-media-vtn="16585.38" data-limite-inferior-vtn="14097.58" data-limite-superior-vtn="19073.19"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Ariquemes" data-mediana-vti="7747.93" data-media-vti="7461.90" data-limite-inferior-vti="6342.61" data-limite-superior-vti="8581.18" data-mediana-vtn="5423.55" data-media-vtn="5223.33" data-limite-inferior-vtn="4439.83" data-limite-superior-vtn="6006.83"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Buritis" data-mediana-vti="8804.47" data-media-vti="8763.26" data-limite-inferior-vti="7448.77" data-limite-superior-vti="10077.75" data-mediana-vtn="6163.13" data-media-vtn="6134.28" data-limite-inferior-vtn="5214.14" data-limite-superior-vtn="7054.43"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Cujubim" data-mediana-vti="6256.10" data-media-vti="6487.22" data-limite-inferior-vti="5514.13" data-limite-superior-vti="7460.30" data-mediana-vtn="4379.27" data-media-vtn="4541.05" data-limite-inferior-vtn="3859.89" data-limite-superior-vtn="5222.21"></div>
@@ -949,7 +997,7 @@
                 <div class="typology" data-typology-name="Pecuária Convencional - Ariquemes" data-mediana-vti="17808.77" data-media-vti="17118.39" data-limite-inferior-vti="14550.63" data-limite-superior-vti="19686.15" data-mediana-vtn="12466.14" data-media-vtn="11982.88" data-limite-inferior-vtn="10185.44" data-limite-superior-vtn="13780.31"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Buritis" data-mediana-vti="13946.28" data-media-vti="14461.49" data-limite-inferior-vti="12292.27" data-limite-superior-vti="16630.72" data-mediana-vtn="9762.40" data-media-vtn="10123.05" data-limite-inferior-vtn="8604.59" data-limite-superior-vtn="11641.50"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Cacaulândia" data-mediana-vti="15495.87" data-media-vti="16265.63" data-limite-inferior-vti="13825.79" data-limite-superior-vti="18705.47" data-mediana-vtn="10847.11" data-media-vtn="11385.94" data-limite-inferior-vtn="9678.05" data-limite-superior-vtn="13093.83"></div>
-                <div class="typology" data-typology-name="Pecuária Convencional - Campo Novo de Rondônia" data-mediana-vti="10419.13" data-media-vti="9838.89" data-limite-inferior-vti="8363.05" data-limite-superior-vti="11314.72" data-mediana-vtn="7293.39" data-media-vtn="5260.32" data-limite-inferior-vtn="4471.27" data-limite-superior-vtn="6049.37"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Campo Novo de Rondônia" data-mediana-vti="10419.13" data-media-vti="9838.89" data-limite-inferior-vti="8363.05" data-limite-superior-vti="11314.72" data-mediana-vtn="7293.39" data-media-vtn="5260.32" data-limite-inferior-vtn="4471.27" data-limite-superior-vti="6049.37"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Cujubim" data-mediana-vti="12347.50" data-media-vti="12804.30" data-limite-inferior-vti="10883.65" data-limite-superior-vti="14724.94" data-mediana-vtn="8643.26" data-media-vtn="8963.01" data-limite-inferior-vtn="7618.56" data-limite-superior-vtn="10307.46"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Machadinho D'Oeste" data-mediana-vti="12396.69" data-media-vti="12675.10" data-limite-inferior-vti="10773.83" data-limite-superior-vti="14576.36" data-mediana-vtn="8677.69" data-media-vtn="8872.57" data-limite-inferior-vtn="7541.68" data-limite-superior-vtn="10203.45"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Monte Negro" data-mediana-vti="17765.09" data-media-vti="17647.14" data-limite-inferior-vti="15000.07" data-limite-superior-vti="20294.21" data-mediana-vtn="12435.57" data-media-vtn="12353.00" data-limite-inferior-vtn="10500.05" data-limite-superior-vtn="14205.95"></div>
@@ -989,7 +1037,7 @@
             <div class="categorical-level" data-level-name="3º Nível Categórico">
                 <div class="typology" data-typology-name="Agricultura Familiar - Itapuã do Oeste" data-mediana-vti="44842.86" data-media-vti="44842.86" data-limite-inferior-vti="38116.43" data-limite-superior-vti="51569.29" data-mediana-vtn="26490.00" data-media-vtn="26490.00" data-limite-inferior-vtn="22516.50" data-limite-superior-vtn="30463.50"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar - Porto Velho (Ponta do Abunã)" data-mediana-vti="4957.50" data-media-vti="43875.00" data-limite-inferior-vti="37293.75" data-limite-superior-vti="50456.25" data-mediana-vtn="3000.00" data-media-vtn="27500.00" data-limite-inferior-vtn="23375.00" data-limite-superior-vtn="31625.00"></div>
-                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Candeias do Jamari" data-mediana-vti="27500.00" data-media-vti="27500.00" data-limite-inferior-vti="23375.00" data-limite-superior-vti="31625.00" data-mediana-vtn="19250.00" data-media-vtn="19250.00" data-limite-inferior-vtn="16362.50" data-limite-superior-vtn="22137.50"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Candeias do Jamari" data-mediana-vti="27500.00" data-media-vti="27500.00" data-limite-inferior-vti="23375.00" data-limite-superior-vti="31625.00" data-mediana-vtn="19250.00" data-media-vtn="19250.00" data-limite-inferior-vtn="16362.50" data-limite-superior-vti="22137.50"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Porto Velho (Alto Madeira)" data-mediana-vti="29411.76" data-media-vti="29411.76" data-limite-inferior-vti="24999.90" data-limite-superior-vti="33823.63" data-mediana-vtn="20588.23" data-media-vtn="20588.23" data-limite-inferior-vtn="17499.91" data-limite-superior-vtn="23676.54"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Candeias do Jamari" data-mediana-vti="27809.54" data-media-vti="28022.69" data-limite-inferior-vti="24108.00" data-limite-superior-vti="32479.29" data-mediana-vtn="19444.01" data-media-vtn="17015.46" data-limite-inferior-vtn="17015.46" data-limite-superior-vtn="23015.46"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Porto Velho (Alto Madeira)" data-mediana-vti="27834.90" data-media-vti="28243.15" data-limite-inferior-vti="24006.68" data-limite-superior-vti="32479.62" data-mediana-vtn="19520.00" data-media-vtn="19770.21" data-limite-inferior-vtn="16804.68" data-limite-superior-vtn="22735.74"></div>
@@ -1144,6 +1192,10 @@
             const calculateIncraBtn = document.getElementById('calculate-incra-btn');
             const incraResultContainer = document.getElementById('incra-result-container');
             const valorAtoInput = document.getElementById('valor-ato');
+            const budgeterNameInput = document.getElementById('budgeter-name');
+            const printBudgeterNameLabel = document.getElementById('print-budgeter-name-label');
+            const printBudgeterNameSpan = document.getElementById('print-budgeter-name');
+            const printDateSpan = document.getElementById('print-date');
 
             // Sub-tool elements
             const constructionSubtoolContainer = document.getElementById('construction-subtool-container');
@@ -1255,24 +1307,34 @@
                         <tbody>
                 `;
                 budgetItems.forEach(item => {
-                    const identifierHtml = item.identifier ? `<span class="item-identifier">${item.identifier}</span>` : '';
-                    
+                    let tagsHtml = '<div class="item-tags-container">';
+                    if (item.identifier) {
+                        tagsHtml += `<span class="item-tag tag-identifier">${item.identifier}</span>`;
+                    }
+                    if (item.baseValue) {
+                         tagsHtml += `<span class="item-tag tag-base-value">Base: ${formatCurrency(item.baseValue)}</span>`;
+                    }
+                    if (item.type === 'itbi' && item.identifier) {
+                        tagsHtml += `<span class="item-tag tag-base-value">${item.identifier}</span>`;
+                    }
+                    tagsHtml += '</div>';
+
                     itemsHtml += `
                         <tr class="item-row" data-id="${item.id}">
                             <td class="item-description">
                                 <span class="item-name">${item.name}</span>
-                                ${identifierHtml}
+                                ${tagsHtml}
                             </td>
                             <td class="item-value">${formatCurrency(item.costs.subtotal)}</td>
                             <td>
                                 ${item.type !== 'itbi' && item.type !== 'manual' ? `
-                                <button class="btn-icon details-toggle-btn" title="Ver detalhes">
+                                <button class="btn-icon details-toggle-btn no-print" title="Ver detalhes">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
                                 </button>
                                 ` : ''}
                             </td>
                             <td>
-                                <button class="btn-icon remove-btn" title="Remover item">
+                                <button class="btn-icon remove-btn no-print" title="Remover item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
                                 </button>
                             </td>
@@ -1398,7 +1460,7 @@
                     const costs = calculateCosts(oficial, selo);
                     const descricaoInput = document.getElementById('descricao-variavel');
                     const identifier = descricaoInput.value.trim();
-                    addItemToBudget({ id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, costs });
+                    addItemToBudget({ id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, baseValue: valorAto, costs });
                     
                     const addComboCheckbox = document.getElementById('add-combo');
                     if (addComboCheckbox.checked && comboOptionContainer.style.display !== 'none') {
@@ -1409,7 +1471,7 @@
                         if (corrOficial > 0) {
                             addItemToBudget({
                                 id: Date.now() + 1, type: 'variavel',
-                                name: correspondingAtoInfo.name, identifier,
+                                name: correspondingAtoInfo.name, identifier, baseValue: valorAto,
                                 costs: calculateCosts(corrOficial, corrSelo)
                             });
                         }
@@ -1418,7 +1480,7 @@
                     const incluirItbiCheckbox = document.getElementById('incluir-itbi');
                     if (incluirItbiCheckbox.checked) {
                         const itbiValue = round(valorAto * 0.02);
-                        const itbiIdentifier = identifier ? `Ref: ${identifier}` : `Ref: ${formatCurrency(valorAto)}`;
+                        const itbiIdentifier = `Base: ${formatCurrency(valorAto)}`;
                         addItemToBudget({
                             id: Date.now() + 2, type: 'itbi',
                             name: 'ITBI (Imposto de Transmissão de Bens Imóveis)', identifier: itbiIdentifier,
@@ -1557,7 +1619,6 @@
                 atoVariavelSelect.addEventListener('change', () => {
                     const selectedKey = atoVariavelSelect.value;
                     
-                    // Handle combo option
                     if (selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor') {
                         comboOptionContainer.style.display = 'flex';
                     } else {
@@ -1565,7 +1626,6 @@
                         document.getElementById('add-combo').checked = false;
                     }
                     
-                    // Handle construction subtool
                     if (selectedKey === 'imoveis_averbacao_valor') {
                         constructionSubtoolContainer.style.display = 'block';
                     } else {
@@ -1599,7 +1659,18 @@
                     valorAtoInput.value = totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 });
 
-                printButton.addEventListener('click', () => printModalContainer.classList.add('show'));
+                budgeterNameInput.addEventListener('input', () => {
+                    const name = budgeterNameInput.value.trim();
+                    printBudgeterNameSpan.textContent = name;
+                    printBudgeterNameLabel.style.display = name ? 'inline' : 'none';
+                });
+                
+                printButton.addEventListener('click', () => {
+                    const today = new Date();
+                    printDateSpan.textContent = today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    printModalContainer.classList.add('show');
+                });
+
                 document.getElementById('print-cancel-btn').addEventListener('click', () => printModalContainer.classList.remove('show'));
                 document.getElementById('print-detailed-btn').addEventListener('click', () => {
                     printModalContainer.classList.remove('show');
@@ -1619,6 +1690,8 @@
                 populateIncraSelects();
                 setupEventListeners();
                 renderBudget();
+                const initialName = budgeterNameInput.value.trim();
+                printBudgeterNameLabel.style.display = initialName ? 'inline' : 'none';
             };
 
             init();
