@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -226,6 +225,31 @@
         .btn-print:hover {
             background-color: var(--dark-gray);
         }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--white);
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-add-discreet {
+            background-color: transparent;
+            border: 1px dashed var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        .btn-add-discreet:hover {
+            background-color: rgba(0, 86, 179, 0.05);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
 
         .btn-icon {
             background: transparent;
@@ -322,6 +346,18 @@
             background-color: rgba(0, 86, 179, 0.1);
             color: var(--primary-color-dark);
         }
+         .tag-usufruct {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+        .tag-evaluation {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+        .tag-meacao {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #b8860b;
+        }
         .item-value {
             text-align: right;
             font-weight: 500;
@@ -385,6 +421,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
         }
         .modal-overlay.show {
             opacity: 1;
@@ -540,6 +577,36 @@
         #construction-fields label a:hover {
             text-decoration: underline;
         }
+
+        /* Inventory Tab Styles */
+        .inventory-asset-row {
+            background: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            position: relative;
+        }
+        .inventory-asset-row .form-group {
+            margin-bottom: 0;
+        }
+        .inventory-asset-row .full-width {
+            grid-column: 1 / -1;
+        }
+        .inventory-asset-row .checkbox-group-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            grid-column: 1 / -1;
+        }
+        .inventory-asset-row .remove-asset-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
     </style>
 <link rel="stylesheet" href="/index.css">
 </head>
@@ -556,6 +623,7 @@
                 <div class="tabs">
                     <button class="tab-link active" data-tab="tab-variavel">Atos com Valor Variável</button>
                     <button class="tab-link" data-tab="tab-fixo">Atos com Valor Fixo</button>
+                    <button class="tab-link" data-tab="tab-inventario">Inventário e Partilha</button>
                     <button class="tab-link" data-tab="tab-manual">Lançamentos Manuais</button>
                     <button class="tab-link" data-tab="tab-incra">Avaliação INCRA</button>
                 </div>
@@ -597,6 +665,11 @@
                                 <div id="construction-result" style="text-align: center; font-weight: bold; color: var(--primary-color-dark);"></div>
                             </div>
                         </div>
+                        
+                        <div id="usufruct-option-container" class="form-group checkbox-group" style="display: none;">
+                            <input type="checkbox" id="is-usufruct">
+                            <label for="is-usufruct">É usufruto? (base de cálculo = 1/3 do valor)</label>
+                        </div>
 
                         <div class="form-group checkbox-group" id="combo-option-container" style="display: none;">
                             <input type="checkbox" id="add-combo">
@@ -605,6 +678,10 @@
                         <div class="form-group checkbox-group">
                             <input type="checkbox" id="incluir-itbi">
                             <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="incluir-itcmd-variavel">
+                            <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
                         </div>
                         <button id="add-variavel" class="btn btn-primary">Adicionar ao Orçamento</button>
                     </div>
@@ -622,6 +699,28 @@
                          <button id="add-fixo" class="btn btn-primary">Adicionar ao Orçamento</button>
                     </div>
 
+                    <!-- Tab Inventário -->
+                    <div id="tab-inventario" class="tab-content">
+                        <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem;">
+                            Adicione os bens do inventário, partilha ou doação. O sistema calculará a escritura, os registros dos imóveis e o ITCMD devido.
+                        </p>
+                        <div class="form-group checkbox-group" style="padding: 0.5rem; background-color: #e9ecef; border-radius: 6px; margin-bottom: 1.5rem;">
+                            <input type="checkbox" id="inventory-calculate-itcmd">
+                            <label for="inventory-calculate-itcmd"><strong>Calcular ITCMD para os bens aplicáveis</strong></label>
+                        </div>
+                        <div id="inventory-assets-list" style="margin-bottom: 1rem;">
+                           <!-- Asset rows will be dynamically added here -->
+                        </div>
+                        <button id="add-inventory-asset" class="btn btn-add-discreet" style="width: 100%; margin-bottom: 1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
+                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+                            </svg>
+                            Adicionar outro Bem
+                        </button>
+                        <button id="calculate-inventory" class="btn btn-primary">Calcular e Adicionar ao Orçamento</button>
+                    </div>
+                    
                     <!-- Tab Manual -->
                     <div id="tab-manual" class="tab-content">
                         <div class="form-group">
@@ -691,7 +790,7 @@
         </main>
 
         <footer class="no-print">
-            <p>Esta é uma ferramenta de simulação. Valores baseados no Diário da Justiça Nº 001 de 02/01/2025 e no Relatório RAMT/RO 2021/2022 do INCRA. Custos adicionais podem ser aplicáveis.</p>
+            <p>Esta é uma ferramenta de simulação. Valores baseados no Diário da Justiça Nº 001 de 02/01/2025, no Relatório RAMT/RO 2021/2022 do INCRA e na Lei Estadual LEI nº 959/00 e alterações. Custos adicionais podem ser aplicáveis.</p>
             <p class="author-credit">Desenvolvido por Richer Della Torre</p>
         </footer>
     </div>
@@ -797,16 +896,16 @@
                 <div class="typology" data-typology-name="Agricultura Familiar - Santa Luzia D'Oeste" data-mediana-vti="40433.88" data-media-vti="41426.68" data-limite-inferior-vti="35212.68" data-limite-superior-vti="47640.68" data-mediana-vtn="28303.72" data-media-vtn="28998.67" data-limite-inferior-vtn="24648.87" data-limite-superior-vtn="33348.47"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar - São Felipe D'Oeste" data-mediana-vti="46487.60" data-media-vti="54752.07" data-limite-inferior-vti="46539.26" data-limite-superior-vti="62964.88" data-mediana-vtn="32541.32" data-media-vtn="38326.45" data-limite-inferior-vtn="32577.48" data-limite-superior-vtn="44075.41"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - São Felipe D'Oeste" data-mediana-vti="38997.94" data-media-vti="38513.22" data-limite-inferior-vti="32736.24" data-limite-superior-vti="44290.21" data-mediana-vtn="27298.55" data-media-vtn="26959.26" data-limite-inferior-vtn="22915.37" data-limite-superior-vtn="31003.15"></div>
-                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alta Floresta D'Oeste" data-mediana-vti="30431.19" data-media-vti="32350.90" data-limite-inferior-vti="27498.27" data-limite-superior-vti="37203.54" data-mediana-vtn="21301.83" data-media-vtn="22645.63" data-limite-inferior-vtn="19248.79" data-limite-superior-vtn="26042.47"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alta Floresta D'Oeste" data-mediana-vti="30431.19" data-media-vti="32350.90" data-limite-inferior-vti="27498.27" data-limite-superior-vti="37203.54" data-mediana-vtn="21301.83" data-media-vti="22645.63" data-limite-inferior-vtn="19248.79" data-limite-superior-vtn="26042.47"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Alto Alegre dos Parecis" data-mediana-vti="37190.08" data-media-vti="39616.95" data-limite-inferior-vti="33674.41" data-limite-superior-vti="45559.49" data-mediana-vtn="26033.06" data-media-vtn="27731.87" data-limite-inferior-vtn="23572.09" data-limite-superior-vtn="31891.64"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Nova Brasilândia D'Oeste" data-mediana-vti="34090.91" data-media-vti="33306.19" data-limite-inferior-vti="28310.27" data-limite-superior-vti="38302.12" data-mediana-vtn="23863.64" data-media-vtn="23314.34" data-limite-inferior-vtn="19817.19" data-limite-superior-vtn="26811.49"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Castanheiras" data-mediana-vti="27892.56" data-media-vti="27892.56" data-limite-inferior-vti="23708.68" data-limite-superior-vti="32076.45" data-mediana-vtn="19524.79" data-media-vtn="19524.79" data-limite-inferior-vtn="16596.08" data-limite-superior-vtn="22453.51"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Castanheiras" data-mediana-vti="27892.56" data-media-vti="27892.56" data-limite-inferior-vti="23708.68" data-limite-superior-vti="32076.45" data-mediana-vtn="19524.79" data-media-vtn="19524.79" data-limite-inferior-vtn="16596.08" data-limite-superior-vti="22453.51"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Rolim de Moura" data-mediana-vti="30991.74" data-media-vti="31283.69" data-limite-inferior-vti="26591.13" data-limite-superior-vti="35976.24" data-mediana-vtn="21694.22" data-media-vtn="21898.58" data-limite-inferior-vtn="18613.79" data-limite-superior-vtn="25183.37"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Felipe D'Oeste" data-mediana-vti="30991.74" data-media-vti="32024.80" data-limite-inferior-vti="27221.08" data-limite-superior-vti="36828.52" data-mediana-vtn="21694.22" data-media-vtn="22417.36" data-limite-inferior-vtn="19054.75" data-limite-superior-vtn="25779.96"></div>
-                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Alta Floresta D'Oeste" data-mediana-vti="7747.93" data-media-vti="6912.31" data-limite-inferior-vti="5875.46" data-limite-superior-vti="7949.15" data-mediana-vtn="5423.55" data-media-vtn="4838.61" data-limite-inferior-vtn="4112.82" data-limite-superior-vtn="5564.41"></div>
+                <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Alta Floresta D'Oeste" data-mediana-vti="7747.93" data-media-vti="6912.31" data-limite-inferior-vti="5875.46" data-limite-superior-vti="7949.15" data-mediana-vtn="5423.55" data-media-vti="4838.61" data-limite-inferior-vtn="4112.82" data-limite-superior-vtn="5564.41"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Alta Floresta D'Oeste" data-mediana-vti="13946.28" data-media-vti="15972.27" data-limite-inferior-vti="13576.43" data-limite-superior-vti="18368.11" data-mediana-vtn="9762.40" data-media-vtn="11180.59" data-limite-inferior-vtn="9503.50" data-limite-superior-vtn="12857.67"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Alto Alegre dos Parecis" data-mediana-vti="16263.28" data-media-vti="18457.24" data-limite-inferior-vti="15688.65" data-limite-superior-vti="21225.82" data-mediana-vtn="11384.30" data-media-vtn="12920.06" data-limite-inferior-vtn="10982.05" data-limite-superior-vtn="14858.07"></div>
-                <div class="typology" data-typology-name="Pecuária Convencional - Castanheiras" data-mediana-vti="24793.39" data-media-vti="24008.26" data-limite-inferior-vti="20407.02" data-limite-superior-vti="27609.50" data-mediana-vtn="17355.37" data-media-vtn="16805.78" data-limite-inferior-vtn="14284.92" data-limite-superior-vtn="19326.65"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Castanheiras" data-mediana-vti="24793.39" data-media-vti="24008.26" data-limite-inferior-vti="20407.02" data-limite-superior-vti="27609.50" data-mediana-vtn="17355.37" data-media-vtn="16805.78" data-limite-inferior-vtn="14284.92" data-limite-superior-vti="19326.65"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Nova Brasilândia D'Oeste" data-mediana-vti="15922.01" data-media-vti="16443.54" data-limite-inferior-vti="13977.01" data-limite-superior-vti="18910.07" data-mediana-vtn="11145.40" data-media-vtn="11510.48" data-limite-inferior-vtn="9783.91" data-limite-superior-vtn="13237.05"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Novo Horizonte do Oeste" data-mediana-vti="15376.13" data-media-vti="18274.21" data-limite-inferior-vti="15533.08" data-limite-superior-vti="21015.34" data-mediana-vtn="10763.29" data-media-vtn="12791.95" data-limite-inferior-vtn="10873.16" data-limite-superior-vtn="14710.74"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Rolim de Moura" data-mediana-vti="23553.72" data-media-vti="23550.90" data-limite-inferior-vti="20018.27" data-limite-superior-vti="27083.54" data-mediana-vtn="16487.60" data-media-vtn="16485.63" data-limite-inferior-vtn="14012.79" data-limite-superior-vtn="18958.48"></div>
@@ -930,7 +1029,7 @@
             </div>
 
             <div class="categorical-level" data-level-name="3º Nível Categórico">
-                <div class="typology" data-typology-name="Agricultura Familiar - Cacoal" data-mediana-vti="52685.95" data-media-vti="50883.34" data-limite-inferior-vti="43250.83" data-limite-superior-vti="58515.84" data-mediana-vtn="36880.17" data-media-vtn="35618.33" data-limite-inferior-vtn="30275.58" data-limite-superior-vtn="40961.08"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar - Cacoal" data-mediana-vti="52685.95" data-media-vti="50883.34" data-limite-inferior-vti="43250.83" data-limite-superior-vti="58515.84" data-mediana-vtn="36880.17" data-media-vti="35618.33" data-limite-inferior-vtn="30275.58" data-limite-superior-vtn="40961.08"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar - Jaru" data-mediana-vti="40399.94" data-media-vti="39877.33" data-limite-inferior-vti="33895.73" data-limite-superior-vti="45858.93" data-mediana-vtn="28279.96" data-media-vtn="27914.13" data-limite-inferior-vtn="23727.01" data-limite-superior-vtn="32101.25"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar - Ji-Paraná" data-mediana-vti="61983.47" data-media-vti="59400.82" data-limite-inferior-vti="50490.70" data-limite-superior-vti="68310.95" data-mediana-vtn="43388.43" data-media-vtn="41580.58" data-limite-inferior-vtn="35343.49" data-limite-superior-vtn="47817.66"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária - Cacoal" data-mediana-vti="42676.88" data-media-vti="44582.24" data-limite-inferior-vti="37894.90" data-limite-superior-vti="51269.58" data-mediana-vtn="29873.81" data-media-vtn="31207.57" data-limite-inferior-vtn="26526.43" data-limite-superior-vtn="35888.70"></div>
@@ -940,7 +1039,7 @@
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Espigão D'Oeste" data-mediana-vti="5820.44" data-media-vti="6086.87" data-limite-inferior-vti="5173.84" data-limite-superior-vti="6999.90" data-mediana-vtn="4074.30" data-media-vtn="4260.81" data-limite-inferior-vtn="3621.69" data-limite-superior-vtn="4899.93"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Ji-Paraná" data-mediana-vti="10330.58" data-media-vti="10674.93" data-limite-inferior-vti="9073.69" data-limite-superior-vti="12276.17" data-mediana-vtn="7231.41" data-media-vtn="7472.45" data-limite-inferior-vtn="6351.58" data-limite-superior-vtn="8593.32"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Theobroma" data-mediana-vti="9297.52" data-media-vti="8887.86" data-limite-inferior-vti="7554.68" data-limite-superior-vti="10221.04" data-mediana-vtn="6508.26" data-media-vtn="6221.50" data-limite-inferior-vtn="5288.27" data-limite-superior-vtn="7154.72"></div>
-                <div class="typology" data-typology-name="Pecuária Convencional - Cacoal" data-mediana-vti="25826.45" data-media-vti="25962.92" data-limite-inferior-vti="22068.49" data-limite-superior-vti="29857.36" data-mediana-vtn="18078.52" data-media-vtn="18174.05" data-limite-inferior-vtn="15447.94" data-limite-superior-vtn="20900.15"></div>
+                <div class="typology" data-typology-name="Pecuária Convencional - Cacoal" data-mediana-vti="25826.45" data-media-vti="25962.92" data-limite-inferior-vti="22068.49" data-limite-superior-vti="29857.36" data-mediana-vtn="18078.52" data-media-vti="18174.05" data-limite-inferior-vtn="15447.94" data-limite-superior-vti="20900.15"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Espigão D'Oeste" data-mediana-vti="13946.28" data-media-vti="14401.47" data-limite-inferior-vti="12241.25" data-limite-superior-vti="16561.69" data-mediana-vtn="9762.40" data-media-vtn="10081.03" data-limite-inferior-vtn="8568.87" data-limite-superior-vtn="11593.18"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Governador Jorge Teixeira" data-mediana-vti="19935.56" data-media-vti="21245.64" data-limite-inferior-vti="18058.79" data-limite-superior-vti="24432.48" data-mediana-vtn="13954.89" data-media-vtn="14871.94" data-limite-inferior-vtn="12641.15" data-limite-superior-vtn="17102.74"></div>
                 <div class="typology" data-typology-name="Pecuária Convencional - Jaru" data-mediana-vti="27892.56" data-media-vti="26964.61" data-limite-inferior-vti="22919.92" data-limite-superior-vti="31009.30" data-mediana-vtn="19524.79" data-media-vtn="18875.23" data-limite-inferior-vtn="16043.94" data-limite-superior-vtn="21706.51"></div>
@@ -977,8 +1076,8 @@
             <div class="categorical-level" data-level-name="2º Nível Categórico">
                 <div class="typology" data-typology-name="Pecuária Convencional" data-mediana-vti="13967.93" data-media-vti="14421.57" data-limite-inferior-vti="12258.33" data-limite-superior-vti="16584.80" data-mediana-vtn="9777.55" data-media-vtn="10095.10" data-limite-inferior-vtn="8580.83" data-limite-superior-vtn="11609.36"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="7641.46" data-media-vti="7289.47" data-limite-inferior-vti="6196.05" data-limite-superior-vti="8382.89" data-mediana-vtn="5349.02" data-media-vtn="5102.63" data-limite-inferior-vtn="4337.24" data-limite-superior-vtn="5868.02"></div>
-                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="30991.74" data-media-vti="30661.16" data-limite-inferior-vti="26061.99" data-limite-superior-vti="35260.33" data-mediana-vtn="21694.21" data-media-vtn="21462.81" data-limite-inferior-vtn="18243.39" data-limite-superior-vtn="24682.23"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="23726.28" data-media-vti="23945.24" data-limite-inferior-vti="20353.45" data-limite-superior-vti="27537.03" data-mediana-vtn="16608.40" data-media-vtn="16761.67" data-limite-inferior-vtn="14247.42" data-limite-superior-vtn="19275.92"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="30991.74" data-media-vti="30661.16" data-limite-inferior-vti="26061.99" data-limite-superior-vti="35260.33" data-mediana-vtn="21694.21" data-media-vti="21462.81" data-limite-inferior-vtn="18243.39" data-limite-superior-vtn="24682.23"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="23726.28" data-media-vti="23945.24" data-limite-inferior-vti="20353.45" data-limite-superior-vti="27537.03" data-mediana-vtn="16608.40" data-media-vtn="16761.67" data-limite-inferior-vtn="14247.42" data-limite-superior-vti="19275.92"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="23243.80" data-media-vti="23317.59" data-limite-inferior-vti="19819.95" data-limite-superior-vti="26815.23" data-mediana-vtn="16270.66" data-media-vtn="16322.31" data-limite-inferior-vtn="13873.97" data-limite-superior-vtn="18770.66"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="39256.20" data-media-vti="42871.90" data-limite-inferior-vti="36441.12" data-limite-superior-vti="49302.69" data-mediana-vtn="27479.34" data-media-vtn="30010.33" data-limite-inferior-vtn="25508.78" data-limite-superior-vtn="34511.88"></div>
                 <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="1800.00" data-media-vti="1804.85" data-limite-inferior-vti="1534.12" data-limite-superior-vti="2075.57" data-mediana-vtn="1260.00" data-media-vtn="1263.39" data-limite-inferior-vtn="1073.88" data-limite-superior-vtn="1452.90"></div>
@@ -1039,9 +1138,9 @@
                 <div class="typology" data-typology-name="Agricultura Familiar - Porto Velho (Ponta do Abunã)" data-mediana-vti="4957.50" data-media-vti="43875.00" data-limite-inferior-vti="37293.75" data-limite-superior-vti="50456.25" data-mediana-vtn="3000.00" data-media-vtn="27500.00" data-limite-inferior-vtn="23375.00" data-limite-superior-vtn="31625.00"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Candeias do Jamari" data-mediana-vti="27500.00" data-media-vti="27500.00" data-limite-inferior-vti="23375.00" data-limite-superior-vti="31625.00" data-mediana-vtn="19250.00" data-media-vtn="19250.00" data-limite-inferior-vtn="16362.50" data-limite-superior-vti="22137.50"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Porto Velho (Alto Madeira)" data-mediana-vti="29411.76" data-media-vti="29411.76" data-limite-inferior-vti="24999.90" data-limite-superior-vti="33823.63" data-mediana-vtn="20588.23" data-media-vtn="20588.23" data-limite-inferior-vtn="17499.91" data-limite-superior-vtn="23676.54"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Candeias do Jamari" data-mediana-vti="27809.54" data-media-vti="28022.69" data-limite-inferior-vti="24108.00" data-limite-superior-vti="32479.29" data-mediana-vtn="19444.01" data-media-vtn="17015.46" data-limite-inferior-vtn="17015.46" data-limite-superior-vtn="23015.46"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Candeias do Jamari" data-mediana-vti="27809.54" data-media-vti="28022.69" data-limite-inferior-vti="24108.00" data-limite-superior-vti="32479.29" data-mediana-vtn="19444.01" data-media-vti="17015.46" data-limite-inferior-vtn="17015.46" data-limite-superior-vtn="23015.46"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Porto Velho (Alto Madeira)" data-mediana-vti="27834.90" data-media-vti="28243.15" data-limite-inferior-vti="24006.68" data-limite-superior-vti="32479.62" data-mediana-vtn="19520.00" data-media-vtn="19770.21" data-limite-inferior-vtn="16804.68" data-limite-superior-vtn="22735.74"></div>
-                <div class="typology" data-typology-name="Pecuária de Médio Suporte - Candeias do Jamari" data-mediana-vti="20135.87" data-media-vti="19169.22" data-limite-inferior-vti="16293.84" data-limite-superior-vti="22044.60" data-mediana-vtn="14095.11" data-media-vtn="13418.45" data-limite-inferior-vtn="11405.68" data-limite-superior-vtn="15431.22"></div>
+                <div class="typology" data-typology-name="Pecuária de Médio Suporte - Candeias do Jamari" data-mediana-vti="20135.87" data-media-vti="19169.22" data-limite-inferior-vti="16293.84" data-limite-superior-vti="22044.60" data-mediana-vtn="14095.11" data-media-vti="13418.45" data-limite-inferior-vtn="11405.68" data-limite-superior-vtn="15431.22"></div>
                 <div class="typology" data-typology-name="Pecuária de Médio Suporte - Itapuã do Oeste" data-mediana-vti="18381.94" data-media-vti="18674.60" data-limite-inferior-vti="16092.47" data-limite-superior-vti="21703.95" data-mediana-vtn="12867.36" data-media-vtn="13125.09" data-limite-inferior-vtn="11315.33" data-limite-superior-vtn="15187.77"></div>
                 <div class="typology" data-typology-name="Pecuária de Médio Suporte - Porto Velho (Ponta do Abunã)" data-mediana-vti="16810.34" data-media-vti="16378.60" data-limite-inferior-vti="13921.81" data-limite-superior-vti="18835.39" data-mediana-vtn="11767.24" data-media-vtn="11465.02" data-limite-inferior-vtn="9745.26" data-limite-superior-vtn="13184.77"></div>
                 <div class="typology" data-typology-name="Mata Explorada - Candeias do Jamari" data-mediana-vti="1156.00" data-media-vti="1156.00" data-limite-inferior-vti="982.60" data-limite-superior-vti="1329.40" data-mediana-vtn="809.20" data-media-vtn="809.20" data-limite-inferior-vtn="687.82" data-limite-superior-vtn="930.58"></div>
@@ -1172,7 +1271,12 @@
                 vtn_mediana: "Mediana VTN/ha", vtn_media: "Média VTN/ha", vtn_limite_inferior: "Limite Inferior VTN/ha", vtn_limite_superior: "Limite Superior VTN/ha"
             };
 
+            const UPF_2025 = 119.14;
+            const ITCMD_BRACKET_1 = 1250 * UPF_2025;
+            const ITCMD_BRACKET_2 = 6170 * UPF_2025;
+            
             let budgetItems = [];
+            let inventoryAssetCounter = 0;
 
             // UI Elements
             const tabs = document.querySelectorAll('.tab-link');
@@ -1183,6 +1287,7 @@
             const atoVariavelSelect = document.getElementById('ato-variavel');
             const atoFixoSelect = document.getElementById('ato-fixo');
             const comboOptionContainer = document.getElementById('combo-option-container');
+            const usufructOptionContainer = document.getElementById('usufruct-option-container');
             const printModalContainer = document.getElementById('print-modal-container');
             const incraMunicipioSelect = document.getElementById('incra-municipio');
             const incraLevelSelect = document.getElementById('incra-level');
@@ -1279,6 +1384,22 @@
                 return { oficial, fuju, fundimper, fundep, fumorpge, selo, subtotal };
             };
 
+            const calculateSingleITCMD = (baseValue) => {
+                let rate = 0;
+                if (baseValue <= 0) {
+                    return { value: 0, rate: 0 };
+                }
+                if (baseValue <= ITCMD_BRACKET_1) {
+                    rate = 0.02;
+                } else if (baseValue <= ITCMD_BRACKET_2) {
+                    rate = 0.03;
+                } else {
+                    rate = 0.04;
+                }
+                const itcmdValue = round(baseValue * rate);
+                return { value: itcmdValue, rate };
+            };
+
             const findVariableFee = (table, value) => {
                 const range = table.ranges.find(r => value >= r.from && value <= r.to);
                 return range ? { oficial: range.oficial, selo: table.selo } : { oficial: 0, selo: 0 };
@@ -1308,14 +1429,23 @@
                 `;
                 budgetItems.forEach(item => {
                     let tagsHtml = '<div class="item-tags-container">';
+                    
                     if (item.identifier) {
                         tagsHtml += `<span class="item-tag tag-identifier">${item.identifier}</span>`;
                     }
-                    if (item.baseValue) {
-                         tagsHtml += `<span class="item-tag tag-base-value">Base: ${formatCurrency(item.baseValue)}</span>`;
+
+                    if (item.isUsufruct) {
+                        tagsHtml += `<span class="item-tag tag-usufruct">Usufruto (Base: 1/3)</span>`;
                     }
-                    if (item.type === 'itbi' && item.identifier) {
-                        tagsHtml += `<span class="item-tag tag-base-value">${item.identifier}</span>`;
+                    if (item.isMeacao) {
+                        tagsHtml += `<span class="item-tag tag-meacao">Meação (Base: 50%)</span>`;
+                    }
+                    
+                    if (item.evaluationValue && item.evaluationValue !== item.baseValue) {
+                        tagsHtml += `<span class="item-tag tag-evaluation">Avaliação: ${formatCurrency(item.evaluationValue)}</span>`;
+                        tagsHtml += `<span class="item-tag tag-base-value">Base de Cálculo: ${formatCurrency(item.baseValue)}</span>`;
+                    } else if (item.baseValue) {
+                         tagsHtml += `<span class="item-tag tag-base-value">Base: ${formatCurrency(item.baseValue)}</span>`;
                     }
                     tagsHtml += '</div>';
 
@@ -1327,7 +1457,7 @@
                             </td>
                             <td class="item-value">${formatCurrency(item.costs.subtotal)}</td>
                             <td>
-                                ${item.type !== 'itbi' && item.type !== 'manual' ? `
+                                ${item.type !== 'itbi' && item.type !== 'manual' && item.type !== 'itcmd' ? `
                                 <button class="btn-icon details-toggle-btn no-print" title="Ver detalhes">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
                                 </button>
@@ -1370,8 +1500,8 @@
                 `;
             };
 
-            const addItemToBudget = (item) => {
-                budgetItems.push(item);
+            const addMultipleItemsToBudget = (items) => {
+                budgetItems.push(...items);
                 renderBudget();
             };
 
@@ -1451,47 +1581,80 @@
                     if (!selectedKey) return;
                     const serventiaKey = selectedKey.split('_')[0];
                     const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
-                    const valorAto = parseCurrency(valorAtoInput.value);
-                    if (valorAto <= 0) { alert('Por favor, insira um valor válido para o ato.'); return; }
+                    const valorAtoOriginal = parseCurrency(valorAtoInput.value);
+                    if (valorAtoOriginal <= 0) { alert('Por favor, insira um valor válido para o ato.'); return; }
+                    
+                    const isUsufruct = document.getElementById('is-usufruct').checked;
+                    const valorParaCalculo = isUsufruct ? (valorAtoOriginal / 3) : valorAtoOriginal;
 
-                    const { oficial, selo } = findVariableFee(atoInfo, valorAto);
+                    const { oficial, selo } = findVariableFee(atoInfo, valorParaCalculo);
                     if (oficial <= 0) { alert('Não foi possível encontrar uma faixa de valor correspondente.'); return; }
 
                     const costs = calculateCosts(oficial, selo);
                     const descricaoInput = document.getElementById('descricao-variavel');
                     const identifier = descricaoInput.value.trim();
-                    addItemToBudget({ id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, baseValue: valorAto, costs });
+                    const newItems = [];
+                    
+                    const newItemData = {
+                        id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, 
+                        baseValue: valorParaCalculo, costs, isUsufruct
+                    };
+                    if (isUsufruct) {
+                        newItemData.evaluationValue = valorAtoOriginal;
+                    }
+                    newItems.push(newItemData);
                     
                     const addComboCheckbox = document.getElementById('add-combo');
                     if (addComboCheckbox.checked && comboOptionContainer.style.display !== 'none') {
                         const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
                         const correspondingServentiaKey = correspondingKey.split('_')[0];
                         const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
-                        const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, valorAto);
+                        const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, valorParaCalculo);
                         if (corrOficial > 0) {
-                            addItemToBudget({
+                             const correspondingItemData = {
                                 id: Date.now() + 1, type: 'variavel',
-                                name: correspondingAtoInfo.name, identifier, baseValue: valorAto,
-                                costs: calculateCosts(corrOficial, corrSelo)
-                            });
+                                name: correspondingAtoInfo.name, identifier, baseValue: valorParaCalculo,
+                                costs: calculateCosts(corrOficial, corrSelo), isUsufruct
+                            };
+                            if (isUsufruct) {
+                                correspondingItemData.evaluationValue = valorAtoOriginal;
+                            }
+                            newItems.push(correspondingItemData);
                         }
                     }
 
                     const incluirItbiCheckbox = document.getElementById('incluir-itbi');
                     if (incluirItbiCheckbox.checked) {
-                        const itbiValue = round(valorAto * 0.02);
-                        const itbiIdentifier = `Base: ${formatCurrency(valorAto)}`;
-                        addItemToBudget({
+                        const itbiValue = round(valorAtoOriginal * 0.02);
+                        newItems.push({
                             id: Date.now() + 2, type: 'itbi',
-                            name: 'ITBI (Imposto de Transmissão de Bens Imóveis)', identifier: itbiIdentifier,
+                            name: 'ITBI (Imposto de Transmissão de Bens Imóveis)', identifier: `Base: ${formatCurrency(valorAtoOriginal)}`,
+                            baseValue: valorAtoOriginal,
                             costs: { oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0, subtotal: itbiValue }
                         });
                     }
+
+                    const incluirItcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
+                    if (incluirItcmdCheckbox.checked) {
+                        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(valorAtoOriginal);
+                        if (itcmdValue > 0) {
+                            newItems.push({
+                                id: Date.now() + 3, type: 'itcmd',
+                                name: `ITCMD (${itcmdRate * 100}%)`,
+                                identifier, baseValue: valorAtoOriginal,
+                                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                            });
+                        }
+                    }
+                    
+                    addMultipleItemsToBudget(newItems);
                     
                     valorAtoInput.value = '';
                     descricaoInput.value = '';
                     incluirItbiCheckbox.checked = false;
+                    incluirItcmdCheckbox.checked = false;
                     addComboCheckbox.checked = false;
+                    document.getElementById('is-usufruct').checked = false;
                 });
 
                 document.getElementById('add-fixo').addEventListener('click', () => {
@@ -1503,7 +1666,7 @@
                     const quantidade = parseInt(quantidadeInput.value) || 1;
                     const costs = calculateCosts(atoInfo.oficial * quantidade, atoInfo.selo * quantidade);
                     const name = `${atoInfo.name} (x${quantidade})`;
-                    addItemToBudget({ id: Date.now(), type: 'fixo', name, identifier: '', costs });
+                    addMultipleItemsToBudget([{ id: Date.now(), type: 'fixo', name, identifier: '', costs }]);
                 });
                 
                 document.getElementById('add-manual').addEventListener('click', () => {
@@ -1514,10 +1677,19 @@
                     if (manualValue <= 0) { alert('Por favor, insira um valor válido para o serviço.'); return; }
                     if (!name) { alert('Por favor, insira uma descrição para o serviço manual.'); return; }
                     const costs = { oficial: manualValue, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0, subtotal: manualValue };
-                    addItemToBudget({ id: Date.now(), type: 'manual', name, identifier: '', costs });
+                    addMultipleItemsToBudget([{ id: Date.now(), type: 'manual', name, identifier: '', costs }]);
                     descricaoManualInput.value = '';
                     valorManualInput.value = '';
                 });
+
+                document.getElementById('add-inventory-asset').addEventListener('click', addInventoryAssetRow);
+                document.getElementById('inventory-assets-list').addEventListener('click', (e) => {
+                    const removeButton = e.target.closest('.remove-asset-btn');
+                    if (removeButton) {
+                        removeButton.closest('.inventory-asset-row').remove();
+                    }
+                });
+                document.getElementById('calculate-inventory').addEventListener('click', calculateInventory);
                 
                 calculateIncraBtn.addEventListener('click', () => {
                     const region = municipalityToRegionMap[incraMunicipioSelect.value];
@@ -1619,11 +1791,13 @@
                 atoVariavelSelect.addEventListener('change', () => {
                     const selectedKey = atoVariavelSelect.value;
                     
-                    if (selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor') {
-                        comboOptionContainer.style.display = 'flex';
-                    } else {
-                        comboOptionContainer.style.display = 'none';
+                    const showCombo = selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor';
+                    comboOptionContainer.style.display = showCombo ? 'flex' : 'none';
+                    usufructOptionContainer.style.display = showCombo ? 'flex' : 'none';
+
+                    if (!showCombo) {
                         document.getElementById('add-combo').checked = false;
+                        document.getElementById('is-usufruct').checked = false;
                     }
                     
                     if (selectedKey === 'imoveis_averbacao_valor') {
@@ -1684,11 +1858,137 @@
                 window.addEventListener('afterprint', () => document.body.classList.remove('print-simplified'));
             };
 
+            function addInventoryAssetRow() {
+                inventoryAssetCounter++;
+                const list = document.getElementById('inventory-assets-list');
+                const row = document.createElement('div');
+                row.className = 'inventory-asset-row';
+                row.innerHTML = `
+                    <button class="btn btn-danger btn-icon remove-asset-btn" title="Remover este bem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                    </button>
+                    <div class="form-group full-width">
+                        <label for="inv-desc-${inventoryAssetCounter}">Identificação do Bem</label>
+                        <input type="text" id="inv-desc-${inventoryAssetCounter}" class="inv-desc" placeholder="Ex: Apto 101, Matrícula 1234">
+                    </div>
+                    <div class="form-group">
+                        <label for="inv-val-${inventoryAssetCounter}">Avaliação (R$)</label>
+                        <input type="text" id="inv-val-${inventoryAssetCounter}" class="inv-val" placeholder="250.000,00">
+                    </div>
+                    <div class="form-group">
+                        <label for="inv-type-${inventoryAssetCounter}">Tipo</label>
+                        <select id="inv-type-${inventoryAssetCounter}" class="inv-type">
+                            <option value="imovel">Imóvel</option>
+                            <option value="movel">Móvel</option>
+                        </select>
+                    </div>
+                    <div class="checkbox-group-stack">
+                        <div class="checkbox-group">
+                           <input type="checkbox" id="inv-meacao-${inventoryAssetCounter}" class="inv-meacao">
+                           <label for="inv-meacao-${inventoryAssetCounter}">É meação (transmite 50%)</label>
+                        </div>
+                        <div class="checkbox-group">
+                           <input type="checkbox" id="inv-isento-${inventoryAssetCounter}" class="inv-isento">
+                           <label for="inv-isento-${inventoryAssetCounter}">Isento de ITCMD</label>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(row);
+            }
+
+            function calculateInventory() {
+                const assetRows = document.querySelectorAll('.inventory-asset-row');
+                const shouldCalculateITCMD = document.getElementById('inventory-calculate-itcmd').checked;
+
+                if (assetRows.length === 0) {
+                    alert('Adicione pelo menos um bem para calcular.');
+                    return;
+                }
+                
+                let totalEscrituraValue = 0;
+                const newItems = [];
+                let timestamp = Date.now();
+
+                // 1. Read all assets and collect data
+                const assetsData = [];
+                let hasError = false;
+                assetRows.forEach(row => {
+                    const desc = row.querySelector('.inv-desc').value.trim();
+                    const val = parseCurrency(row.querySelector('.inv-val').value);
+                    if (!desc || val <= 0) {
+                        alert('Por favor, preencha a identificação e a avaliação de todos os bens.');
+                        hasError = true;
+                        return;
+                    }
+                    assetsData.push({
+                        desc,
+                        val,
+                        type: row.querySelector('.inv-type').value,
+                        isMeacao: row.querySelector('.inv-meacao').checked,
+                        isIsento: row.querySelector('.inv-isento').checked,
+                    });
+                });
+
+                if (hasError) return;
+
+                // 2. Calculate Escritura
+                totalEscrituraValue = assetsData.reduce((sum, asset) => sum + asset.val, 0);
+                const escrituraAtoInfo = feeTables.notas.atosVariaveis.notas_escritura_valor;
+                const { oficial: escOficial, selo: escSelo } = findVariableFee(escrituraAtoInfo, totalEscrituraValue);
+                newItems.push({
+                    id: timestamp++, type: 'variavel', name: 'Escritura de Inventário/Partilha/Doação',
+                    identifier: `Total de ${assetsData.length} bens`, baseValue: totalEscrituraValue,
+                    costs: calculateCosts(escOficial, escSelo)
+                });
+                
+                const registroAtoInfo = feeTables.imoveis.atosVariaveis.imoveis_registro_valor;
+
+                // 3. Calculate Registros (for imóveis) and ITCMD (if applicable)
+                assetsData.forEach(asset => {
+                    const baseValueTransmitted = asset.isMeacao ? asset.val * 0.5 : asset.val;
+
+                    // 3a. Registro de Imóveis
+                    if (asset.type === 'imovel') {
+                        const { oficial: regOficial, selo: regSelo } = findVariableFee(registroAtoInfo, baseValueTransmitted);
+                         newItems.push({
+                            id: timestamp++, type: 'variavel', name: 'Registro de Imóvel (Partilha)',
+                            identifier: asset.desc, 
+                            baseValue: baseValueTransmitted,
+                            evaluationValue: asset.val,
+                            costs: calculateCosts(regOficial, regSelo),
+                            isMeacao: asset.isMeacao
+                        });
+                    }
+
+                    // 3b. ITCMD
+                    if (shouldCalculateITCMD && !asset.isIsento) {
+                        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(baseValueTransmitted);
+                        if (itcmdValue > 0) {
+                            newItems.push({
+                                id: timestamp++, type: 'itcmd', name: `ITCMD (${itcmdRate * 100}%)`,
+                                identifier: asset.desc, 
+                                baseValue: baseValueTransmitted,
+                                evaluationValue: asset.val,
+                                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
+                                isMeacao: asset.isMeacao
+                            });
+                        }
+                    }
+                });
+                
+                addMultipleItemsToBudget(newItems);
+                document.getElementById('inventory-assets-list').innerHTML = '';
+                inventoryAssetCounter = 0;
+                addInventoryAssetRow();
+            }
+
+
             // --- App Start ---
             const init = () => {
                 populateSelects();
                 populateIncraSelects();
                 setupEventListeners();
+                addInventoryAssetRow(); // Start with one asset row by default
                 renderBudget();
                 const initialName = budgeterNameInput.value.trim();
                 printBudgeterNameLabel.style.display = initialName ? 'inline' : 'none';
