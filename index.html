@@ -679,6 +679,29 @@
                             <input type="checkbox" id="incluir-itbi">
                             <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
                         </div>
+<!-- PAINEL DE OPÇÕES AVANÇADAS DO ITCMD (INSERIR AQUI) -->
+<div id="itcmd-options-panel" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 0.75rem; margin-bottom: 1.25rem; border-radius: 6px; background-color: #f8f9fa;">
+    <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark-gray);">Como a base de cálculo do ITCMD deve ser considerada?</label>
+    </div>
+    <div class="form-group" style="margin-bottom: 0.5rem;">
+        <div class="checkbox-group">
+            <input type="radio" id="itcmd_base_padrao" name="itcmd_base_type" value="padrao" checked>
+            <label for="itcmd_base_padrao" style="font-weight: 500;">Padrão (sobre o valor total do bem)</label>
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+        <div class="checkbox-group">
+            <input type="radio" id="itcmd_base_fracionado" name="itcmd_base_type" value="fracionado">
+            <label for="itcmd_base_fracionado" style="font-weight: 500;">Múltiplos Donatários</label>
+        </div>
+        <div id="itcmd-donors-details" style="display: none; margin-top: 0.75rem; padding-left: 1.75rem;">
+            <label for="itcmd-donors-count" style="font-size: 0.9rem;">Número de Donatários:</label>
+            <input type="number" id="itcmd-donors-count" value="2" min="2" style="width: 100px; padding: 0.5rem;">
+            <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">O valor do bem será dividido igualmente entre os Donatários para o cálculo individual do imposto.</p>
+        </div>
+    </div>
+</div>
                         <div class="form-group checkbox-group">
                             <input type="checkbox" id="incluir-itcmd-variavel">
                             <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
@@ -1635,17 +1658,42 @@
                     }
 
                     const incluirItcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
-                    if (incluirItcmdCheckbox.checked) {
-                        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(valorAtoOriginal);
-                        if (itcmdValue > 0) {
-                            newItems.push({
-                                id: Date.now() + 3, type: 'itcmd',
-                                name: `ITCMD (${itcmdRate * 100}%)`,
-                                identifier, baseValue: valorAtoOriginal,
-                                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-                            });
-                        }
-                    }
+if (incluirItcmdCheckbox.checked) {
+    const calcType = document.querySelector('input[name="itcmd_base_type"]:checked').value;
+    let itcmdItem = null;
+
+    if (calcType === 'fracionado') {
+        const donorCount = parseInt(document.getElementById('itcmd-donors-count').value) || 2;
+        const fractionalValue = valorAtoOriginal / donorCount;
+        const { value: itcmdPerDonor, rate: itcmdRate } = calculateSingleITCMD(fractionalValue);
+        const totalItcmd = itcmdPerDonor * donorCount;
+
+        if (totalItcmd > 0) {
+            itcmdItem = {
+                id: Date.now() + 3, type: 'itcmd',
+                name: `ITCMD (${itcmdRate * 100}%) - Cálculo Fracionado`,
+                identifier: `Base: ${formatCurrency(fractionalValue)} (x${donorCount} Donatários)`,
+                baseValue: valorAtoOriginal, // Armazena o valor total original para referência
+                costs: { subtotal: totalItcmd, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+            };
+        }
+    } else { // 'padrao'
+        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(valorAtoOriginal);
+        if (itcmdValue > 0) {
+            itcmdItem = {
+                id: Date.now() + 3, type: 'itcmd',
+                name: `ITCMD (${itcmdRate * 100}%)`,
+                identifier: `Base: ${formatCurrency(valorAtoOriginal)}`,
+                baseValue: valorAtoOriginal,
+                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+            };
+        }
+    }
+
+    if (itcmdItem) {
+        newItems.push(itcmdItem);
+    }
+}
                     
                     addMultipleItemsToBudget(newItems);
                     
@@ -1850,13 +1898,47 @@
                     printModalContainer.classList.remove('show');
                     window.print();
                 });
-                document.getElementById('print-simplified-btn').addEventListener('click', () => {
+                                document.getElementById('print-simplified-btn').addEventListener('click', () => {
                     printModalContainer.classList.remove('show');
                     document.body.classList.add('print-simplified');
                     window.print();
                 });
                 window.addEventListener('afterprint', () => document.body.classList.remove('print-simplified'));
-            };
+
+                // <<< COLE O SEU NOVO CÓDIGO EXATAMENTE AQUI, NESTA LINHA ABAIXO >>>
+                
+                // --- INÍCIO: Lógica para o painel interativo do ITCMD ---
+
+                // Primeiro, "pegamos" os elementos do HTML para poder manipulá-los.
+                const itcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
+                const itcmdOptionsPanel = document.getElementById('itcmd-options-panel');
+                const itcmdDonorsDetails = document.getElementById('itcmd-donors-details');
+                const itcmdBaseTypeRadios = document.querySelectorAll('input[name="itcmd_base_type"]');
+
+                // OUVINTE 1: Fica de olho na checkbox principal do ITCMD.
+                // O evento é 'change' (quando é marcada ou desmarcada).
+                itcmdCheckbox.addEventListener('change', () => {
+                    // A AÇÃO: Se a checkbox estiver marcada (checked), o painel fica visível ('block').
+                    // Se não, ele fica escondido ('none').
+                    itcmdOptionsPanel.style.display = itcmdCheckbox.checked ? 'block' : 'none';
+                });
+
+                // OUVINTE 2: Fica de olho nos dois botões de rádio (Padrão e Fracionado).
+                // Usamos forEach para aplicar a mesma lógica para ambos os botões.
+                itcmdBaseTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        // A AÇÃO: Verificamos se o botão "fracionado" está marcado.
+                        const showDetails = document.getElementById('itcmd_base_fracionado').checked;
+                        
+                        // Se estiver, o campo "Número de Donatários" fica visível ('block').
+                        // Se não, ele fica escondido ('none').
+                        itcmdDonorsDetails.style.display = showDetails ? 'block' : 'none';
+                    });
+                });
+
+                // --- FIM: Lógica para o painel interativo do ITCMD ---
+
+            }; // ESTA É A CHAVE DE FECHAMENTO ORIGINAL DA FUNÇÃO. ELA DEVE FICAR DEPOIS DO SEU CÓDIGO.
 
             function addInventoryAssetRow() {
                 inventoryAssetCounter++;
