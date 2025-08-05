@@ -666,16 +666,34 @@
                             </div>
                         </div>
                         
-                        <div id="usufruct-option-container" class="form-group checkbox-group" style="display: none;">
-                            <input type="checkbox" id="is-usufruct">
-                            <label for="is-usufruct">É usufruto? (base de cálculo = 1/3 do valor)</label>
-                        </div>
+                        <div id="natureza-ato-panel" class="form-group" style="display: none;">
+    <label>Natureza do Ato</label>
+    <div style="border: 1px solid #e0e0e0; padding: 0.75rem; border-radius: 6px; background-color: #f9f9f9;">
+        <div class="checkbox-group" style="margin-bottom: 0.5rem;">
+            <input type="radio" id="natureza_padrao" name="ato_natureza" value="padrao" checked>
+            <label for="natureza_padrao" style="font-weight: 500;">Ato Padrão (Valor integral)</label>
+        </div>
+        <div class="checkbox-group" style="margin-bottom: 0.5rem;">
+            <input type="radio" id="natureza_composto" name="ato_natureza" value="composto">
+            <label for="natureza_composto" style="font-weight: 500;">Ato com Reserva de Usufruto</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="radio" id="natureza_apenas_usufruto" name="ato_natureza" value="apenas_usufruto">
+            <label for="natureza_apenas_usufruto" style="font-weight: 500;">Apenas o Usufruto</label>
+        </div>
+    </div>
+</div>
 
                         <div class="form-group checkbox-group" id="combo-option-container" style="display: none;">
                             <input type="checkbox" id="add-combo">
                             <label for="add-combo">Adicionar ato correspondente (Registro/Escritura) com a mesma base de cálculo</label>
                         </div>
+                       
                         <div class="form-group checkbox-group">
+                            <input type="checkbox" id="incluir-itcmd-variavel">
+                            <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
+                        </div>
+ <div class="form-group checkbox-group">
                             <input type="checkbox" id="incluir-itbi">
                             <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
                         </div>
@@ -702,10 +720,6 @@
         </div>
     </div>
 </div>
-                        <div class="form-group checkbox-group">
-                            <input type="checkbox" id="incluir-itcmd-variavel">
-                            <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
-                        </div>
                         <button id="add-variavel" class="btn btn-primary">Adicionar ao Orçamento</button>
                     </div>
 
@@ -731,6 +745,32 @@
                             <input type="checkbox" id="inventory-calculate-itcmd">
                             <label for="inventory-calculate-itcmd"><strong>Calcular ITCMD para os bens aplicáveis</strong></label>
                         </div>
+<div id="itcmd-disclaimer" style="display: none; padding: 0.8rem; margin-bottom: 1.5rem; border-radius: 6px; background-color: #fffbe6; border: 1px solid #ffe58f; color: #8a6d3b; font-size: 0.85rem; line-height: 1.5;">
+    <strong>Atenção:</strong> A calculadora de ITCMD assume uma divisão <strong>igualitária</strong> da herança entre os descendentes diretos. Para partilhas complexas (ex: netos herdando, divisões desiguais), utilize a aba <strong>Lançamentos Manuais</strong> para inserir o valor do imposto.
+</div>
+<div id="inventory-itcmd-settings" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 1rem; margin-bottom: 1.5rem; border-radius: 6px; background-color: #f8f9fa;">
+    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">
+        Informe os dados da sucessão para o cálculo correto do ITCMD.
+    </p>
+    <div class="form-group">
+        <label for="inventory-has-spouse">O falecido deixou cônjuge/companheiro(a)?</label>
+        <select id="inventory-has-spouse">
+            <option value="nao" selected>Não</option>
+            <option value="sim">Sim</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="inventory-heir-count">Número de herdeiros (descendentes)</label>
+        <input type="number" id="inventory-heir-count" value="1" min="1">
+    </div>
+    <div id="inventory-spouse-heir-option" class="form-group" style="display: none;">
+         <div class="checkbox-group">
+            <input type="checkbox" id="inventory-spouse-is-heir">
+            <label for="inventory-spouse-is-heir">Cônjuge também herda bens particulares (sem meação)?</label>
+        </div>
+         <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">Marque se o regime for Comunhão Parcial e houver bens particulares, ou Comunhão Total.</p>
+    </div>
+</div>
                         <div id="inventory-assets-list" style="margin-bottom: 1rem;">
                            <!-- Asset rows will be dynamically added here -->
                         </div>
@@ -1493,20 +1533,20 @@
                             </td>
                         </tr>
                         <tr class="details-row" data-details-for="${item.id}">
-                            <td colspan="4">
-                                <div class="details-content">
-                                    <table>
-                                        <tbody>
-                                            <tr><td>Emolumentos (Oficial)</td><td class="item-value">${formatCurrency(item.costs.oficial)}</td></tr>
-                                            <tr><td>FUJU (20%)</td><td class="item-value">${formatCurrency(item.costs.fuju)}</td></tr>
-                                            <tr><td>FUNDIMPER (7.5%)</td><td class="item-value">${formatCurrency(item.costs.fundimper)}</td></tr>
-                                            <tr><td>FUNDEP (4%)</td><td class="item-value">${formatCurrency(item.costs.fundep)}</td></tr>
-                                            <tr><td>FUMORPGE (3%)</td><td class="item-value">${formatCurrency(item.costs.fumorpge)}</td></tr>
-                                            <tr><td>Selo de Fiscalização</td><td class="item-value">${formatCurrency(item.costs.selo)}</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </td>
+                           <td colspan="4">
+    <div class="details-content">
+        <table>
+            <tbody>
+                <tr><td>Emolumentos (Oficial)</td><td class="item-value">${formatCurrency(item.costs.oficial)}</td></tr>
+                <tr><td>FUJU (20%)</td><td class="item-value">${formatCurrency(item.costs.fuju)}</td></tr>
+                <tr><td>FUNDIMPER (7.5%)</td><td class="item-value">${formatCurrency(item.costs.fundimper)}</td></tr>
+                <tr><td>FUNDEP (4%)</td><td class="item-value">${formatCurrency(item.costs.fundep)}</td></tr>
+                <tr><td>FUMORPGE (3%)</td><td class="item-value">${formatCurrency(item.costs.fumorpge)}</td></tr>
+                <tr><td>Selo de Fiscalização</td><td class="item-value">${formatCurrency(item.costs.selo)}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</td>
                         </tr>
                     `;
                 });
@@ -1600,109 +1640,121 @@
                 });
 
                 document.getElementById('add-variavel').addEventListener('click', () => {
-                    const selectedKey = atoVariavelSelect.value;
-                    if (!selectedKey) return;
-                    const serventiaKey = selectedKey.split('_')[0];
-                    const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
-                    const valorAtoOriginal = parseCurrency(valorAtoInput.value);
-                    if (valorAtoOriginal <= 0) { alert('Por favor, insira um valor válido para o ato.'); return; }
-                    
-                    const isUsufruct = document.getElementById('is-usufruct').checked;
-                    const valorParaCalculo = isUsufruct ? (valorAtoOriginal / 3) : valorAtoOriginal;
+ const selectedKey = atoVariavelSelect.value;
+    if (!selectedKey) return;
 
-                    const { oficial, selo } = findVariableFee(atoInfo, valorParaCalculo);
-                    if (oficial <= 0) { alert('Não foi possível encontrar uma faixa de valor correspondente.'); return; }
-
-                    const costs = calculateCosts(oficial, selo);
-                    const descricaoInput = document.getElementById('descricao-variavel');
-                    const identifier = descricaoInput.value.trim();
-                    const newItems = [];
-                    
-                    const newItemData = {
-                        id: Date.now(), type: 'variavel', name: atoInfo.name, identifier, 
-                        baseValue: valorParaCalculo, costs, isUsufruct
-                    };
-                    if (isUsufruct) {
-                        newItemData.evaluationValue = valorAtoOriginal;
-                    }
-                    newItems.push(newItemData);
-                    
-                    const addComboCheckbox = document.getElementById('add-combo');
-                    if (addComboCheckbox.checked && comboOptionContainer.style.display !== 'none') {
-                        const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
-                        const correspondingServentiaKey = correspondingKey.split('_')[0];
-                        const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
-                        const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, valorParaCalculo);
-                        if (corrOficial > 0) {
-                             const correspondingItemData = {
-                                id: Date.now() + 1, type: 'variavel',
-                                name: correspondingAtoInfo.name, identifier, baseValue: valorParaCalculo,
-                                costs: calculateCosts(corrOficial, corrSelo), isUsufruct
-                            };
-                            if (isUsufruct) {
-                                correspondingItemData.evaluationValue = valorAtoOriginal;
-                            }
-                            newItems.push(correspondingItemData);
-                        }
-                    }
-
-                    const incluirItbiCheckbox = document.getElementById('incluir-itbi');
-                    if (incluirItbiCheckbox.checked) {
-                        const itbiValue = round(valorAtoOriginal * 0.02);
-                        newItems.push({
-                            id: Date.now() + 2, type: 'itbi',
-                            name: 'ITBI (Imposto de Transmissão de Bens Imóveis)', identifier: `Base: ${formatCurrency(valorAtoOriginal)}`,
-                            baseValue: valorAtoOriginal,
-                            costs: { oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0, subtotal: itbiValue }
-                        });
-                    }
-
-                    const incluirItcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
-if (incluirItcmdCheckbox.checked) {
-    const calcType = document.querySelector('input[name="itcmd_base_type"]:checked').value;
-    let itcmdItem = null;
-
-    if (calcType === 'fracionado') {
-        const donorCount = parseInt(document.getElementById('itcmd-donors-count').value) || 2;
-        const fractionalValue = valorAtoOriginal / donorCount;
-        const { value: itcmdPerDonor, rate: itcmdRate } = calculateSingleITCMD(fractionalValue);
-        const totalItcmd = itcmdPerDonor * donorCount;
-
-        if (totalItcmd > 0) {
-            itcmdItem = {
-                id: Date.now() + 3, type: 'itcmd',
-                name: `ITCMD (${itcmdRate * 100}%) - Cálculo Fracionado`,
-                identifier: `Base: ${formatCurrency(fractionalValue)} (x${donorCount} Donatários)`,
-                baseValue: valorAtoOriginal, // Armazena o valor total original para referência
-                costs: { subtotal: totalItcmd, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-            };
-        }
-    } else { // 'padrao'
-        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(valorAtoOriginal);
-        if (itcmdValue > 0) {
-            itcmdItem = {
-                id: Date.now() + 3, type: 'itcmd',
-                name: `ITCMD (${itcmdRate * 100}%)`,
-                identifier: `Base: ${formatCurrency(valorAtoOriginal)}`,
-                baseValue: valorAtoOriginal,
-                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-            };
-        }
+    const valorAtoOriginal = parseCurrency(valorAtoInput.value);
+    if (valorAtoOriginal <= 0) {
+        alert('Por favor, insira um valor válido para o ato.');
+        return;
     }
 
-    if (itcmdItem) {
-        newItems.push(itcmdItem);
+    const serventiaKey = selectedKey.split('_')[0];
+    const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
+    const descricaoInput = document.getElementById('descricao-variavel');
+    const identifier = descricaoInput.value.trim();
+    const addCombo = document.getElementById('add-combo').checked;
+    const naturezaAto = document.querySelector('input[name="ato_natureza"]:checked').value;
+    
+    const newItems = [];
+    let timestamp = Date.now();
+
+    // Função auxiliar para criar atos (principal e correspondente)
+    const createActPair = (name, baseValue, isUsufructFlag = false, isPrincipal = true) => {
+        // Ato principal (Escritura ou Registro)
+        const { oficial, selo } = findVariableFee(atoInfo, baseValue);
+        if (oficial > 0) {
+            newItems.push({
+                id: timestamp++, type: 'variavel', name: name,
+                identifier, baseValue, costs: calculateCosts(oficial, selo), isUsufruct: isUsufructFlag
+            });
+        }
+
+        // Ato correspondente (se combo estiver marcado)
+        if (addCombo && comboOptionContainer.style.display !== 'none') {
+            const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
+            const correspondingServentiaKey = correspondingKey.split('_')[0];
+            const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
+            const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, baseValue);
+            if (corrOficial > 0) {
+                const correspondingName = isPrincipal 
+                    ? correspondingAtoInfo.name + ' (Nu-Propriedade)' 
+                    : 'Registro de Usufruto';
+                newItems.push({
+                    id: timestamp++, type: 'variavel', name: correspondingName,
+                    identifier, baseValue, costs: calculateCosts(corrOficial, corrSelo), isUsufruct: isUsufructFlag
+                });
+            }
+        }
+    };
+
+    switch (naturezaAto) {
+        case 'composto':
+            // 1. Ato Principal (Nu-Propriedade) sobre 100% do valor
+            createActPair(atoInfo.name + ' (Nu-Propriedade)', valorAtoOriginal, false, true);
+            // 2. Ato de Usufruto sobre 1/3 do valor
+            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
+            break;
+
+        case 'apenas_usufruto':
+            // Apenas o ato de usufruto sobre 1/3 do valor
+            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
+            break;
+
+        case 'padrao':
+        default:
+            // Comportamento padrão sobre 100% do valor
+            createActPair(atoInfo.name, valorAtoOriginal, false, true);
+            break;
     }
-}
-                    
-                    addMultipleItemsToBudget(newItems);
-                    
-                    valorAtoInput.value = '';
-                    descricaoInput.value = '';
-                    incluirItbiCheckbox.checked = false;
-                    incluirItcmdCheckbox.checked = false;
-                    addComboCheckbox.checked = false;
-                    document.getElementById('is-usufruct').checked = false;
+
+    // Adicionar ITBI e ITCMD (calculados sobre o valor total do imóvel)
+    if (document.getElementById('incluir-itbi').checked) {
+        const itbiValue = round(valorAtoOriginal * 0.02);
+        newItems.push({
+            id: timestamp++, type: 'itbi', name: 'ITBI (Imposto de Transmissão de Bens Imóveis)',
+            identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
+            costs: { subtotal: itbiValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+        });
+    }
+
+    if (document.getElementById('incluir-itcmd-variavel').checked) {
+        const calcType = document.querySelector('input[name="itcmd_base_type"]:checked').value;
+        let itcmdItem = null;
+        if (calcType === 'fracionado') {
+            const donorCount = parseInt(document.getElementById('itcmd-donors-count').value) || 2;
+            const fractionalValue = valorAtoOriginal / donorCount;
+            const { value: itcmdPerDonor, rate } = calculateSingleITCMD(fractionalValue);
+            const totalItcmd = itcmdPerDonor * donorCount;
+            if (totalItcmd > 0) {
+                itcmdItem = {
+                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%) - Cálculo Fracionado`,
+                    identifier: `Base: ${formatCurrency(fractionalValue)} (x${donorCount} Donatários)`, baseValue: valorAtoOriginal,
+                    costs: { subtotal: totalItcmd, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                };
+            }
+        } else {
+            const { value: itcmdValue, rate } = calculateSingleITCMD(valorAtoOriginal);
+            if (itcmdValue > 0) {
+                itcmdItem = {
+                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%)`,
+                    identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
+                    costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                };
+            }
+        }
+        if (itcmdItem) newItems.push(itcmdItem);
+    }
+    
+    addMultipleItemsToBudget(newItems);
+    
+    // Resetar campos
+    valorAtoInput.value = '';
+    descricaoInput.value = '';
+    document.getElementById('incluir-itbi').checked = false;
+    document.getElementById('incluir-itcmd-variavel').checked = false;
+    document.getElementById('add-combo').checked = false;
+    document.getElementById('natureza_padrao').checked = true;
                 });
 
                 document.getElementById('add-fixo').addEventListener('click', () => {
@@ -1841,7 +1893,8 @@ if (incluirItcmdCheckbox.checked) {
                     
                     const showCombo = selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor';
                     comboOptionContainer.style.display = showCombo ? 'flex' : 'none';
-                    usufructOptionContainer.style.display = showCombo ? 'flex' : 'none';
+                    const naturezaAtoPanel = document.getElementById('natureza-ato-panel');
+naturezaAtoPanel.style.display = showCombo ? 'block' : 'none';
 
                     if (!showCombo) {
                         document.getElementById('add-combo').checked = false;
@@ -1938,6 +1991,33 @@ if (incluirItcmdCheckbox.checked) {
 
                 // --- FIM: Lógica para o painel interativo do ITCMD ---
 
+
+// <<< COLE O NOVO BLOCO DE CÓDIGO IMEDIATAMENTE ABAIXO >>>
+
+// --- INÍCIO: Lógica da Interface para Configurações do ITCMD no Inventário ---
+const inventoryItcmdCheckbox = document.getElementById('inventory-calculate-itcmd');
+const inventoryItcmdSettings = document.getElementById('inventory-itcmd-settings');
+const itcmdDisclaimer = document.getElementById('itcmd-disclaimer'); // <-- ADICIONE ESTA LINHA
+
+inventoryItcmdCheckbox.addEventListener('change', () => {
+    const isChecked = inventoryItcmdCheckbox.checked; // <-- ADICIONE ESTA LINHA
+    // Mostra ou esconde todo o painel de configurações
+    inventoryItcmdSettings.style.display = isChecked ? 'block' : 'none'; // <-- ALTERE ESTA LINHA
+    itcmdDisclaimer.style.display = isChecked ? 'block' : 'none';      // <-- ADICIONE ESTA LINHA
+});
+const inventoryHasSpouseSelect = document.getElementById('inventory-has-spouse');
+const inventorySpouseHeirOption = document.getElementById('inventory-spouse-heir-option');
+
+inventoryHasSpouseSelect.addEventListener('change', () => {
+    // Mostra ou esconde a opção do cônjuge herdeiro
+    const showSpouseHeirOption = inventoryHasSpouseSelect.value === 'sim';
+    inventorySpouseHeirOption.style.display = showSpouseHeirOption ? 'block' : 'none';
+    if (!showSpouseHeirOption) {
+        document.getElementById('inventory-spouse-is-heir').checked = false;
+    }
+});
+// --- FIM: Lógica da Interface ---
+
             }; // ESTA É A CHAVE DE FECHAMENTO ORIGINAL DA FUNÇÃO. ELA DEVE FICAR DEPOIS DO SEU CÓDIGO.
 
             function addInventoryAssetRow() {
@@ -1978,91 +2058,147 @@ if (incluirItcmdCheckbox.checked) {
                 list.appendChild(row);
             }
 
-            function calculateInventory() {
-                const assetRows = document.querySelectorAll('.inventory-asset-row');
-                const shouldCalculateITCMD = document.getElementById('inventory-calculate-itcmd').checked;
+ 
+function calculateInventory() {
+    const assetRows = document.querySelectorAll('.inventory-asset-row');
+    const shouldCalculateITCMD = document.getElementById('inventory-calculate-itcmd').checked;
 
-                if (assetRows.length === 0) {
-                    alert('Adicione pelo menos um bem para calcular.');
-                    return;
-                }
-                
-                let totalEscrituraValue = 0;
-                const newItems = [];
-                let timestamp = Date.now();
+    if (assetRows.length === 0) {
+        alert('Adicione pelo menos um bem para calcular.');
+        return;
+    }
+    
+    const newItems = [];
+    let timestamp = Date.now();
+    let hasError = false;
 
-                // 1. Read all assets and collect data
-                const assetsData = [];
-                let hasError = false;
-                assetRows.forEach(row => {
-                    const desc = row.querySelector('.inv-desc').value.trim();
-                    const val = parseCurrency(row.querySelector('.inv-val').value);
-                    if (!desc || val <= 0) {
-                        alert('Por favor, preencha a identificação e a avaliação de todos os bens.');
-                        hasError = true;
-                        return;
-                    }
-                    assetsData.push({
-                        desc,
-                        val,
-                        type: row.querySelector('.inv-type').value,
-                        isMeacao: row.querySelector('.inv-meacao').checked,
-                        isIsento: row.querySelector('.inv-isento').checked,
-                    });
-                });
+    // 1. Ler todos os bens da lista
+    const assetsData = [];
+    assetRows.forEach(row => {
+        const desc = row.querySelector('.inv-desc').value.trim();
+        const val = parseCurrency(row.querySelector('.inv-val').value);
+        if (!desc || val <= 0) {
+            hasError = true;
+            return;
+        }
+        assetsData.push({
+            desc, val,
+            type: row.querySelector('.inv-type').value,
+            isMeacao: row.querySelector('.inv-meacao').checked,
+            isIsento: row.querySelector('.inv-isento').checked,
+        });
+    });
 
-                if (hasError) return;
+    if (hasError) {
+        alert('Por favor, preencha a identificação e a avaliação de todos os bens.');
+        return;
+    }
 
-                // 2. Calculate Escritura
-                totalEscrituraValue = assetsData.reduce((sum, asset) => sum + asset.val, 0);
-                const escrituraAtoInfo = feeTables.notas.atosVariaveis.notas_escritura_valor;
-                const { oficial: escOficial, selo: escSelo } = findVariableFee(escrituraAtoInfo, totalEscrituraValue);
-                newItems.push({
-                    id: timestamp++, type: 'variavel', name: 'Escritura de Inventário/Partilha/Doação',
-                    identifier: `Total de ${assetsData.length} bens`, baseValue: totalEscrituraValue,
-                    costs: calculateCosts(escOficial, escSelo)
-                });
-                
-                const registroAtoInfo = feeTables.imoveis.atosVariaveis.imoveis_registro_valor;
+    // 2. Calcular Escritura e Registros (sem alterações aqui)
+    const totalEscrituraValue = assetsData.reduce((sum, asset) => sum + asset.val, 0);
+    const escrituraAtoInfo = feeTables.notas.atosVariaveis.notas_escritura_valor;
+    const { oficial: escOficial, selo: escSelo } = findVariableFee(escrituraAtoInfo, totalEscrituraValue);
+    newItems.push({
+        id: timestamp++, type: 'variavel', name: 'Escritura de Inventário/Partilha/Doação',
+        identifier: `Base: ${formatCurrency(totalEscrituraValue)} (${assetsData.length} bens)`,
+        baseValue: totalEscrituraValue,
+        costs: calculateCosts(escOficial, escSelo)
+    });
+    
+    const registroAtoInfo = feeTables.imoveis.atosVariaveis.imoveis_registro_valor;
+    assetsData.forEach(asset => {
+        if (asset.type === 'imovel') {
+            const baseValueTransmitted = asset.isMeacao ? asset.val * 0.5 : asset.val;
+            const { oficial: regOficial, selo: regSelo } = findVariableFee(registroAtoInfo, baseValueTransmitted);
+             newItems.push({
+                id: timestamp++, type: 'variavel', name: 'Registro de Imóvel (Partilha)',
+                identifier: asset.desc, 
+                baseValue: baseValueTransmitted,
+                evaluationValue: asset.val,
+                costs: calculateCosts(regOficial, regSelo),
+                isMeacao: asset.isMeacao
+            });
+        }
+    });
 
-                // 3. Calculate Registros (for imóveis) and ITCMD (if applicable)
-                assetsData.forEach(asset => {
-                    const baseValueTransmitted = asset.isMeacao ? asset.val * 0.5 : asset.val;
+    // 3. LÓGICA DE CÁLCULO DO ITCMD REFINADA E SEPARADA
+    if (shouldCalculateITCMD) {
+        const hasSpouse = document.getElementById('inventory-has-spouse').value === 'sim';
+        const heirCount = parseInt(document.getElementById('inventory-heir-count').value) || 1;
+        const spouseIsHeir = document.getElementById('inventory-spouse-is-heir').checked;
 
-                    // 3a. Registro de Imóveis
-                    if (asset.type === 'imovel') {
-                        const { oficial: regOficial, selo: regSelo } = findVariableFee(registroAtoInfo, baseValueTransmitted);
-                         newItems.push({
-                            id: timestamp++, type: 'variavel', name: 'Registro de Imóvel (Partilha)',
-                            identifier: asset.desc, 
-                            baseValue: baseValueTransmitted,
-                            evaluationValue: asset.val,
-                            costs: calculateCosts(regOficial, regSelo),
-                            isMeacao: asset.isMeacao
-                        });
-                    }
+        let totalHerancaParaHerdeiros = 0;
+        let totalHerancaParaConjuge = 0;
 
-                    // 3b. ITCMD
-                    if (shouldCalculateITCMD && !asset.isIsento) {
-                        const { value: itcmdValue, rate: itcmdRate } = calculateSingleITCMD(baseValueTransmitted);
-                        if (itcmdValue > 0) {
-                            newItems.push({
-                                id: timestamp++, type: 'itcmd', name: `ITCMD (${itcmdRate * 100}%)`,
-                                identifier: asset.desc, 
-                                baseValue: baseValueTransmitted,
-                                evaluationValue: asset.val,
-                                costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
-                                isMeacao: asset.isMeacao
-                            });
+        assetsData.forEach(asset => {
+            if (!asset.isIsento) {
+                // Se é meação, metade do valor é herança para os herdeiros
+                if (asset.isMeacao) {
+                    totalHerancaParaHerdeiros += asset.val / 2;
+                } 
+                // Se é bem particular, o valor total é herança
+                else {
+                    const divisorParticulares = (hasSpouse && spouseIsHeir) ? heirCount + 1 : heirCount;
+                    if (divisorParticulares > 0) {
+                        const share = asset.val / divisorParticulares;
+                        totalHerancaParaHerdeiros += share * heirCount;
+                        if (hasSpouse && spouseIsHeir) {
+                            totalHerancaParaConjuge += share;
                         }
                     }
-                });
-                
-                addMultipleItemsToBudget(newItems);
-                document.getElementById('inventory-assets-list').innerHTML = '';
-                inventoryAssetCounter = 0;
-                addInventoryAssetRow();
+                }
             }
+        });
+        
+        // Agora calculamos a base de cálculo individual e o imposto
+        if (heirCount > 0 && totalHerancaParaHerdeiros > 0) {
+            const baseCalculoPorHerdeiro = totalHerancaParaHerdeiros / heirCount;
+            const { value: itcmdPorHerdeiro, rate } = calculateSingleITCMD(baseCalculoPorHerdeiro);
+            const totalItcmdHerdeiros = itcmdPorHerdeiro * heirCount;
+
+            if (totalItcmdHerdeiros > 0) {
+                const itcmdDetails = [
+                    { label: 'Base de Cálculo (por herdeiro)', value: formatCurrency(baseCalculoPorHerdeiro) },
+                    { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
+                    { label: 'Imposto (por herdeiro)', value: formatCurrency(itcmdPorHerdeiro) },
+                    { label: 'Total (Herdeiros)', value: `${formatCurrency(itcmdPorHerdeiro)} x ${heirCount} = ${formatCurrency(totalItcmdHerdeiros)}` }
+                ];
+                newItems.push({
+                    id: timestamp++, type: 'itcmd', name: 'ITCMD (Herdeiros)',
+                    identifier: `${heirCount} herdeiro(s)`,
+                    costs: { subtotal: totalItcmdHerdeiros, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
+                    details: itcmdDetails
+                });
+            }
+        }
+
+        if (hasSpouse && totalHerancaParaConjuge > 0) {
+            const baseCalculoConjuge = totalHerancaParaConjuge; // Já é o total para o cônjuge
+            const { value: itcmdDoConjuge, rate } = calculateSingleITCMD(baseCalculoConjuge);
+
+            if (itcmdDoConjuge > 0) {
+                 const itcmdDetails = [
+                    { label: 'Base de Cálculo (Cônjuge)', value: formatCurrency(baseCalculoConjuge) },
+                    { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
+                    { label: 'Total (Cônjuge)', value: formatCurrency(itcmdDoConjuge) }
+                ];
+                newItems.push({
+                    id: timestamp++, type: 'itcmd', name: 'ITCMD (Cônjuge Herdeiro)',
+                    identifier: '1 cônjuge/companheiro(a)',
+                    costs: { subtotal: itcmdDoConjuge, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
+                    details: itcmdDetails
+                });
+            }
+        }
+    }
+    
+    addMultipleItemsToBudget(newItems);
+    document.getElementById('inventory-assets-list').innerHTML = '';
+    inventoryAssetCounter = 0;
+    addInventoryAssetRow();
+}
+
+// FIM DA NOVA FUNÇÃO
 
 
             // --- App Start ---
