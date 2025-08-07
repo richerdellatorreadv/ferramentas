@@ -91,6 +91,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         /* Tabs */
@@ -197,10 +199,10 @@
             font-size: 1rem;
             font-weight: 600;
             border-radius: var(--border-radius);
-            border: none;
+            border: 1px solid transparent;
             cursor: pointer;
             text-align: center;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s, border-color 0.2s, color 0.2s;
         }
 
         .btn:hover {
@@ -215,6 +217,14 @@
 
         .btn-primary:hover {
             background-color: var(--primary-color-dark);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: var(--white);
+        }
+        .btn-success:hover {
+             background-color: #218838;
         }
 
         .btn-print {
@@ -235,6 +245,17 @@
         
         .btn-danger:hover {
             background-color: #c82333;
+        }
+        
+        /* NOVO ESTILO PARA O BOTÃO LIMPAR */
+        .btn-danger-outline {
+            background-color: transparent;
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        .btn-danger-outline:hover {
+            background-color: var(--danger-color);
+            color: var(--white);
         }
         
         .btn-add-discreet {
@@ -309,6 +330,13 @@
 
         #budget-items-table th, #budget-items-table td {
             padding: 0.75rem;
+        }
+        
+        /* NOVO: Ajuste para colunas de botões */
+        #budget-items-table .actions-col {
+            width: 1%;
+            padding: 0.75rem 0.25rem; /* Menor padding para os botões */
+            white-space: nowrap;
         }
 
         .item-row, .details-row {
@@ -463,7 +491,12 @@
         .btn-cancel {
             background-color: transparent;
             color: var(--secondary-color);
+            border: 1px solid transparent; /* NOVO */
         }
+        .btn-cancel:hover { /* NOVO */
+            background-color: var(--medium-gray);
+        }
+
 
         /* Footer */
         footer {
@@ -504,7 +537,7 @@
             body {
                 padding: 0;
             }
-            .no-print, header, footer, .input-section, .budget-header button, #budgeter-name-group {
+            .no-print, header, footer, .input-section, .budget-header .btn, #budgeter-name-group {
                 display: none !important;
             }
             #print-header-info {
@@ -828,13 +861,19 @@
             <section class="budget-section">
                 <div class="budget-header">
                     <h2>Meu Orçamento</h2>
-                    <button id="print-button" class="btn btn-print no-print" style="display: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
-                        </svg>
-                        Imprimir
-                    </button>
+                    <div class="no-print" style="display: flex; gap: 0.5rem;">
+                        <button id="clear-budget-button" class="btn btn-danger-outline no-print" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                            Limpar
+                        </button>
+                        <button id="print-button" class="btn btn-print no-print" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                            </svg>
+                            Imprimir
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="form-group no-print" id="budgeter-name-group">
@@ -870,6 +909,40 @@
             </div>
         </div>
     </div>
+    
+    <!-- NOVO: Modal para Edição de Item -->
+    <div id="edit-item-modal-container" class="modal-overlay no-print">
+        <div class="modal-box">
+            <h4>Editar Lançamento</h4>
+            <p>Altere as descrições do item. Os valores não serão recalculados.</p>
+            <input type="hidden" id="edit-item-id-hidden">
+            <div class="form-group">
+                <label for="edit-item-name">Descrição Principal</label>
+                <input type="text" id="edit-item-name">
+            </div>
+            <div class="form-group">
+                <label for="edit-item-identifier">Identificação / Rótulo (Opcional)</label>
+                <input type="text" id="edit-item-identifier">
+            </div>
+            <div class="modal-actions">
+                <button id="edit-item-cancel-btn" class="btn btn-cancel">Cancelar</button>
+                <button id="edit-item-save-btn" class="btn btn-success">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NOVO: Modal para Confirmação de Limpeza -->
+    <div id="clear-modal-container" class="modal-overlay no-print">
+        <div class="modal-box">
+            <h4>Confirmar Ação</h4>
+            <p>Tem certeza que deseja limpar todo o orçamento? Esta ação não pode ser desfeita.</p>
+            <div class="modal-actions">
+                <button id="clear-cancel-btn" class="btn btn-secondary">Cancelar</button>
+                <button id="clear-confirm-btn" class="btn btn-danger" style="font-size: 1rem; padding: 0.75rem 1.5rem;">Sim, Limpar Tudo</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="incra-raw-data" style="display:none;">
         <!-- === INÍCIO: Mercado Regional de Terras Cone Sul === -->
@@ -995,7 +1068,7 @@
             </div>
             
             <div class="categorical-level" data-level-name="2º Nível Categórico">
-                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="27846.08" data-media-vti="27526.98" data-limite-inferior-vti="23397.93" data-limite-superior-vti="31656.03" data-mediana-vtn="19492.25" data-media-vtn="19268.89" data-limite-inferior-vtn="16378.55" data-limite-superior-vtn="22159.22"></div>
+                <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="27846.08" data-media-vti="27526.98" data-limite-inferior-vti="23397.93" data-limite-superior-vti="31656.03" data-mediana-vtn="19492.25" data-media-vti="19268.89" data-limite-inferior-vtn="16378.55" data-limite-superior-vtn="22159.22"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="30991.74" data-media-vti="29508.25" data-limite-inferior-vti="25082.01" data-limite-superior-vti="33934.49" data-mediana-vtn="21694.22" data-media-vtn="20655.78" data-limite-inferior-vtn="17557.41" data-limite-superior-vtn="23754.14"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="25091.39" data-media-vti="24791.40" data-limite-inferior-vti="21072.69" data-limite-superior-vti="28510.10" data-mediana-vtn="17563.97" data-media-vtn="17353.98" data-limite-inferior-vtn="14750.88" data-limite-superior-vtn="19957.07"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="21694.21" data-media-vti="21009.31" data-limite-inferior-vti="17857.92" data-limite-superior-vti="24160.71" data-mediana-vtn="15185.95" data-media-vtn="14706.52" data-limite-inferior-vtn="12500.54" data-limite-superior-vtn="16912.50"></div>
@@ -1010,7 +1083,7 @@
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Alvorada do Oeste" data-mediana-vti="30991.74" data-media-vti="31416.86" data-limite-inferior-vti="26704.33" data-limite-superior-vti="36129.39" data-mediana-vtn="21694.22" data-media-vtn="21991.80" data-limite-inferior-vtn="18693.03" data-limite-superior-vtn="25290.57"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - Costa Marques" data-mediana-vti="30991.74" data-media-vti="28512.40" data-limite-inferior-vti="24235.54" data-limite-superior-vti="32789.26" data-mediana-vtn="21694.22" data-media-vtn="19958.68" data-limite-inferior-vtn="16964.88" data-limite-superior-vtn="22952.48"></div>
                 <div class="typology" data-typology-name="Lavoura Anual Mecanizada - São Francisco do Guaporé" data-mediana-vti="31290.87" data-media-vti="31002.08" data-limite-inferior-vti="26351.77" data-limite-superior-vti="35652.39" data-mediana-vtn="21903.61" data-media-vtn="21701.46" data-limite-inferior-vtn="18446.24" data-limite-superior-vtn="24956.67"></div>
-                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Miguel do Guaporé" data-mediana-vti="29442.15" data-media-vti="27376.03" data-limite-inferior-vti="23269.63" data-limite-superior-vti="31482.44" data-mediana-vtn="20609.51" data-media-vtn="19163.22" data-limite-inferior-vtn="16288.74" data-limite-superior-vtn="22037.71"></div>
+                <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Miguel do Guaporé" data-mediana-vti="29442.15" data-media-vti="27376.03" data-limite-inferior-vti="23269.63" data-limite-superior-vti="31482.44" data-mediana-vtn="20609.51" data-media-vti="19163.22" data-limite-inferior-vtn="16288.74" data-limite-superior-vtn="22037.71"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - Costa Marques" data-mediana-vti="21146.72" data-media-vti="21102.91" data-limite-inferior-vti="17937.47" data-limite-superior-vti="24268.35" data-mediana-vtn="14802.70" data-media-vtn="14772.04" data-limite-inferior-vtn="12556.23" data-limite-superior-vtn="16987.84"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária - São Francisco do Guaporé" data-mediana-vti="21694.21" data-media-vti="21227.18" data-limite-inferior-vti="18043.10" data-limite-superior-vti="24411.26" data-mediana-vtn="15185.95" data-media-vtn="14859.03" data-limite-inferior-vtn="12630.17" data-limite-superior-vtn="17087.88"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte - Alvorada do Oeste" data-mediana-vti="6641.09" data-media-vti="6776.87" data-limite-inferior-vti="5760.34" data-limite-superior-vti="7793.40" data-mediana-vtn="4648.76" data-media-vtn="4743.81" data-limite-inferior-vtn="4032.24" data-limite-superior-vtn="5455.38"></div>
@@ -1045,7 +1118,7 @@
 
             <div class="categorical-level" data-level-name="2º Nível Categórico">
                 <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="23553.72" data-media-vti="24448.46" data-limite-inferior-vti="20781.19" data-limite-superior-vti="28115.73" data-mediana-vtn="16487.60" data-media-vtn="17113.92" data-limite-inferior-vtn="14546.84" data-limite-superior-vtn="19681.01"></div>
-                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="21952.48" data-media-vti="20234.58" data-limite-inferior-vti="17199.39" data-limite-superior-vti="23269.77" data-mediana-vtn="15366.74" data-media-vtn="14164.21" data-limite-inferior-vtn="12039.58" data-limite-superior-vtn="16288.84"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="21952.48" data-media-vti="20234.58" data-limite-inferior-vti="17199.39" data-limite-superior-vti="23269.77" data-mediana-vtn="15366.74" data-media-vti="14164.21" data-limite-inferior-vtn="12039.58" data-limite-superior-vtn="16288.84"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="13171.49" data-media-vti="15396.69" data-limite-inferior-vti="13087.18" data-limite-superior-vti="17706.19" data-mediana-vtn="9220.04" data-media-vtn="10777.68" data-limite-inferior-vtn="9161.03" data-limite-superior-vtn="12394.33"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="18595.04" data-media-vti="18776.74" data-limite-inferior-vti="15960.23" data-limite-superior-vti="21593.26" data-mediana-vtn="13016.53" data-media-vtn="13143.72" data-limite-inferior-vtn="11172.16" data-limite-superior-vtn="15115.28"></div>
                 <div class="typology" data-typology-name="Mata Explorada" data-mediana-vti="1376.81" data-media-vti="1449.36" data-limite-inferior-vti="1231.96" data-limite-superior-vti="1666.77" data-mediana-vtn="963.77" data-media-vtn="1014.55" data-limite-inferior-vtn="862.37" data-limite-superior-vtn="1166.74"></div>
@@ -1084,7 +1157,7 @@
             
             <div class="categorical-level" data-level-name="2º Nível Categórico">
                 <div class="typology" data-typology-name="Agricultura Familiar" data-mediana-vti="46487.60" data-media-vti="47578.91" data-limite-inferior-vti="40442.07" data-limite-superior-vti="54715.74" data-mediana-vtn="32541.32" data-media-vtn="33305.24" data-limite-inferior-vtn="28309.45" data-limite-superior-vtn="38301.02"></div>
-                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="47896.32" data-media-vti="47847.74" data-limite-inferior-vti="40670.58" data-limite-superior-vti="55024.90" data-mediana-vtn="33527.42" data-media-vtn="33493.42" data-limite-inferior-vtn="28469.41" data-limite-superior-vtn="38517.43"></div>
+                <div class="typology" data-typology-name="Lavoura Anual Mecanizada" data-mediana-vti="47896.32" data-media-vti="47847.74" data-limite-inferior-vti="40670.58" data-limite-superior-vti="55024.90" data-mediana-vtn="33527.42" data-media-vti="33493.42" data-limite-inferior-vtn="28469.41" data-limite-superior-vtn="38517.43"></div>
                 <div class="typology" data-typology-name="Agricultura Familiar e Pecuária" data-mediana-vti="40231.87" data-media-vti="40475.22" data-limite-inferior-vti="34403.94" data-limite-superior-vti="46546.50" data-mediana-vtn="28162.31" data-media-vtn="28332.65" data-limite-inferior-vtn="24082.76" data-limite-superior-vtn="32582.55"></div>
                 <div class="typology" data-typology-name="Lavoura Mecanizada e Pecuária" data-mediana-vti="30991.74" data-media-vti="32221.57" data-limite-inferior-vti="27388.33" data-limite-superior-vti="37054.81" data-mediana-vtn="21694.22" data-media-vtn="22555.10" data-limite-inferior-vtn="19171.83" data-limite-superior-vtn="25938.36"></div>
                 <div class="typology" data-typology-name="Pecuária de Baixo Suporte" data-mediana-vti="8040.31" data-media-vti="8054.81" data-limite-inferior-vti="6846.59" data-limite-superior-vti="9263.03" data-mediana-vtn="5628.22" data-media-vtn="5638.37" data-limite-inferior-vtn="4792.61" data-limite-superior-vtn="6484.12"></div>
@@ -1371,6 +1444,14 @@
             const constructionFields = document.getElementById('construction-fields');
             const calculateConstructionValueBtn = document.getElementById('calculate-construction-value');
             
+            // --- NOVO: Referências aos novos elementos de UI ---
+            const clearBudgetButton = document.getElementById('clear-budget-button');
+            const editItemModal = document.getElementById('edit-item-modal-container');
+            const clearModal = document.getElementById('clear-modal-container');
+            const editItemIdHiddenInput = document.getElementById('edit-item-id-hidden');
+            const editItemNameInput = document.getElementById('edit-item-name');
+            const editItemIdentifierInput = document.getElementById('edit-item-identifier');
+
             // --- DATA BUILDERS ---
             function buildIncraData() {
                 const db = {};
@@ -1473,10 +1554,12 @@
                     budgetItemsContainer.innerHTML = `<div id="budget-placeholder">Seu orçamento está vazio. Adicione um ato acima.</div>`;
                     budgetSummaryContainer.innerHTML = '';
                     printButton.style.display = 'none';
+                    clearBudgetButton.style.display = 'none'; // NOVO: Esconder botão de limpar
                     return;
                 }
 
                 printButton.style.display = 'inline-flex';
+                clearBudgetButton.style.display = 'inline-flex'; // NOVO: Mostrar botão de limpar
 
                 let itemsHtml = `
                     <table id="budget-items-table">
@@ -1484,8 +1567,7 @@
                             <tr>
                                 <th>Descrição do Ato</th>
                                 <th style="text-align: right;">Subtotal</th>
-                                <th style="width: 1%;" class="no-print"></th>
-                                <th style="width: 1%;" class="no-print"></th>
+                                <th colspan="3" class="actions-col no-print"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1519,21 +1601,26 @@
                                 ${tagsHtml}
                             </td>
                             <td class="item-value">${formatCurrency(item.costs.subtotal)}</td>
-                            <td>
+                            <td class="actions-col no-print">
                                 ${item.type !== 'itbi' && item.type !== 'manual' && item.type !== 'itcmd' ? `
-                                <button class="btn-icon details-toggle-btn no-print" title="Ver detalhes">
+                                <button class="btn-icon details-toggle-btn" title="Ver detalhes">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
                                 </button>
                                 ` : ''}
                             </td>
-                            <td>
-                                <button class="btn-icon remove-btn no-print" title="Remover item">
+                            <td class="actions-col no-print">
+                                <button class="btn-icon edit-btn" title="Editar item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg>
+                                </button>
+                            </td>
+                            <td class="actions-col no-print">
+                                <button class="btn-icon remove-btn" title="Remover item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
                                 </button>
                             </td>
                         </tr>
                         <tr class="details-row" data-details-for="${item.id}">
-                           <td colspan="4">
+                           <td colspan="5">
     <div class="details-content">
         <table>
             <tbody>
@@ -1876,6 +1963,8 @@
                     const target = e.target;
                     const removeButton = target.closest('.remove-btn');
                     const detailsButton = target.closest('.details-toggle-btn');
+                    const editButton = target.closest('.edit-btn'); // NOVO
+                    
                     if (removeButton) {
                         const row = removeButton.closest('.item-row');
                         removeItemFromBudget(parseInt(row.dataset.id));
@@ -1884,6 +1973,13 @@
                         const detailsRow = document.querySelector(`.details-row[data-details-for='${row.dataset.id}']`);
                         if (detailsRow) {
                             detailsRow.style.display = detailsRow.style.display === 'table-row' ? 'none' : 'table-row';
+                        }
+                    } else if (editButton) { // NOVO: Lógica do botão de edição
+                        const row = editButton.closest('.item-row');
+                        const itemId = parseInt(row.dataset.id);
+                        const itemToEdit = budgetItems.find(item => item.id === itemId);
+                        if (itemToEdit) {
+                            openEditModal(itemToEdit);
                         }
                     }
                 });
@@ -1894,11 +1990,10 @@
                     const showCombo = selectedKey === 'notas_escritura_valor' || selectedKey === 'imoveis_registro_valor';
                     comboOptionContainer.style.display = showCombo ? 'flex' : 'none';
                     const naturezaAtoPanel = document.getElementById('natureza-ato-panel');
-naturezaAtoPanel.style.display = showCombo ? 'block' : 'none';
+                    naturezaAtoPanel.style.display = showCombo ? 'block' : 'none';
 
                     if (!showCombo) {
                         document.getElementById('add-combo').checked = false;
-                        document.getElementById('is-usufruct').checked = false;
                     }
                     
                     if (selectedKey === 'imoveis_averbacao_valor') {
@@ -1951,74 +2046,98 @@ naturezaAtoPanel.style.display = showCombo ? 'block' : 'none';
                     printModalContainer.classList.remove('show');
                     window.print();
                 });
-                                document.getElementById('print-simplified-btn').addEventListener('click', () => {
+                document.getElementById('print-simplified-btn').addEventListener('click', () => {
                     printModalContainer.classList.remove('show');
                     document.body.classList.add('print-simplified');
                     window.print();
                 });
                 window.addEventListener('afterprint', () => document.body.classList.remove('print-simplified'));
-
-                // <<< COLE O SEU NOVO CÓDIGO EXATAMENTE AQUI, NESTA LINHA ABAIXO >>>
                 
-                // --- INÍCIO: Lógica para o painel interativo do ITCMD ---
+                // --- INÍCIO: CÓDIGO NOVO PARA MODAL DE EDIÇÃO E LIMPEZA ---
 
-                // Primeiro, "pegamos" os elementos do HTML para poder manipulá-los.
+                // --- Funções do Modal de Edição ---
+                function openEditModal(item) {
+                    editItemIdHiddenInput.value = item.id;
+                    editItemNameInput.value = item.name;
+                    editItemIdentifierInput.value = item.identifier;
+                    editItemModal.classList.add('show');
+                }
+                
+                function closeEditModal() {
+                    editItemModal.classList.remove('show');
+                }
+
+                function saveItemChanges() {
+                    const itemId = parseInt(editItemIdHiddenInput.value);
+                    const itemToUpdate = budgetItems.find(item => item.id === itemId);
+                    
+                    if (itemToUpdate) {
+                        itemToUpdate.name = editItemNameInput.value.trim();
+                        itemToUpdate.identifier = editItemIdentifierInput.value.trim();
+                    }
+                    
+                    renderBudget();
+                    closeEditModal();
+                }
+
+                // --- Listeners do Modal de Edição ---
+                document.getElementById('edit-item-save-btn').addEventListener('click', saveItemChanges);
+                document.getElementById('edit-item-cancel-btn').addEventListener('click', closeEditModal);
+
+                // --- Funções e Listeners do Modal de Limpeza ---
+                clearBudgetButton.addEventListener('click', () => {
+                    clearModal.classList.add('show');
+                });
+
+                document.getElementById('clear-cancel-btn').addEventListener('click', () => {
+                    clearModal.classList.remove('show');
+                });
+
+                document.getElementById('clear-confirm-btn').addEventListener('click', () => {
+                    budgetItems = []; // Esvazia o array de itens
+                    renderBudget();   // Re-renderiza a UI, que agora mostrará o placeholder
+                    clearModal.classList.remove('show');
+                });
+
+                // --- FIM: CÓDIGO NOVO PARA MODAL DE EDIÇÃO E LIMPEZA ---
+                
                 const itcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
                 const itcmdOptionsPanel = document.getElementById('itcmd-options-panel');
                 const itcmdDonorsDetails = document.getElementById('itcmd-donors-details');
                 const itcmdBaseTypeRadios = document.querySelectorAll('input[name="itcmd_base_type"]');
 
-                // OUVINTE 1: Fica de olho na checkbox principal do ITCMD.
-                // O evento é 'change' (quando é marcada ou desmarcada).
                 itcmdCheckbox.addEventListener('change', () => {
-                    // A AÇÃO: Se a checkbox estiver marcada (checked), o painel fica visível ('block').
-                    // Se não, ele fica escondido ('none').
                     itcmdOptionsPanel.style.display = itcmdCheckbox.checked ? 'block' : 'none';
                 });
 
-                // OUVINTE 2: Fica de olho nos dois botões de rádio (Padrão e Fracionado).
-                // Usamos forEach para aplicar a mesma lógica para ambos os botões.
                 itcmdBaseTypeRadios.forEach(radio => {
                     radio.addEventListener('change', () => {
-                        // A AÇÃO: Verificamos se o botão "fracionado" está marcado.
                         const showDetails = document.getElementById('itcmd_base_fracionado').checked;
-                        
-                        // Se estiver, o campo "Número de Donatários" fica visível ('block').
-                        // Se não, ele fica escondido ('none').
                         itcmdDonorsDetails.style.display = showDetails ? 'block' : 'none';
                     });
                 });
 
-                // --- FIM: Lógica para o painel interativo do ITCMD ---
+                const inventoryItcmdCheckbox = document.getElementById('inventory-calculate-itcmd');
+                const inventoryItcmdSettings = document.getElementById('inventory-itcmd-settings');
+                const itcmdDisclaimer = document.getElementById('itcmd-disclaimer'); 
 
+                inventoryItcmdCheckbox.addEventListener('change', () => {
+                    const isChecked = inventoryItcmdCheckbox.checked; 
+                    inventoryItcmdSettings.style.display = isChecked ? 'block' : 'none'; 
+                    itcmdDisclaimer.style.display = isChecked ? 'block' : 'none';      
+                });
+                const inventoryHasSpouseSelect = document.getElementById('inventory-has-spouse');
+                const inventorySpouseHeirOption = document.getElementById('inventory-spouse-heir-option');
 
-// <<< COLE O NOVO BLOCO DE CÓDIGO IMEDIATAMENTE ABAIXO >>>
+                inventoryHasSpouseSelect.addEventListener('change', () => {
+                    const showSpouseHeirOption = inventoryHasSpouseSelect.value === 'sim';
+                    inventorySpouseHeirOption.style.display = showSpouseHeirOption ? 'block' : 'none';
+                    if (!showSpouseHeirOption) {
+                        document.getElementById('inventory-spouse-is-heir').checked = false;
+                    }
+                });
 
-// --- INÍCIO: Lógica da Interface para Configurações do ITCMD no Inventário ---
-const inventoryItcmdCheckbox = document.getElementById('inventory-calculate-itcmd');
-const inventoryItcmdSettings = document.getElementById('inventory-itcmd-settings');
-const itcmdDisclaimer = document.getElementById('itcmd-disclaimer'); // <-- ADICIONE ESTA LINHA
-
-inventoryItcmdCheckbox.addEventListener('change', () => {
-    const isChecked = inventoryItcmdCheckbox.checked; // <-- ADICIONE ESTA LINHA
-    // Mostra ou esconde todo o painel de configurações
-    inventoryItcmdSettings.style.display = isChecked ? 'block' : 'none'; // <-- ALTERE ESTA LINHA
-    itcmdDisclaimer.style.display = isChecked ? 'block' : 'none';      // <-- ADICIONE ESTA LINHA
-});
-const inventoryHasSpouseSelect = document.getElementById('inventory-has-spouse');
-const inventorySpouseHeirOption = document.getElementById('inventory-spouse-heir-option');
-
-inventoryHasSpouseSelect.addEventListener('change', () => {
-    // Mostra ou esconde a opção do cônjuge herdeiro
-    const showSpouseHeirOption = inventoryHasSpouseSelect.value === 'sim';
-    inventorySpouseHeirOption.style.display = showSpouseHeirOption ? 'block' : 'none';
-    if (!showSpouseHeirOption) {
-        document.getElementById('inventory-spouse-is-heir').checked = false;
-    }
-});
-// --- FIM: Lógica da Interface ---
-
-            }; // ESTA É A CHAVE DE FECHAMENTO ORIGINAL DA FUNÇÃO. ELA DEVE FICAR DEPOIS DO SEU CÓDIGO.
+            }; 
 
             function addInventoryAssetRow() {
                 inventoryAssetCounter++;
@@ -2059,147 +2178,138 @@ inventoryHasSpouseSelect.addEventListener('change', () => {
             }
 
  
-function calculateInventory() {
-    const assetRows = document.querySelectorAll('.inventory-asset-row');
-    const shouldCalculateITCMD = document.getElementById('inventory-calculate-itcmd').checked;
+            function calculateInventory() {
+                const assetRows = document.querySelectorAll('.inventory-asset-row');
+                const shouldCalculateITCMD = document.getElementById('inventory-calculate-itcmd').checked;
 
-    if (assetRows.length === 0) {
-        alert('Adicione pelo menos um bem para calcular.');
-        return;
-    }
-    
-    const newItems = [];
-    let timestamp = Date.now();
-    let hasError = false;
+                if (assetRows.length === 0) {
+                    alert('Adicione pelo menos um bem para calcular.');
+                    return;
+                }
+                
+                const newItems = [];
+                let timestamp = Date.now();
+                let hasError = false;
 
-    // 1. Ler todos os bens da lista
-    const assetsData = [];
-    assetRows.forEach(row => {
-        const desc = row.querySelector('.inv-desc').value.trim();
-        const val = parseCurrency(row.querySelector('.inv-val').value);
-        if (!desc || val <= 0) {
-            hasError = true;
-            return;
-        }
-        assetsData.push({
-            desc, val,
-            type: row.querySelector('.inv-type').value,
-            isMeacao: row.querySelector('.inv-meacao').checked,
-            isIsento: row.querySelector('.inv-isento').checked,
-        });
-    });
+                const assetsData = [];
+                assetRows.forEach(row => {
+                    const desc = row.querySelector('.inv-desc').value.trim();
+                    const val = parseCurrency(row.querySelector('.inv-val').value);
+                    if (!desc || val <= 0) {
+                        hasError = true;
+                        return;
+                    }
+                    assetsData.push({
+                        desc, val,
+                        type: row.querySelector('.inv-type').value,
+                        isMeacao: row.querySelector('.inv-meacao').checked,
+                        isIsento: row.querySelector('.inv-isento').checked,
+                    });
+                });
 
-    if (hasError) {
-        alert('Por favor, preencha a identificação e a avaliação de todos os bens.');
-        return;
-    }
+                if (hasError) {
+                    alert('Por favor, preencha a identificação e a avaliação de todos os bens.');
+                    return;
+                }
 
-    // 2. Calcular Escritura e Registros (sem alterações aqui)
-    const totalEscrituraValue = assetsData.reduce((sum, asset) => sum + asset.val, 0);
-    const escrituraAtoInfo = feeTables.notas.atosVariaveis.notas_escritura_valor;
-    const { oficial: escOficial, selo: escSelo } = findVariableFee(escrituraAtoInfo, totalEscrituraValue);
-    newItems.push({
-        id: timestamp++, type: 'variavel', name: 'Escritura de Inventário/Partilha/Doação',
-        identifier: `Base: ${formatCurrency(totalEscrituraValue)} (${assetsData.length} bens)`,
-        baseValue: totalEscrituraValue,
-        costs: calculateCosts(escOficial, escSelo)
-    });
-    
-    const registroAtoInfo = feeTables.imoveis.atosVariaveis.imoveis_registro_valor;
-    assetsData.forEach(asset => {
-        if (asset.type === 'imovel') {
-            const baseValueTransmitted = asset.isMeacao ? asset.val * 0.5 : asset.val;
-            const { oficial: regOficial, selo: regSelo } = findVariableFee(registroAtoInfo, baseValueTransmitted);
-             newItems.push({
-                id: timestamp++, type: 'variavel', name: 'Registro de Imóvel (Partilha)',
-                identifier: asset.desc, 
-                baseValue: baseValueTransmitted,
-                evaluationValue: asset.val,
-                costs: calculateCosts(regOficial, regSelo),
-                isMeacao: asset.isMeacao
-            });
-        }
-    });
+                const totalEscrituraValue = assetsData.reduce((sum, asset) => sum + asset.val, 0);
+                const escrituraAtoInfo = feeTables.notas.atosVariaveis.notas_escritura_valor;
+                const { oficial: escOficial, selo: escSelo } = findVariableFee(escrituraAtoInfo, totalEscrituraValue);
+                newItems.push({
+                    id: timestamp++, type: 'variavel', name: 'Escritura de Inventário/Partilha/Doação',
+                    identifier: `Base: ${formatCurrency(totalEscrituraValue)} (${assetsData.length} bens)`,
+                    baseValue: totalEscrituraValue,
+                    costs: calculateCosts(escOficial, escSelo)
+                });
+                
+                const registroAtoInfo = feeTables.imoveis.atosVariaveis.imoveis_registro_valor;
+                assetsData.forEach(asset => {
+                    if (asset.type === 'imovel') {
+                        const baseValueTransmitted = asset.isMeacao ? asset.val * 0.5 : asset.val;
+                        const { oficial: regOficial, selo: regSelo } = findVariableFee(registroAtoInfo, baseValueTransmitted);
+                         newItems.push({
+                            id: timestamp++, type: 'variavel', name: 'Registro de Imóvel (Partilha)',
+                            identifier: asset.desc, 
+                            baseValue: baseValueTransmitted,
+                            evaluationValue: asset.val,
+                            costs: calculateCosts(regOficial, regSelo),
+                            isMeacao: asset.isMeacao
+                        });
+                    }
+                });
 
-    // 3. LÓGICA DE CÁLCULO DO ITCMD REFINADA E SEPARADA
-    if (shouldCalculateITCMD) {
-        const hasSpouse = document.getElementById('inventory-has-spouse').value === 'sim';
-        const heirCount = parseInt(document.getElementById('inventory-heir-count').value) || 1;
-        const spouseIsHeir = document.getElementById('inventory-spouse-is-heir').checked;
+                if (shouldCalculateITCMD) {
+                    const hasSpouse = document.getElementById('inventory-has-spouse').value === 'sim';
+                    const heirCount = parseInt(document.getElementById('inventory-heir-count').value) || 1;
+                    const spouseIsHeir = document.getElementById('inventory-spouse-is-heir').checked;
 
-        let totalHerancaParaHerdeiros = 0;
-        let totalHerancaParaConjuge = 0;
+                    let totalHerancaParaHerdeiros = 0;
+                    let totalHerancaParaConjuge = 0;
 
-        assetsData.forEach(asset => {
-            if (!asset.isIsento) {
-                // Se é meação, metade do valor é herança para os herdeiros
-                if (asset.isMeacao) {
-                    totalHerancaParaHerdeiros += asset.val / 2;
-                } 
-                // Se é bem particular, o valor total é herança
-                else {
-                    const divisorParticulares = (hasSpouse && spouseIsHeir) ? heirCount + 1 : heirCount;
-                    if (divisorParticulares > 0) {
-                        const share = asset.val / divisorParticulares;
-                        totalHerancaParaHerdeiros += share * heirCount;
-                        if (hasSpouse && spouseIsHeir) {
-                            totalHerancaParaConjuge += share;
+                    assetsData.forEach(asset => {
+                        if (!asset.isIsento) {
+                            if (asset.isMeacao) {
+                                totalHerancaParaHerdeiros += asset.val / 2;
+                            } 
+                            else {
+                                const divisorParticulares = (hasSpouse && spouseIsHeir) ? heirCount + 1 : heirCount;
+                                if (divisorParticulares > 0) {
+                                    const share = asset.val / divisorParticulares;
+                                    totalHerancaParaHerdeiros += share * heirCount;
+                                    if (hasSpouse && spouseIsHeir) {
+                                        totalHerancaParaConjuge += share;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    if (heirCount > 0 && totalHerancaParaHerdeiros > 0) {
+                        const baseCalculoPorHerdeiro = totalHerancaParaHerdeiros / heirCount;
+                        const { value: itcmdPorHerdeiro, rate } = calculateSingleITCMD(baseCalculoPorHerdeiro);
+                        const totalItcmdHerdeiros = itcmdPorHerdeiro * heirCount;
+
+                        if (totalItcmdHerdeiros > 0) {
+                            const itcmdDetails = [
+                                { label: 'Base de Cálculo (por herdeiro)', value: formatCurrency(baseCalculoPorHerdeiro) },
+                                { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
+                                { label: 'Imposto (por herdeiro)', value: formatCurrency(itcmdPorHerdeiro) },
+                                { label: 'Total (Herdeiros)', value: `${formatCurrency(itcmdPorHerdeiro)} x ${heirCount} = ${formatCurrency(totalItcmdHerdeiros)}` }
+                            ];
+                            newItems.push({
+                                id: timestamp++, type: 'itcmd', name: 'ITCMD (Herdeiros)',
+                                identifier: `${heirCount} herdeiro(s)`,
+                                costs: { subtotal: totalItcmdHerdeiros, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
+                                details: itcmdDetails
+                            });
+                        }
+                    }
+
+                    if (hasSpouse && totalHerancaParaConjuge > 0) {
+                        const baseCalculoConjuge = totalHerancaParaConjuge;
+                        const { value: itcmdDoConjuge, rate } = calculateSingleITCMD(baseCalculoConjuge);
+
+                        if (itcmdDoConjuge > 0) {
+                             const itcmdDetails = [
+                                { label: 'Base de Cálculo (Cônjuge)', value: formatCurrency(baseCalculoConjuge) },
+                                { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
+                                { label: 'Total (Cônjuge)', value: formatCurrency(itcmdDoConjuge) }
+                            ];
+                            newItems.push({
+                                id: timestamp++, type: 'itcmd', name: 'ITCMD (Cônjuge Herdeiro)',
+                                identifier: '1 cônjuge/companheiro(a)',
+                                costs: { subtotal: itcmdDoConjuge, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
+                                details: itcmdDetails
+                            });
                         }
                     }
                 }
+
+                addMultipleItemsToBudget(newItems);
+                document.getElementById('inventory-assets-list').innerHTML = '';
+                inventoryAssetCounter = 0;
+                addInventoryAssetRow();
             }
-        });
-        
-        // Agora calculamos a base de cálculo individual e o imposto
-        if (heirCount > 0 && totalHerancaParaHerdeiros > 0) {
-            const baseCalculoPorHerdeiro = totalHerancaParaHerdeiros / heirCount;
-            const { value: itcmdPorHerdeiro, rate } = calculateSingleITCMD(baseCalculoPorHerdeiro);
-            const totalItcmdHerdeiros = itcmdPorHerdeiro * heirCount;
-
-            if (totalItcmdHerdeiros > 0) {
-                const itcmdDetails = [
-                    { label: 'Base de Cálculo (por herdeiro)', value: formatCurrency(baseCalculoPorHerdeiro) },
-                    { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
-                    { label: 'Imposto (por herdeiro)', value: formatCurrency(itcmdPorHerdeiro) },
-                    { label: 'Total (Herdeiros)', value: `${formatCurrency(itcmdPorHerdeiro)} x ${heirCount} = ${formatCurrency(totalItcmdHerdeiros)}` }
-                ];
-                newItems.push({
-                    id: timestamp++, type: 'itcmd', name: 'ITCMD (Herdeiros)',
-                    identifier: `${heirCount} herdeiro(s)`,
-                    costs: { subtotal: totalItcmdHerdeiros, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
-                    details: itcmdDetails
-                });
-            }
-        }
-
-        if (hasSpouse && totalHerancaParaConjuge > 0) {
-            const baseCalculoConjuge = totalHerancaParaConjuge; // Já é o total para o cônjuge
-            const { value: itcmdDoConjuge, rate } = calculateSingleITCMD(baseCalculoConjuge);
-
-            if (itcmdDoConjuge > 0) {
-                 const itcmdDetails = [
-                    { label: 'Base de Cálculo (Cônjuge)', value: formatCurrency(baseCalculoConjuge) },
-                    { label: 'Alíquota Aplicada', value: `${rate * 100}%` },
-                    { label: 'Total (Cônjuge)', value: formatCurrency(itcmdDoConjuge) }
-                ];
-                newItems.push({
-                    id: timestamp++, type: 'itcmd', name: 'ITCMD (Cônjuge Herdeiro)',
-                    identifier: '1 cônjuge/companheiro(a)',
-                    costs: { subtotal: itcmdDoConjuge, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 },
-                    details: itcmdDetails
-                });
-            }
-        }
-    }
-
-    addMultipleItemsToBudget(newItems);
-    document.getElementById('inventory-assets-list').innerHTML = '';
-    inventoryAssetCounter = 0;
-    addInventoryAssetRow();
-}
-
-// FIM DA NOVA FUNÇÃO
-
 
             // --- App Start ---
             const init = () => {
