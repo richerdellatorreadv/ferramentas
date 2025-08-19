@@ -329,6 +329,31 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
     .tab-link { padding: 0.7rem 0.6rem; font-size: 0.85rem; }
     .modal-actions { flex-direction: column; }
     .modal-actions .btn { width: 100%; }
+
+    /* --- INÍCIO DA CORREÇÃO PARA CELULAR --- */
+
+    /* Faz os campos de formulário que ficavam lado a lado empilharem verticalmente */
+    .form-group-inline, 
+    .inventory-asset-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Permite que as abas quebrem a linha se não couberem na tela */
+    .tabs {
+        flex-wrap: wrap;
+    }
+
+    /* Reduz o tamanho do título principal em telas pequenas */
+    header h1 {
+        font-size: 1.75rem;
+    }
+
+    /* Ajusta o layout principal para telas muito estreitas, se necessário */
+    .main-content {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    
+    /* --- FIM DA CORREÇÃO PARA CELULAR --- */
 }
 </style>
 <link rel="stylesheet" href="/index.css">
