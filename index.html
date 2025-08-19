@@ -4,643 +4,333 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Orçamento de Custas - TJRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script
+  src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js"
+  type="module"
+></script>
     <style>
-        :root {
-            --primary-color: #0056b3;
-            --primary-color-dark: #004085;
-            --secondary-color: #6c757d;
-            --light-gray: #f8f9fa;
-            --medium-gray: #e9ecef;
-            --dark-gray: #495057;
-            --text-color: #212529;
-            --white: #fff;
-            --danger-color: #dc3545;
-            --success-color: #28a745;
-            --border-radius: 6px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
+:root {
+    --primary-color: #1e63b3;
+    --primary-color-dark: #124a8a;
+    --primary-color-light: #f0f6ff;
+    --secondary-color: #4a5568;
+    --light-gray: #f7fafc;
+    --medium-gray: #e2e8f0;
+    --dark-gray: #2d3748;
+    --text-color: #2d3748;
+    --white: #fff;
+    --danger-color: #e53e3e;
+    --success-color: #38a169;
+    --warning-color: #dd6b20;
+    --border-color: #cbd5e0;
+    --border-radius: 0.5rem; /* 8px */
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    --box-shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --transition-speed: 0.2s;
+}
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: var(--font-family);
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
+body {
+    font-family: var(--font-family);
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-        }
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-lg);
+    overflow: hidden;
+}
 
-        header {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 2rem;
-            text-align: center;
-        }
+header {
+    background: var(--dark-gray);
+    color: var(--white);
+    padding: 2.5rem;
+    text-align: center;
+}
 
-        header h1 {
-            margin-bottom: 0.5rem;
-            font-size: 2rem;
-            font-weight: 500;
-        }
+header h1 {
+    margin-bottom: 0.5rem;
+    font-size: 2.25rem;
+    font-weight: 700;
+}
 
-        header p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
+header p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
 
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-        }
+.main-content {
+    display: grid;
+    grid-template-columns: minmax(500px, 1.3fr) 1.7fr;
+    min-height: 80vh;
+}
 
-        .input-section, .budget-section {
-            padding: 2rem;
-        }
+.input-section, .budget-section {
+    padding: 2.5rem;
+}
 
-        .input-section {
-            flex: 1 1 450px;
-            border-right: 1px solid var(--medium-gray);
-        }
+.input-section {
+    background-color: var(--white);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
 
-        .budget-section {
-            flex: 1 1 550px;
-            background-color: var(--light-gray);
-        }
+.input-section > h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-gray);
+    font-weight: 600;
+}
 
-        .input-section h2, .budget-header h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color-dark);
-        }
+/* NOVO VISUAL DE ABAS */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--medium-gray);
+    margin-bottom: 2rem;
+}
 
-        .budget-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+.tab-link {
+    padding: 0.8rem 1.2rem;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--secondary-color);
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: -2px;
+}
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            border-bottom: 2px solid var(--medium-gray);
-            margin-bottom: 1.5rem;
-        }
+.tab-link:hover {
+    color: var(--primary-color);
+}
 
-        .tab-link {
-            padding: 0.75rem 1rem;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--secondary-color);
-            border-bottom: 3px solid transparent;
-            transition: color 0.2s, border-color 0.2s;
-            margin-bottom: -2px;
-        }
+.tab-link.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 600;
+}
 
-        .tab-link:hover {
-            color: var(--primary-color);
-        }
+.tab-content { display: none; animation: fadeIn 0.4s; }
+.tab-content.active { display: block; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .tab-link.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
+/* SEÇÃO DE ORÇAMENTO MELHORADA */
+.budget-section {
+    background-color: var(--light-gray);
+    display: flex;
+    flex-direction: column;
+}
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.4s;
-        }
+.budget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+}
 
-        .tab-content.active {
-            display: block;
-        }
+.budget-header h2 {
+    font-size: 1.75rem;
+    color: var(--dark-gray);
+    font-weight: 600;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+#budget-placeholder {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--secondary-color);
+    border: 2px dashed var(--medium-gray);
+    border-radius: var(--border-radius);
+    background-color: var(--white);
+    margin-top: 1.5rem;
+    transition: all var(--transition-speed);
+}
+#budget-items-container {
+    margin-top: 1.5rem;
+}
 
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+#budget-items-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.75rem;
+}
+#budget-items-table thead { display: none; }
+#budget-items-table th, #budget-items-table td { padding: 1rem 1.25rem; vertical-align: middle; }
+#budget-items-table .actions-col { width: 1%; padding: 0.5rem; white-space: nowrap; }
 
-        label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark-gray);
-        }
+.item-row {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.item-row:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+.details-row { display: none; }
+.details-row > td { padding: 0; }
+.details-content {
+    background-color: #f8f9fa;
+    padding: 1rem 1.25rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    border-top: 1px solid var(--medium-gray);
+}
+.details-content table { width: 100%; font-size: 0.9rem; }
+.details-content table td { padding: 0.4rem 0; }
+.details-content .item-value { text-align: right; }
+.item-description { font-weight: 500; }
+.item-value { text-align: right; font-weight: 600; font-size: 1.05rem; }
 
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
+#summary-table {
+    margin-top: 1.5rem;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    border-collapse: collapse;
+}
+.summary-total td {
+    padding: 1.25rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-top: 3px solid var(--primary-color);
+}
+.summary-total td:first-child { color: var(--dark-gray); }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.25);
-        }
+/* FORMULÁRIOS MODERNIZADOS */
+.form-group { margin-bottom: 1.25rem; }
+.form-group-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        select:disabled {
-            background-color: var(--medium-gray);
-            cursor: not-allowed;
-        }
+label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--secondary-color); }
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    background-color: var(--white);
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 99, 179, 0.2);
+}
+select:disabled { background-color: var(--medium-gray); cursor: not-allowed; opacity: 0.7; }
+.checkbox-group { display: flex; align-items: center; gap: 0.75rem; }
+.checkbox-group input[type="checkbox"],
+.checkbox-group input[type="radio"] { width: 1.1em; height: 1.1em; accent-color: var(--primary-color); }
+.checkbox-group label { margin-bottom: 0; font-weight: 500; color: var(--text-color); }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+/* BOTÕES APRIMORADOS */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.6rem; font-size: 1rem; font-weight: 600; border-radius: var(--border-radius); border: 1px solid transparent; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+.btn-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-dark) 100%); color: var(--white); width: 100%; }
+.btn-primary:hover { background: linear-gradient(135deg, var(--primary-color-dark) 0%, #0e3b75 100%); }
+.btn-success { background-color: var(--success-color); color: var(--white); }
+.btn-success:hover { background-color: #2f855a; }
+.btn-print { background-color: var(--secondary-color); color: var(--white); }
+.btn-print:hover { background-color: var(--dark-gray); }
+.btn-danger { background-color: var(--danger-color); color: var(--white); }
+.btn-danger:hover { background-color: #c53030; }
+.btn-danger-outline { background-color: transparent; color: var(--danger-color); border-color: var(--danger-color); }
+.btn-danger-outline:hover { background-color: var(--danger-color); color: var(--white); }
+.btn-add-discreet { background-color: transparent; border: 2px dashed var(--medium-gray); color: var(--secondary-color); font-weight: 500; }
+.btn-add-discreet:hover { background-color: var(--primary-color-light); color: var(--primary-color); border-color: var(--primary-color); box-shadow: none; }
+.btn-icon { background: transparent; border: none; cursor: pointer; color: #a0aec0; padding: 0.35rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; }
+.btn-icon:hover { color: var(--primary-color); background-color: var(--primary-color-light); }
+.btn-icon svg { width: 18px; height: 18px; }
 
-        .checkbox-group input[type="checkbox"] {
-            width: 1.2em;
-            height: 1.2em;
-        }
-        .checkbox-group label {
-            margin-bottom: 0;
-            font-weight: 500;
-            color: var(--text-color);
-        }
+/* TAGS DOS ITENS */
+.item-tags-container { margin-top: 6px; }
+.item-tag { display: inline-flex; align-items: center; gap: 0.3em; padding: 4px 10px; font-size: 0.75rem; font-weight: 500; border-radius: 9999px; margin-right: 6px; margin-top: 4px; }
+.tag-identifier { background-color: #edf2f7; color: #4a5568; }
+.tag-base-value { background-color: #ebf8ff; color: #2c5282; }
+.tag-usufruct { background-color: #fff5f5; color: #c53030; }
+.tag-evaluation { background-color: #f0fff4; color: #2f855a; }
+.tag-meacao { background-color: #fffaf0; color: #dd6b20; }
 
+/* OUTROS COMPONENTES */
+.inventory-asset-row { background: var(--light-gray); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1.25rem; margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; position: relative; animation: fadeIn 0.3s; }
+.inventory-asset-row .remove-asset-btn { position: absolute; top: 0.5rem; right: 0.5rem; }
+#incra-result-container { margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, var(--success-color) 0%, #2f855a 100%); color: var(--white); border-radius: var(--border-radius); text-align: center; }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: var(--border-radius);
-            border: 1px solid transparent;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.2s, transform 0.1s, border-color 0.2s, color 0.2s;
-        }
+/* MODAIS */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; z-index: 1000; backdrop-filter: blur(4px); }
+.modal-overlay.show { opacity: 1; visibility: visible; }
+.modal-box { background: var(--white); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow-lg); width: 90%; max-width: 500px; transform: translateY(-20px) scale(0.95); transition: transform 0.3s ease-out; }
+.modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+.modal-box h4 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--dark-gray); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+.btn-secondary { background-color: var(--secondary-color); color: var(--white); }
+.btn-secondary:hover { background-color: var(--dark-gray); }
+.btn-cancel { background-color: transparent; color: var(--secondary-color); border: 1px solid var(--border-color); }
+.btn-cancel:hover { background-color: var(--medium-gray); box-shadow: none; }
 
-        .btn:hover {
-            transform: translateY(-1px);
-        }
+/* RODAPÉ */
+footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); color: #a0aec0; font-size: 0.9rem; }
+.author-credit { display: block; margin-top: 0.5rem; opacity: 0.7; }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--white);
-            width: 100%;
-        }
+/* ESTILOS DE IMPRESSÃO */
+@media print {
+    body { padding: 0; background-color: var(--white); font-size: 10pt; }
+    .no-print, header, footer, .input-section, .budget-header .btn, #budgeter-name-group, .btn-icon, .actions-col { display: none !important; }
+    #print-header-info { display: block !important; padding-bottom: 1rem; border-bottom: 2px solid var(--dark-gray); margin-bottom: 1.5rem; }
+    .container { box-shadow: none; max-width: 100%; margin: 0; }
+    .main-content { display: block; }
+    .budget-section { border: none; padding: 1rem; background-color: var(--white); }
+    #budget-items-table { border-spacing: 0 0; }
+    .item-row { box-shadow: none; border-radius: 0; border-bottom: 1px solid #ccc; }
+    .item-row:hover { transform: none; }
+    body.print-simplified .details-row, body.print-simplified .details-toggle-btn { display: none !important; }
+}
 
-        .btn-primary:hover {
-            background-color: var(--primary-color-dark);
-        }
-        
-        .btn-success {
-            background-color: var(--success-color);
-            color: var(--white);
-        }
-        .btn-success:hover {
-             background-color: #218838;
-        }
-
-        .btn-print {
-            background-color: var(--secondary-color);
-            color: var(--white);
-        }
-
-        .btn-print:hover {
-            background-color: var(--dark-gray);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: var(--white);
-            padding: 0.2rem 0.6rem;
-            font-size: 0.8rem;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-        
-        /* NOVO ESTILO PARA O BOTÃO LIMPAR */
-        .btn-danger-outline {
-            background-color: transparent;
-            color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-        .btn-danger-outline:hover {
-            background-color: var(--danger-color);
-            color: var(--white);
-        }
-        
-        .btn-add-discreet {
-            background-color: transparent;
-            border: 1px dashed var(--secondary-color);
-            color: var(--secondary-color);
-            font-weight: 500;
-            transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
-        }
-        .btn-add-discreet:hover {
-            background-color: rgba(0, 86, 179, 0.05);
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-            transform: translateY(-1px);
-        }
-
-        .btn-icon {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--secondary-color);
-            padding: 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        .btn-icon:hover {
-            color: var(--text-color);
-            background-color: var(--medium-gray);
-        }
-
-        /* Budget Section */
-        #budget-placeholder {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--secondary-color);
-            border: 2px dashed var(--medium-gray);
-            border-radius: var(--border-radius);
-        }
-        
-        #budgeter-name-group {
-            margin-bottom: 1.5rem;
-        }
-        #print-header-info {
-            display: none; /* Hidden by default */
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px dashed var(--medium-gray);
-        }
-        #print-header-info p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-        }
-        #print-header-info p:last-child {
-            margin-top: 0.25rem;
-        }
-
-        #budget-items-table, #summary-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        #budget-items-table thead {
-            border-bottom: 2px solid var(--medium-gray);
-            color: var(--secondary-color);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            text-align: left;
-        }
-
-        #budget-items-table th, #budget-items-table td {
-            padding: 0.75rem;
-        }
-        
-        /* NOVO: Ajuste para colunas de botões */
-        #budget-items-table .actions-col {
-            width: 1%;
-            padding: 0.75rem 0.25rem; /* Menor padding para os botões */
-            white-space: nowrap;
-        }
-
-        .item-row, .details-row {
-            border-bottom: 1px solid var(--medium-gray);
-        }
-        .item-row:last-of-type {
-            border-bottom: none;
-        }
-        .details-row {
-             display: none;
-        }
-
-        .item-name {
-            font-weight: 600;
-        }
-        .item-tags-container {
-            margin-top: 6px;
-        }
-        .item-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3em;
-            padding: 3px 10px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border-radius: 14px;
-            margin-right: 6px;
-            margin-top: 4px;
-        }
-        .tag-identifier {
-            background-color: var(--medium-gray);
-            color: var(--dark-gray);
-        }
-        .tag-base-value {
-            background-color: rgba(0, 86, 179, 0.1);
-            color: var(--primary-color-dark);
-        }
-         .tag-usufruct {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-        .tag-evaluation {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-        .tag-meacao {
-            background-color: rgba(255, 193, 7, 0.15);
-            color: #b8860b;
-        }
-        .item-value {
-            text-align: right;
-            font-weight: 500;
-        }
-        .details-row {
-            background-color: var(--light-gray);
-        }
-        .details-content table {
-            width: 100%;
-        }
-        .details-content td {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.9rem;
-        }
-        #summary-table {
-            margin-top: 1.5rem;
-            border-top: 2px solid var(--dark-gray);
-        }
-        .summary-total td {
-            padding: 1rem 0.75rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        /* INCRA Result */
-        #incra-result-container {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: var(--success-color);
-            color: var(--white);
-            border-radius: var(--border-radius);
-            text-align: center;
-        }
-        #incra-result-container .result-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            opacity: 0.9;
-        }
-        #incra-result-container .result-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0.25rem 0 1rem;
-        }
-        #incra-result-container .btn {
-            background-color: var(--white);
-            color: var(--success-color);
-            font-weight: 700;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            z-index: 1000;
-        }
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-box {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 500px;
-            transform: translateY(-20px);
-            transition: transform 0.3s;
-        }
-        .modal-overlay.show .modal-box {
-            transform: translateY(0);
-        }
-        .modal-box h4 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-        .modal-box p {
-            margin-bottom: 1.5rem;
-            color: var(--secondary-color);
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: var(--white);
-        }
-        .btn-secondary:hover {
-            background-color: var(--dark-gray);
-        }
-        .btn-cancel {
-            background-color: transparent;
-            color: var(--secondary-color);
-            border: 1px solid transparent; /* NOVO */
-        }
-        .btn-cancel:hover { /* NOVO */
-            background-color: var(--medium-gray);
-        }
-
-
-        /* Footer */
-        footer {
-            background-color: var(--dark-gray);
-            color: var(--light-gray);
-            font-size: 0.8rem;
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .author-credit {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            background: linear-gradient(
-                -45deg, 
-                #f8f9fa, 
-                #a7c5eb, 
-                #e9ecef, 
-                #f8f9fa
-            );
-            background-size: 400% 400%;
-            animation: gradient-flow 8s ease infinite;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        @keyframes gradient-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-
-        /* Print Styles */
-        @media print {
-            body {
-                padding: 0;
-            }
-            .no-print, header, footer, .input-section, .budget-header .btn, #budgeter-name-group {
-                display: none !important;
-            }
-            #print-header-info {
-                display: block !important;
-            }
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-            }
-            .main-content {
-                display: block;
-            }
-            .budget-section {
-                border: none;
-                padding: 1rem;
-            }
-            .budget-header h2 {
-                margin-bottom: 1rem;
-            }
-            body.print-simplified .details-row,
-            body.print-simplified .details-toggle-btn {
-                display: none !important;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .main-content {
-                flex-direction: column;
-            }
-            .input-section {
-                border-right: none;
-                border-bottom: 1px solid var(--medium-gray);
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            header, .input-section, .budget-section {
-                padding: 1rem;
-            }
-            header h1 {
-                font-size: 1.5rem;
-            }
-            .tabs {
-                gap: 0.5rem;
-            }
-            .tab-link {
-                flex-grow: 1;
-                text-align: center;
-                padding: 0.5rem;
-            }
-            .modal-actions {
-                flex-direction: column;
-            }
-            .modal-actions .btn {
-                width: 100%;
-            }
-        }
-        
-        #construction-fields label a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.8em;
-            margin-left: 4px;
-        }
-        #construction-fields label a:hover {
-            text-decoration: underline;
-        }
-
-        /* Inventory Tab Styles */
-        .inventory-asset-row {
-            background: var(--light-gray);
-            border: 1px solid var(--medium-gray);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            position: relative;
-        }
-        .inventory-asset-row .form-group {
-            margin-bottom: 0;
-        }
-        .inventory-asset-row .full-width {
-            grid-column: 1 / -1;
-        }
-        .inventory-asset-row .checkbox-group-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            grid-column: 1 / -1;
-        }
-        .inventory-asset-row .remove-asset-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-        }
-    </style>
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+    .main-content { grid-template-columns: 1fr; }
+    .input-section { border-right: none; border-bottom: 2px solid var(--border-color); }
+}
+@media (max-width: 768px) {
+    .container { margin: 1rem; }
+    header, .input-section, .budget-section { padding: 1.5rem; }
+    .tabs { gap: 0.2rem; }
+    .tab-link { padding: 0.7rem 0.6rem; font-size: 0.85rem; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions .btn { width: 100%; }
+}
+</style>
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
@@ -652,227 +342,258 @@
 
         <main class="main-content">
             <section class="input-section">
-                <h2>Adicionar Ato ao Orçamento</h2>
-                <div class="tabs">
-                    <button class="tab-link active" data-tab="tab-variavel">Atos com Valor Variável</button>
-                    <button class="tab-link" data-tab="tab-fixo">Atos com Valor Fixo</button>
-                    <button class="tab-link" data-tab="tab-inventario">Inventário e Partilha</button>
-                    <button class="tab-link" data-tab="tab-manual">Lançamentos Manuais</button>
-                    <button class="tab-link" data-tab="tab-incra">Avaliação INCRA</button>
+    <h2>Adicionar Ato ao Orçamento</h2>
+    
+    <div class="input-panel">
+        <div class="tabs">
+            <button class="tab-link active" data-tab="tab-variavel">Valor Variável</button>
+            <button class="tab-link" data-tab="tab-fixo">Valor Fixo</button>
+            <button class="tab-link" data-tab="tab-inventario">Inventário</button>
+            <button class="tab-link" data-tab="tab-manual">Manual</button>
+            <button class="tab-link" data-tab="tab-incra">INCRA</button>
+            <button class="tab-link" data-tab="tab-itcmd-avulso">ITCMD Avulso</button>
+        </div>
+
+        <div class="tab-contents-wrapper">
+            <!-- O conteúdo de todas as suas abas (tab-content) continua aqui dentro, exatamente como estava antes -->
+            <!-- Tab Variável -->
+            <div id="tab-variavel" class="tab-content active">
+                <div class="form-group">
+                    <label for="ato-variavel">Tipo de Ato</label>
+                    <select id="ato-variavel"></select>
+                </div>
+                <div class="form-group">
+                    <label for="descricao-variavel">Identificação do Ato (Opcional)</label>
+                    <input type="text" id="descricao-variavel" placeholder="Ex: Lote 101, Apto 10">
+                </div>
+                <div class="form-group">
+                    <label for="valor-ato">Valor do Ato/Imóvel (R$)</label>
+                    <input type="text" id="valor-ato" placeholder="150.000,00">
                 </div>
 
-                <div class="tab-contents-wrapper">
-                    <!-- Tab Variável -->
-                    <div id="tab-variavel" class="tab-content active">
+                <div id="construction-subtool-container" class="form-group" style="display: none;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="is-construction-checkbox">
+                        <label for="is-construction-checkbox">É averbação de construção?</label>
+                    </div>
+                    <div id="construction-fields" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 1rem; border-radius: 6px; background-color: #f8f9fa;">
+                        <p style="font-size: 0.9rem; color: #6c757d; margin-bottom: 1rem; text-align: center;">Calcule o valor da obra para usar como base de cálculo.</p>
                         <div class="form-group">
-                            <label for="ato-variavel">Tipo de Ato</label>
-                            <select id="ato-variavel"></select>
+                            <label for="construction-area">Área da construção (m²)</label>
+                            <input type="number" id="construction-area" placeholder="Ex: 120">
                         </div>
                         <div class="form-group">
-                            <label for="descricao-variavel">Identificação do Ato (Opcional)</label>
-                            <input type="text" id="descricao-variavel" placeholder="Ex: Lote 101, Apto 10">
+                            <label for="construction-cub">Valor do CUB/m² (R$) 
+                                <a href="https://sindusconro.com.br/home/?page_id=378" target="_blank" title="Consultar CUB no SINDUSCON/RO">(Consultar Tabela)</a>
+                            </label>
+                            <input type="text" id="construction-cub" placeholder="Ex: 2.500,00">
                         </div>
-                        <div class="form-group">
-                            <label for="valor-ato">Valor do Ato/Imóvel (R$)</label>
-                            <input type="text" id="valor-ato" placeholder="150.000,00">
-                        </div>
-
-                        <div id="construction-subtool-container" class="form-group" style="display: none;">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="is-construction-checkbox">
-                                <label for="is-construction-checkbox">É averbação de construção?</label>
-                            </div>
-                            <div id="construction-fields" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 1rem; border-radius: 6px; background-color: #f8f9fa;">
-                                <p style="font-size: 0.9rem; color: #6c757d; margin-bottom: 1rem; text-align: center;">Calcule o valor da obra para usar como base de cálculo.</p>
-                                <div class="form-group">
-                                    <label for="construction-area">Área da construção (m²)</label>
-                                    <input type="number" id="construction-area" placeholder="Ex: 120">
-                                </div>
-                                <div class="form-group">
-                                    <label for="construction-cub">Valor do CUB/m² (R$) 
-                                        <a href="https://sindusconro.com.br/home/?page_id=378" target="_blank" title="Consultar CUB no SINDUSCON/RO">(Consultar Tabela)</a>
-                                    </label>
-                                    <input type="text" id="construction-cub" placeholder="Ex: 2.500,00">
-                                </div>
-                                <button id="calculate-construction-value" class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;">Calcular e Preencher Valor da Obra</button>
-                                <div id="construction-result" style="text-align: center; font-weight: bold; color: var(--primary-color-dark);"></div>
-                            </div>
-                        </div>
-                        
-                        <div id="natureza-ato-panel" class="form-group" style="display: none;">
-    <label>Natureza do Ato</label>
-    <div style="border: 1px solid #e0e0e0; padding: 0.75rem; border-radius: 6px; background-color: #f9f9f9;">
-        <div class="checkbox-group" style="margin-bottom: 0.5rem;">
-            <input type="radio" id="natureza_padrao" name="ato_natureza" value="padrao" checked>
-            <label for="natureza_padrao" style="font-weight: 500;">Ato Padrão (Valor integral)</label>
-        </div>
-        <div class="checkbox-group" style="margin-bottom: 0.5rem;">
-            <input type="radio" id="natureza_composto" name="ato_natureza" value="composto">
-            <label for="natureza_composto" style="font-weight: 500;">Ato com Reserva de Usufruto</label>
-        </div>
-        <div class="checkbox-group">
-            <input type="radio" id="natureza_apenas_usufruto" name="ato_natureza" value="apenas_usufruto">
-            <label for="natureza_apenas_usufruto" style="font-weight: 500;">Apenas o Usufruto</label>
-        </div>
-    </div>
+                        <button id="calculate-construction-value" class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;">Calcular e Preencher Valor da Obra</button>
+                        <div id="construction-result" style="text-align: center; font-weight: bold; color: var(--primary-color-dark);"></div>
+                    </div>
+                </div>
+                
+                <div id="natureza-ato-panel" class="form-group" style="display: none;">
+<label>Natureza do Ato</label>
+<div style="border: 1px solid #e0e0e0; padding: 0.75rem; border-radius: 6px; background-color: #f9f9f9;">
+<div class="checkbox-group" style="margin-bottom: 0.5rem;">
+    <input type="radio" id="natureza_padrao" name="ato_natureza" value="padrao" checked>
+    <label for="natureza_padrao" style="font-weight: 500;">Ato Padrão (Valor integral)</label>
+</div>
+<div class="checkbox-group" style="margin-bottom: 0.5rem;">
+    <input type="radio" id="natureza_composto" name="ato_natureza" value="composto">
+    <label for="natureza_composto" style="font-weight: 500;">Ato com Reserva de Usufruto</label>
+</div>
+<div class="checkbox-group">
+    <input type="radio" id="natureza_apenas_usufruto" name="ato_natureza" value="apenas_usufruto">
+    <label for="natureza_apenas_usufruto" style="font-weight: 500;">Apenas o Usufruto</label>
+</div>
+</div>
 </div>
 
-                        <div class="form-group checkbox-group" id="combo-option-container" style="display: none;">
-                            <input type="checkbox" id="add-combo">
-                            <label for="add-combo">Adicionar ato correspondente (Registro/Escritura) com a mesma base de cálculo</label>
-                        </div>
-                       
-                        <div class="form-group checkbox-group">
-                            <input type="checkbox" id="incluir-itcmd-variavel">
-                            <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
-                        </div>
- <div class="form-group checkbox-group">
-                            <input type="checkbox" id="incluir-itbi">
-                            <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
-                        </div>
+                <div class="form-group checkbox-group" id="combo-option-container" style="display: none;">
+                    <input type="checkbox" id="add-combo">
+                    <label for="add-combo">Adicionar ato correspondente (Registro/Escritura) com a mesma base de cálculo</label>
+                </div>
+               
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="incluir-itcmd-variavel">
+                    <label for="incluir-itcmd-variavel">Adicionar ITCMD (Alíquota progressiva)</label>
+                </div>
+<div class="form-group checkbox-group">
+                    <input type="checkbox" id="incluir-itbi">
+                    <label for="incluir-itbi">Adicionar ITBI (2%) para este valor</label>
+                </div>
 <!-- PAINEL DE OPÇÕES AVANÇADAS DO ITCMD (INSERIR AQUI) -->
 <div id="itcmd-options-panel" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 0.75rem; margin-bottom: 1.25rem; border-radius: 6px; background-color: #f8f9fa;">
-    <div class="form-group" style="margin-bottom: 0.75rem;">
-        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark-gray);">Como a base de cálculo do ITCMD deve ser considerada?</label>
-    </div>
-    <div class="form-group" style="margin-bottom: 0.5rem;">
-        <div class="checkbox-group">
-            <input type="radio" id="itcmd_base_padrao" name="itcmd_base_type" value="padrao" checked>
-            <label for="itcmd_base_padrao" style="font-weight: 500;">Padrão (sobre o valor total do bem)</label>
-        </div>
-    </div>
-    <div class="form-group" style="margin-bottom: 0;">
-        <div class="checkbox-group">
-            <input type="radio" id="itcmd_base_fracionado" name="itcmd_base_type" value="fracionado">
-            <label for="itcmd_base_fracionado" style="font-weight: 500;">Múltiplos Donatários</label>
-        </div>
-        <div id="itcmd-donors-details" style="display: none; margin-top: 0.75rem; padding-left: 1.75rem;">
-            <label for="itcmd-donors-count" style="font-size: 0.9rem;">Número de Donatários:</label>
-            <input type="number" id="itcmd-donors-count" value="2" min="2" style="width: 100px; padding: 0.5rem;">
-            <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">O valor do bem será dividido igualmente entre os Donatários para o cálculo individual do imposto.</p>
-        </div>
-    </div>
+<div class="form-group" style="margin-bottom: 0.75rem;">
+<label style="font-weight: 600; font-size: 0.9rem; color: var(--dark-gray);">Como a base de cálculo do ITCMD deve ser considerada?</label>
 </div>
-                        <button id="add-variavel" class="btn btn-primary">Adicionar ao Orçamento</button>
-                    </div>
+<div class="form-group" style="margin-bottom: 0.5rem;">
+<div class="checkbox-group">
+    <input type="radio" id="itcmd_base_padrao" name="itcmd_base_type" value="padrao" checked>
+    <label for="itcmd_base_padrao" style="font-weight: 500;">Padrão (sobre o valor total do bem)</label>
+</div>
+</div>
+<div class="form-group" style="margin-bottom: 0;">
+<div class="checkbox-group">
+    <input type="radio" id="itcmd_base_fracionado" name="itcmd_base_type" value="fracionado">
+    <label for="itcmd_base_fracionado" style="font-weight: 500;">Múltiplos Donatários</label>
+</div>
+<div id="itcmd-donors-details" style="display: none; margin-top: 0.75rem; padding-left: 1.75rem;">
+    <label for="itcmd-donors-count" style="font-size: 0.9rem;">Número de Donatários:</label>
+    <input type="number" id="itcmd-donors-count" value="2" min="2" style="width: 100px; padding: 0.5rem;">
+    <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">O valor do bem será dividido igualmente entre os Donatários para o cálculo individual do imposto.</p>
+</div>
+</div>
+</div>
+                <button id="add-variavel" class="btn btn-primary">Adicionar ao Orçamento</button>
+            </div>
 
-                    <!-- Tab Fixo -->
-                    <div id="tab-fixo" class="tab-content">
-                        <div class="form-group">
-                            <label for="ato-fixo">Tipo de Ato</label>
-                            <select id="ato-fixo"></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantidade-fixo">Quantidade</label>
-                            <input type="number" id="quantidade-fixo" value="1" min="1">
-                        </div>
-                         <button id="add-fixo" class="btn btn-primary">Adicionar ao Orçamento</button>
-                    </div>
+            <!-- Tab Fixo -->
+            <div id="tab-fixo" class="tab-content">
+                <div class="form-group">
+                    <label for="ato-fixo">Tipo de Ato</label>
+                    <select id="ato-fixo"></select>
+                </div>
+                <div class="form-group">
+                    <label for="quantidade-fixo">Quantidade</label>
+                    <input type="number" id="quantidade-fixo" value="1" min="1">
+                </div>
+                 <button id="add-fixo" class="btn btn-primary">Adicionar ao Orçamento</button>
+            </div>
 
-                    <!-- Tab Inventário -->
-                    <div id="tab-inventario" class="tab-content">
-                        <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem;">
-                            Adicione os bens do inventário, partilha ou doação. O sistema calculará a escritura, os registros dos imóveis e o ITCMD devido.
-                        </p>
-                        <div class="form-group checkbox-group" style="padding: 0.5rem; background-color: #e9ecef; border-radius: 6px; margin-bottom: 1.5rem;">
-                            <input type="checkbox" id="inventory-calculate-itcmd">
-                            <label for="inventory-calculate-itcmd"><strong>Calcular ITCMD para os bens aplicáveis</strong></label>
-                        </div>
+            <!-- Tab Inventário -->
+            <div id="tab-inventario" class="tab-content">
+                <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem;">
+                    Adicione os bens do inventário, partilha ou doação. O sistema calculará a escritura, os registros dos imóveis e o ITCMD devido.
+                </p>
+                <div class="form-group checkbox-group" style="padding: 0.5rem; background-color: #e9ecef; border-radius: 6px; margin-bottom: 1.5rem;">
+                    <input type="checkbox" id="inventory-calculate-itcmd">
+                    <label for="inventory-calculate-itcmd"><strong>Calcular ITCMD para os bens aplicáveis</strong></label>
+                </div>
 <div id="itcmd-disclaimer" style="display: none; padding: 0.8rem; margin-bottom: 1.5rem; border-radius: 6px; background-color: #fffbe6; border: 1px solid #ffe58f; color: #8a6d3b; font-size: 0.85rem; line-height: 1.5;">
-    <strong>Atenção:</strong> A calculadora de ITCMD assume uma divisão <strong>igualitária</strong> da herança entre os descendentes diretos. Para partilhas complexas (ex: netos herdando, divisões desiguais), utilize a aba <strong>Lançamentos Manuais</strong> para inserir o valor do imposto.
+<strong>Atenção:</strong> A calculadora de ITCMD assume uma divisão <strong>igualitária</strong> da herança entre os descendentes diretos. Para partilhas complexas (ex: netos herdando, divisões desiguais), utilize a aba <strong>Lançamentos Manuais</strong> para inserir o valor do imposto.
 </div>
 <div id="inventory-itcmd-settings" style="display: none; border: 1px solid #e0e0e0; padding: 1rem; margin-top: 1rem; margin-bottom: 1.5rem; border-radius: 6px; background-color: #f8f9fa;">
-    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">
-        Informe os dados da sucessão para o cálculo correto do ITCMD.
-    </p>
-    <div class="form-group">
-        <label for="inventory-has-spouse">O falecido deixou cônjuge/companheiro(a)?</label>
-        <select id="inventory-has-spouse">
-            <option value="nao" selected>Não</option>
-            <option value="sim">Sim</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="inventory-heir-count">Número de herdeiros (descendentes)</label>
-        <input type="number" id="inventory-heir-count" value="1" min="1">
-    </div>
-    <div id="inventory-spouse-heir-option" class="form-group" style="display: none;">
-         <div class="checkbox-group">
-            <input type="checkbox" id="inventory-spouse-is-heir">
-            <label for="inventory-spouse-is-heir">Cônjuge também herda bens particulares (sem meação)?</label>
-        </div>
-         <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">Marque se for o caso</p>
-    </div>
+<p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">
+    Informe os dados da sucessão para o cálculo correto do ITCMD.
+</p>
+<div class="form-group">
+<label for="inventory-has-spouse">O falecido deixou cônjuge/companheiro(a)?</label>
+<select id="inventory-has-spouse">
+    <option value="nao" selected>Não</option>
+    <option value="sim">Sim</option>
+</select>
 </div>
-                        <div id="inventory-assets-list" style="margin-bottom: 1rem;">
-                           <!-- Asset rows will be dynamically added here -->
-                        </div>
-                        <button id="add-inventory-asset" class="btn btn-add-discreet" style="width: 100%; margin-bottom: 1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
-                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
-                            </svg>
-                            Adicionar outro Bem
-                        </button>
-                        <button id="calculate-inventory" class="btn btn-primary">Calcular e Adicionar ao Orçamento</button>
-                    </div>
-                    
-                    <!-- Tab Manual -->
-                    <div id="tab-manual" class="tab-content">
-                        <div class="form-group">
-                            <label for="descricao-manual">Descrição do Serviço</label>
-                            <input type="text" id="descricao-manual" placeholder="Ex: Serviço de consultoria">
-                        </div>
-                        <div class="form-group">
-                            <label for="valor-manual">Valor do Serviço (R$)</label>
-                            <input type="text" id="valor-manual" placeholder="100,00">
-                        </div>
-                         <button id="add-manual" class="btn btn-primary">Adicionar ao Orçamento</button>
-                    </div>
+<div class="form-group">
+<label for="inventory-heir-count">Número de herdeiros (descendentes)</label>
+<input type="number" id="inventory-heir-count" value="1" min="1">
+</div>
+<div id="inventory-spouse-heir-option" class="form-group" style="display: none;">
+ <div class="checkbox-group">
+    <input type="checkbox" id="inventory-spouse-is-heir">
+    <label for="inventory-spouse-is-heir">Cônjuge também herda bens particulares (sem meação)?</label>
+</div>
+ <p style="font-size: 0.8rem; color: #6c757d; margin-top: 4px;">Marque se for o caso</p>
+</div>
+</div>
+                <div id="inventory-assets-list" style="margin-bottom: 1rem;">
+                   <!-- Asset rows will be dynamically added here -->
+                </div>
+                <button id="add-inventory-asset" class="btn btn-add-discreet" style="width: 100%; margin-bottom: 1rem;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/></svg>
+    Adicionar outro Bem
+</button>
+                <button id="calculate-inventory" class="btn btn-primary">Calcular e Adicionar ao Orçamento</button>
+            </div>
+            
+            <!-- Tab Manual -->
+            <div id="tab-manual" class="tab-content">
+                <div class="form-group">
+                    <label for="descricao-manual">Descrição do Serviço</label>
+                    <input type="text" id="descricao-manual" placeholder="Ex: Serviço de consultoria">
+                </div>
+                <div class="form-group">
+                    <label for="valor-manual">Valor do Serviço (R$)</label>
+                    <input type="text" id="valor-manual" placeholder="100,00">
+                </div>
+                 <button id="add-manual" class="btn btn-primary">Adicionar ao Orçamento</button>
+            </div>
 
-                    <!-- Tab INCRA -->
-                    <div id="tab-incra" class="tab-content">
-                        <div class="form-group">
-                            <label for="incra-municipio">1. Município</label>
-                            <select id="incra-municipio"></select>
+            <!-- Tab INCRA -->
+<div id="tab-incra" class="tab-content">
+    <div class="form-group">
+        <label for="incra-municipio">1. Município</label>
+        <select id="incra-municipio"></select>
+    </div>
+    <div id="incra-level-wrapper" class="form-group" style="display: none;">
+        <label for="incra-level">2. Nível Categórico</label>
+        <select id="incra-level"></select>
+    </div>
+    <div id="incra-typology-wrapper" class="form-group" style="display: none;">
+        <label for="incra-typology">3. Tipologia de Uso</label>
+        <select id="incra-typology"></select>
+    </div>
+     <div id="incra-value-column-wrapper" class="form-group" style="display: none;">
+        <label for="incra-value-column">4. Coluna de Valor de Referência</label>
+        <select id="incra-value-column"></select>
+    </div>
+    <div id="incra-area-wrapper" class="form-group" style="display: none;">
+        <label for="incra-area">5. Área (em hectares)</label>
+        <input type="number" id="incra-area" placeholder="Ex: 50">
+    </div>
+    <button id="calculate-incra-btn" class="btn btn-primary" style="display: none;">Calcular Valor de Referência</button>
+    <div id="incra-result-container" style="display: none;"></div>
+</div>
+
+<div id="tab-itcmd-avulso" class="tab-content">
+                <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1.5rem;">
+                    Calcule o ITCMD de forma avulsa para um único bem. Ideal para doações simples ou para conferir valores de forma rápida.
+                </p>
+                <div class="form-group">
+                    <label for="descricao-itcmd">Identificação do Bem/Direito</label>
+                    <input type="text" id="descricao-itcmd" placeholder="Ex: Doação de 1/4 do Imóvel X, Mat. 123">
+                </div>
+                <div class="form-group">
+                    <label for="valor-itcmd">Valor de Avaliação / Base de Cálculo (R$)</label>
+                    <input type="text" id="valor-itcmd" placeholder="150.000,00">
+                </div>
+                <div class="form-group">
+                    <label>Alíquota do Imposto</label>
+                    <div style="border: 1px solid #e0e0e0; padding: 0.75rem; border-radius: 6px; background-color: #f9f9f9;">
+                        <div class="checkbox-group" style="margin-bottom: 0.75rem;">
+                            <input type="radio" id="itcmd_avulso_auto" name="itcmd_avulso_tipo" value="auto" checked>
+                            <label for="itcmd_avulso_auto" style="font-weight: 500;">Calcular automaticamente (Progressiva)</label>
                         </div>
-                        <div class="form-group">
-                            <label for="incra-level">2. Nível Categórico</label>
-                            <select id="incra-level" disabled></select>
+                        <div class="checkbox-group">
+                            <input type="radio" id="itcmd_avulso_manual" name="itcmd_avulso_tipo" value="manual">
+                            <label for="itcmd_avulso_manual" style="font-weight: 500;">Informar manualmente</label>
                         </div>
-                        <div class="form-group">
-                            <label for="incra-typology">3. Tipologia de Uso</label>
-                            <select id="incra-typology" disabled></select>
-                        </div>
-                         <div class="form-group">
-                            <label for="incra-value-column">4. Coluna de Valor de Referência</label>
-                            <select id="incra-value-column" disabled></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="incra-area">5. Área (em hectares)</label>
-                            <input type="number" id="incra-area" placeholder="Ex: 50">
-                        </div>
-                        <button id="calculate-incra-btn" class="btn btn-primary">Calcular Valor de Referência</button>
-                        <div id="incra-result-container" style="display: none;"></div>
                     </div>
                 </div>
-            </section>
+                <div id="itcmd_avulso_manual_panel" class="form-group" style="display: none;">
+                    <label for="itcmd_avulso_aliquota">Alíquota Manual (%)</label>
+                    <input type="number" id="itcmd_avulso_aliquota" placeholder="Ex: 2">
+                </div>
+                <button id="add-itcmd-avulso" class="btn btn-primary">Adicionar ao Orçamento</button>
+            </div>
+        </div>
+    </div>
+</section>
 
             <section class="budget-section">
                 <div class="budget-header">
                     <h2>Meu Orçamento</h2>
                     <div class="no-print" style="display: flex; gap: 0.5rem;">
                         <button id="clear-budget-button" class="btn btn-danger-outline no-print" style="display: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-                            Limpar
-                        </button>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3V2h11v1z"/></svg>
+    Limpar
+</button>
                         <button id="print-button" class="btn btn-print no-print" style="display: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-                                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
-                            </svg>
-                            Imprimir
-                        </button>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM13 8V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v3h10zM14 8H2v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1zM3 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m-2 5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/></svg>
+    Imprimir
+</button>
                     </div>
                 </div>
                 
@@ -1304,6 +1025,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+
             const feeTables = {
                 notas: {
                     name: 'Tabelionato de Notas',
@@ -1551,25 +1273,33 @@
 
             const renderBudget = () => {
                 if (budgetItems.length === 0) {
-                    budgetItemsContainer.innerHTML = `<div id="budget-placeholder">Seu orçamento está vazio. Adicione um ato acima.</div>`;
+                    // Agora, simplesmente inserimos o componente web que você encontrou
+                    budgetItemsContainer.innerHTML = `
+                        <div id="budget-placeholder">
+                            <dotlottie-wc
+                                src="https://lottie.host/90dfa774-54a9-4d38-ad2d-ce81b44f893f/xjpr2ewavr.lottie"
+                                style="width: 250px; height: 250px; margin: 0 auto;"
+                                speed="1"
+                                autoplay
+                                loop
+                            ></dotlottie-wc>
+                            <p style="font-size: 1.1rem; font-weight: 500; margin-top: 1rem;">Seu orçamento está vazio...</p>
+                            <p style="color: var(--secondary-color);">Adicione um ato no painel à esquerda para começar.</p>
+                        </div>
+                    `;
+
                     budgetSummaryContainer.innerHTML = '';
                     printButton.style.display = 'none';
-                    clearBudgetButton.style.display = 'none'; // NOVO: Esconder botão de limpar
+                    clearBudgetButton.style.display = 'none';
                     return;
                 }
 
+                // O resto da função permanece igual
                 printButton.style.display = 'inline-flex';
-                clearBudgetButton.style.display = 'inline-flex'; // NOVO: Mostrar botão de limpar
+                clearBudgetButton.style.display = 'inline-flex';
 
                 let itemsHtml = `
                     <table id="budget-items-table">
-                        <thead>
-                            <tr>
-                                <th>Descrição do Ato</th>
-                                <th style="text-align: right;">Subtotal</th>
-                                <th colspan="3" class="actions-col no-print"></th>
-                            </tr>
-                        </thead>
                         <tbody>
                 `;
                 budgetItems.forEach(item => {
@@ -1578,14 +1308,12 @@
                     if (item.identifier) {
                         tagsHtml += `<span class="item-tag tag-identifier">${item.identifier}</span>`;
                     }
-
                     if (item.isUsufruct) {
                         tagsHtml += `<span class="item-tag tag-usufruct">Usufruto (Base: 1/3)</span>`;
                     }
                     if (item.isMeacao) {
                         tagsHtml += `<span class="item-tag tag-meacao">Meação (Base: 50%)</span>`;
                     }
-                    
                     if (item.evaluationValue && item.evaluationValue !== item.baseValue) {
                         tagsHtml += `<span class="item-tag tag-evaluation">Avaliação: ${formatCurrency(item.evaluationValue)}</span>`;
                         tagsHtml += `<span class="item-tag tag-base-value">Base de Cálculo: ${formatCurrency(item.baseValue)}</span>`;
@@ -1621,19 +1349,19 @@
                         </tr>
                         <tr class="details-row" data-details-for="${item.id}">
                            <td colspan="5">
-    <div class="details-content">
-        <table>
-            <tbody>
-                <tr><td>Emolumentos (Oficial)</td><td class="item-value">${formatCurrency(item.costs.oficial)}</td></tr>
-                <tr><td>FUJU (20%)</td><td class="item-value">${formatCurrency(item.costs.fuju)}</td></tr>
-                <tr><td>FUNDIMPER (7.5%)</td><td class="item-value">${formatCurrency(item.costs.fundimper)}</td></tr>
-                <tr><td>FUNDEP (4%)</td><td class="item-value">${formatCurrency(item.costs.fundep)}</td></tr>
-                <tr><td>FUMORPGE (3%)</td><td class="item-value">${formatCurrency(item.costs.fumorpge)}</td></tr>
-                <tr><td>Selo de Fiscalização</td><td class="item-value">${formatCurrency(item.costs.selo)}</td></tr>
-            </tbody>
-        </table>
-    </div>
-</td>
+                                <div class="details-content">
+                                    <table>
+                                        <tbody>
+                                            <tr><td>Emolumentos (Oficial)</td><td class="item-value">${formatCurrency(item.costs.oficial)}</td></tr>
+                                            <tr><td>FUJU (20%)</td><td class="item-value">${formatCurrency(item.costs.fuju)}</td></tr>
+                                            <tr><td>FUNDIMPER (7.5%)</td><td class="item-value">${formatCurrency(item.costs.fundimper)}</td></tr>
+                                            <tr><td>FUNDEP (4%)</td><td class="item-value">${formatCurrency(item.costs.fundep)}</td></tr>
+                                            <tr><td>FUMORPGE (3%)</td><td class="item-value">${formatCurrency(item.costs.fumorpge)}</td></tr>
+                                            <tr><td>Selo de Fiscalização</td><td class="item-value">${formatCurrency(item.costs.selo)}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
@@ -1727,121 +1455,112 @@
                 });
 
                 document.getElementById('add-variavel').addEventListener('click', () => {
- const selectedKey = atoVariavelSelect.value;
-    if (!selectedKey) return;
+                     const selectedKey = atoVariavelSelect.value;
+                    if (!selectedKey) return;
 
-    const valorAtoOriginal = parseCurrency(valorAtoInput.value);
-    if (valorAtoOriginal <= 0) {
-        alert('Por favor, insira um valor válido para o ato.');
-        return;
-    }
+                    const valorAtoOriginal = parseCurrency(valorAtoInput.value);
+                    if (valorAtoOriginal <= 0) {
+                        alert('Por favor, insira um valor válido para o ato.');
+                        return;
+                    }
 
-    const serventiaKey = selectedKey.split('_')[0];
-    const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
-    const descricaoInput = document.getElementById('descricao-variavel');
-    const identifier = descricaoInput.value.trim();
-    const addCombo = document.getElementById('add-combo').checked;
-    const naturezaAto = document.querySelector('input[name="ato_natureza"]:checked').value;
-    
-    const newItems = [];
-    let timestamp = Date.now();
+                    const serventiaKey = selectedKey.split('_')[0];
+                    const atoInfo = feeTables[serventiaKey].atosVariaveis[selectedKey];
+                    const descricaoInput = document.getElementById('descricao-variavel');
+                    const identifier = descricaoInput.value.trim();
+                    const addCombo = document.getElementById('add-combo').checked;
+                    const naturezaAto = document.querySelector('input[name="ato_natureza"]:checked').value;
+                    
+                    const newItems = [];
+                    let timestamp = Date.now();
 
-    // Função auxiliar para criar atos (principal e correspondente)
-    const createActPair = (name, baseValue, isUsufructFlag = false, isPrincipal = true) => {
-        // Ato principal (Escritura ou Registro)
-        const { oficial, selo } = findVariableFee(atoInfo, baseValue);
-        if (oficial > 0) {
-            newItems.push({
-                id: timestamp++, type: 'variavel', name: name,
-                identifier, baseValue, costs: calculateCosts(oficial, selo), isUsufruct: isUsufructFlag
-            });
-        }
+                    const createActPair = (name, baseValue, isUsufructFlag = false, isPrincipal = true) => {
+                        const { oficial, selo } = findVariableFee(atoInfo, baseValue);
+                        if (oficial > 0) {
+                            newItems.push({
+                                id: timestamp++, type: 'variavel', name: name,
+                                identifier, baseValue, costs: calculateCosts(oficial, selo), isUsufruct: isUsufructFlag
+                            });
+                        }
 
-        // Ato correspondente (se combo estiver marcado)
-        if (addCombo && comboOptionContainer.style.display !== 'none') {
-            const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
-            const correspondingServentiaKey = correspondingKey.split('_')[0];
-            const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
-            const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, baseValue);
-            if (corrOficial > 0) {
-                const correspondingName = isPrincipal 
-                    ? correspondingAtoInfo.name + ' (Nu-Propriedade)' 
-                    : 'Registro de Usufruto';
-                newItems.push({
-                    id: timestamp++, type: 'variavel', name: correspondingName,
-                    identifier, baseValue, costs: calculateCosts(corrOficial, corrSelo), isUsufruct: isUsufructFlag
-                });
-            }
-        }
-    };
+                        if (addCombo && comboOptionContainer.style.display !== 'none') {
+                            const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
+                            const correspondingServentiaKey = correspondingKey.split('_')[0];
+                            const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
+                            const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, baseValue);
+                            if (corrOficial > 0) {
+                                const correspondingName = isPrincipal 
+                                    ? correspondingAtoInfo.name + ' (Nu-Propriedade)' 
+                                    : 'Registro de Usufruto';
+                                newItems.push({
+                                    id: timestamp++, type: 'variavel', name: correspondingName,
+                                    identifier, baseValue, costs: calculateCosts(corrOficial, corrSelo), isUsufruct: isUsufructFlag
+                                });
+                            }
+                        }
+                    };
 
-    switch (naturezaAto) {
-        case 'composto':
-            // 1. Ato Principal (Nu-Propriedade) sobre 100% do valor
-            createActPair(atoInfo.name + ' (Nu-Propriedade)', valorAtoOriginal, false, true);
-            // 2. Ato de Usufruto sobre 1/3 do valor
-            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
-            break;
+                    switch (naturezaAto) {
+                        case 'composto':
+                            createActPair(atoInfo.name + ' (Nu-Propriedade)', valorAtoOriginal, false, true);
+                            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
+                            break;
 
-        case 'apenas_usufruto':
-            // Apenas o ato de usufruto sobre 1/3 do valor
-            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
-            break;
+                        case 'apenas_usufruto':
+                            createActPair('Instituição de Usufruto', valorAtoOriginal / 3, true, false);
+                            break;
 
-        case 'padrao':
-        default:
-            // Comportamento padrão sobre 100% do valor
-            createActPair(atoInfo.name, valorAtoOriginal, false, true);
-            break;
-    }
+                        case 'padrao':
+                        default:
+                            createActPair(atoInfo.name, valorAtoOriginal, false, true);
+                            break;
+                    }
 
-    // Adicionar ITBI e ITCMD (calculados sobre o valor total do imóvel)
-    if (document.getElementById('incluir-itbi').checked) {
-        const itbiValue = round(valorAtoOriginal * 0.02);
-        newItems.push({
-            id: timestamp++, type: 'itbi', name: 'ITBI (Imposto de Transmissão de Bens Imóveis)',
-            identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
-            costs: { subtotal: itbiValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-        });
-    }
+                    if (document.getElementById('incluir-itbi').checked) {
+                        const itbiValue = round(valorAtoOriginal * 0.02);
+                        newItems.push({
+                            id: timestamp++, type: 'itbi', name: 'ITBI (Imposto de Transmissão de Bens Imóveis)',
+                            identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
+                            costs: { subtotal: itbiValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                        });
+                    }
 
-    if (document.getElementById('incluir-itcmd-variavel').checked) {
-        const calcType = document.querySelector('input[name="itcmd_base_type"]:checked').value;
-        let itcmdItem = null;
-        if (calcType === 'fracionado') {
-            const donorCount = parseInt(document.getElementById('itcmd-donors-count').value) || 2;
-            const fractionalValue = valorAtoOriginal / donorCount;
-            const { value: itcmdPerDonor, rate } = calculateSingleITCMD(fractionalValue);
-            const totalItcmd = itcmdPerDonor * donorCount;
-            if (totalItcmd > 0) {
-                itcmdItem = {
-                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%) - Cálculo Fracionado`,
-                    identifier: `Base: ${formatCurrency(fractionalValue)} (x${donorCount} Donatários)`, baseValue: valorAtoOriginal,
-                    costs: { subtotal: totalItcmd, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-                };
-            }
-        } else {
-            const { value: itcmdValue, rate } = calculateSingleITCMD(valorAtoOriginal);
-            if (itcmdValue > 0) {
-                itcmdItem = {
-                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%)`,
-                    identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
-                    costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
-                };
-            }
-        }
-        if (itcmdItem) newItems.push(itcmdItem);
-    }
-    
-    addMultipleItemsToBudget(newItems);
-    
-    // Resetar campos
-    valorAtoInput.value = '';
-    descricaoInput.value = '';
-    document.getElementById('incluir-itbi').checked = false;
-    document.getElementById('incluir-itcmd-variavel').checked = false;
-    document.getElementById('add-combo').checked = false;
-    document.getElementById('natureza_padrao').checked = true;
+                    if (document.getElementById('incluir-itcmd-variavel').checked) {
+                        const calcType = document.querySelector('input[name="itcmd_base_type"]:checked').value;
+                        let itcmdItem = null;
+                        if (calcType === 'fracionado') {
+                            const donorCount = parseInt(document.getElementById('itcmd-donors-count').value) || 2;
+                            const fractionalValue = valorAtoOriginal / donorCount;
+                            const { value: itcmdPerDonor, rate } = calculateSingleITCMD(fractionalValue);
+                            const totalItcmd = itcmdPerDonor * donorCount;
+                            if (totalItcmd > 0) {
+                                itcmdItem = {
+                                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%) - Cálculo Fracionado`,
+                                    identifier: `Base: ${formatCurrency(fractionalValue)} (x${donorCount} Donatários)`, baseValue: valorAtoOriginal,
+                                    costs: { subtotal: totalItcmd, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                                };
+                            }
+                        } else {
+                            const { value: itcmdValue, rate } = calculateSingleITCMD(valorAtoOriginal);
+                            if (itcmdValue > 0) {
+                                itcmdItem = {
+                                    id: timestamp++, type: 'itcmd', name: `ITCMD (${rate * 100}%)`,
+                                    identifier: `Base: ${formatCurrency(valorAtoOriginal)}`, baseValue: valorAtoOriginal,
+                                    costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                                };
+                            }
+                        }
+                        if (itcmdItem) newItems.push(itcmdItem);
+                    }
+                    
+                    addMultipleItemsToBudget(newItems);
+                    
+                    valorAtoInput.value = '';
+                    descricaoInput.value = '';
+                    document.getElementById('incluir-itbi').checked = false;
+                    document.getElementById('incluir-itcmd-variavel').checked = false;
+                    document.getElementById('add-combo').checked = false;
+                    document.getElementById('natureza_padrao').checked = true;
                 });
 
                 document.getElementById('add-fixo').addEventListener('click', () => {
@@ -1911,15 +1630,40 @@
                         switchTab('tab-variavel');
                     }
                 });
+                
+                // --- INÍCIO DA NOVA LÓGICA DO INCRA ---
+                const incraLevelWrapper = document.getElementById('incra-level-wrapper');
+                const incraTypologyWrapper = document.getElementById('incra-typology-wrapper');
+                const incraValueColumnWrapper = document.getElementById('incra-value-column-wrapper');
+                const incraAreaWrapper = document.getElementById('incra-area-wrapper');
+                const incraCalcBtn = document.getElementById('calculate-incra-btn');
+
+                const resetIncraFields = (level = 1) => {
+                    if (level <= 1) {
+                        incraLevelSelect.innerHTML = '';
+                        incraLevelWrapper.style.display = 'none';
+                    }
+                    if (level <= 2) {
+                        incraTypologySelect.innerHTML = '';
+                        incraTypologyWrapper.style.display = 'none';
+                    }
+                    if (level <= 3) {
+                        incraValueColumnSelect.value = '';
+                        incraValueColumnWrapper.style.display = 'none';
+                    }
+                    if (level <= 4) {
+                        incraAreaInput.value = '';
+                        incraAreaWrapper.style.display = 'none';
+                        incraCalcBtn.style.display = 'none';
+                        incraResultContainer.style.display = 'none';
+                    }
+                };
 
                 incraMunicipioSelect.addEventListener('change', function() {
+                    resetIncraFields(1);
                     const selectedMunicipio = this.value;
-                    incraLevelSelect.innerHTML = '<option value="">-- Aguardando município --</option>';
-                    incraLevelSelect.disabled = true;
-                    incraTypologySelect.innerHTML = '<option value="">-- Aguardando nível --</option>';
-                    incraTypologySelect.disabled = true;
-                    incraValueColumnSelect.disabled = true;
                     if (!selectedMunicipio) return;
+                    
                     const region = municipalityToRegionMap[selectedMunicipio];
                     if (region && incraData[region]) {
                         const levels = Object.keys(incraData[region]).sort();
@@ -1930,17 +1674,16 @@
                             option.textContent = level;
                             incraLevelSelect.appendChild(option);
                         });
-                        incraLevelSelect.disabled = false;
+                        incraLevelWrapper.style.display = 'block';
                     }
                 });
 
                 incraLevelSelect.addEventListener('change', function() {
+                    resetIncraFields(2);
                     const selectedMunicipio = incraMunicipioSelect.value;
                     const selectedLevel = this.value;
-                    incraTypologySelect.innerHTML = '<option value="">-- Aguardando nível --</option>';
-                    incraTypologySelect.disabled = true;
-                    incraValueColumnSelect.disabled = true;
                     if (!selectedMunicipio || !selectedLevel) return;
+
                     const region = municipalityToRegionMap[selectedMunicipio];
                     if (region && incraData[region]?.[selectedLevel]) {
                         const typologies = Object.keys(incraData[region][selectedLevel]).sort();
@@ -1951,19 +1694,30 @@
                             option.textContent = typology;
                             incraTypologySelect.appendChild(option);
                         });
-                        incraTypologySelect.disabled = false;
+                        incraTypologyWrapper.style.display = 'block';
                     }
                 });
 
                 incraTypologySelect.addEventListener('change', function() {
-                    incraValueColumnSelect.disabled = !this.value;
+                    resetIncraFields(3);
+                    if(!this.value) return;
+                    incraValueColumnWrapper.style.display = 'block';
                 });
+                
+                incraValueColumnSelect.addEventListener('change', function() {
+                    resetIncraFields(4);
+                    if(!this.value) return;
+                    incraAreaWrapper.style.display = 'block';
+                    incraCalcBtn.style.display = 'inline-flex';
+                });
+                // --- FIM DA NOVA LÓGICA DO INCRA ---
+
 
                 budgetItemsContainer.addEventListener('click', (e) => {
                     const target = e.target;
                     const removeButton = target.closest('.remove-btn');
                     const detailsButton = target.closest('.details-toggle-btn');
-                    const editButton = target.closest('.edit-btn'); // NOVO
+                    const editButton = target.closest('.edit-btn');
                     
                     if (removeButton) {
                         const row = removeButton.closest('.item-row');
@@ -1974,7 +1728,7 @@
                         if (detailsRow) {
                             detailsRow.style.display = detailsRow.style.display === 'table-row' ? 'none' : 'table-row';
                         }
-                    } else if (editButton) { // NOVO: Lógica do botão de edição
+                    } else if (editButton) {
                         const row = editButton.closest('.item-row');
                         const itemId = parseInt(row.dataset.id);
                         const itemToEdit = budgetItems.find(item => item.id === itemId);
@@ -2053,9 +1807,6 @@
                 });
                 window.addEventListener('afterprint', () => document.body.classList.remove('print-simplified'));
                 
-                // --- INÍCIO: CÓDIGO NOVO PARA MODAL DE EDIÇÃO E LIMPEZA ---
-
-                // --- Funções do Modal de Edição ---
                 function openEditModal(item) {
                     editItemIdHiddenInput.value = item.id;
                     editItemNameInput.value = item.name;
@@ -2080,11 +1831,9 @@
                     closeEditModal();
                 }
 
-                // --- Listeners do Modal de Edição ---
                 document.getElementById('edit-item-save-btn').addEventListener('click', saveItemChanges);
                 document.getElementById('edit-item-cancel-btn').addEventListener('click', closeEditModal);
 
-                // --- Funções e Listeners do Modal de Limpeza ---
                 clearBudgetButton.addEventListener('click', () => {
                     clearModal.classList.add('show');
                 });
@@ -2094,12 +1843,10 @@
                 });
 
                 document.getElementById('clear-confirm-btn').addEventListener('click', () => {
-                    budgetItems = []; // Esvazia o array de itens
-                    renderBudget();   // Re-renderiza a UI, que agora mostrará o placeholder
+                    budgetItems = [];
+                    renderBudget();
                     clearModal.classList.remove('show');
                 });
-
-                // --- FIM: CÓDIGO NOVO PARA MODAL DE EDIÇÃO E LIMPEZA ---
                 
                 const itcmdCheckbox = document.getElementById('incluir-itcmd-variavel');
                 const itcmdOptionsPanel = document.getElementById('itcmd-options-panel');
@@ -2137,6 +1884,76 @@
                     }
                 });
 
+                document.getElementById('add-itcmd-avulso').addEventListener('click', () => {
+                    const descriptionInput = document.getElementById('descricao-itcmd');
+                    const valueInput = document.getElementById('valor-itcmd');
+                    const calcType = document.querySelector('input[name="itcmd_avulso_tipo"]:checked').value;
+                    
+                    const description = descriptionInput.value.trim();
+                    const baseValue = parseCurrency(valueInput.value);
+
+                    if (baseValue <= 0) {
+                        alert('Por favor, insira um valor de avaliação válido.');
+                        return;
+                    }
+                    if (!description) {
+                        alert('Por favor, insira uma identificação para o bem.');
+                        return;
+                    }
+
+                    let itcmdValue = 0;
+                    let rate = 0;
+                    let rateLabel = '';
+
+                    if (calcType === 'auto') {
+                        const result = calculateSingleITCMD(baseValue);
+                        itcmdValue = result.value;
+                        rate = result.rate;
+                        rateLabel = `Automática (${(rate * 100).toFixed(1).replace('.',',')}%)`;
+                    } else {
+                        const manualRateInput = document.getElementById('itcmd_avulso_aliquota');
+                        const manualRate = parseFloat(manualRateInput.value);
+
+                        if (isNaN(manualRate) || manualRate <= 0 || manualRate > 100) {
+                            alert('Por favor, insira uma alíquota manual válida (ex: 2 para 2%).');
+                            return;
+                        }
+                        rate = manualRate / 100;
+                        itcmdValue = round(baseValue * rate);
+                        rateLabel = `Manual (${manualRate.toString().replace('.',',')}%)`;
+                    }
+
+                    if (itcmdValue > 0) {
+                        addMultipleItemsToBudget([{
+                            id: Date.now(),
+                            type: 'itcmd',
+                            name: `ITCMD (${rateLabel})`,
+                            identifier: description,
+                            baseValue: baseValue,
+                            costs: { subtotal: itcmdValue, oficial: 0, fuju: 0, fundimper: 0, fundep: 0, fumorpge: 0, selo: 0 }
+                        }]);
+                        
+                        descriptionInput.value = '';
+                        valueInput.value = '';
+                        document.getElementById('itcmd_avulso_auto').checked = true;
+                        document.getElementById('itcmd_avulso_manual_panel').style.display = 'none';
+                        document.getElementById('itcmd_avulso_aliquota').value = '';
+
+                    } else {
+                        alert('O valor do ITCMD calculado foi zero. Nenhum item foi adicionado.');
+                    }
+                });
+                
+                document.querySelectorAll('input[name="itcmd_avulso_tipo"]').forEach(radio => {
+                    radio.addEventListener('change', (event) => {
+                        const manualPanel = document.getElementById('itcmd_avulso_manual_panel');
+                        if (event.target.value === 'manual') {
+                            manualPanel.style.display = 'block';
+                        } else {
+                            manualPanel.style.display = 'none';
+                        }
+                    });
+                });
             }; 
 
             function addInventoryAssetRow() {
@@ -2317,7 +2134,7 @@
                 populateIncraSelects();
                 setupEventListeners();
                 addInventoryAssetRow(); // Start with one asset row by default
-                renderBudget();
+                renderBudget(); // Initial render
                 const initialName = budgeterNameInput.value.trim();
                 printBudgeterNameLabel.style.display = initialName ? 'inline' : 'none';
             };
