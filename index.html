@@ -330,42 +330,6 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
     .modal-actions { flex-direction: column; }
     .modal-actions .btn { width: 100%; }
 
-    /* --- INÍCIO DA CORREÇÃO PARA CELULAR --- */
-
-/* Transforma a linha da tabela em um container flexível que quebra a linha */
-#budget-items-table .item-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.25rem; /* Ajusta o espaçamento interno para o novo layout */
-}
-
-/* Força a descrição a ocupar 100% da largura, empurrando os outros itens para baixo */
-#budget-items-table .item-description {
-    width: 100%;
-    padding: 0 0 0.5rem 0; /* Remove padding lateral e adiciona espaço abaixo */
-    text-align: left;
-}
-
-/* Alinha o valor à esquerda e dá destaque */
-#budget-items-table .item-value {
-    padding: 0;
-    text-align: left;
-    font-size: 1.15rem;
-    font-weight: 700;
-    /* Faz o valor crescer para ocupar o espaço disponível à esquerda dos botões */
-    flex-grow: 1; 
-}
-
-/* Remove o padding das colunas de ação para não ocupar espaço desnecessário */
-#budget-items-table .actions-col {
-    padding: 0 0 0 0.25rem; /* Adiciona um pequeno espaçamento entre os botões */
-}
-
-/* --- FIM DA CORREÇÃO --- */
-
-
     /* Faz os campos de formulário que ficavam lado a lado empilharem verticalmente */
     .form-group-inline, 
     .inventory-asset-row {
@@ -387,7 +351,40 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
         grid-template-columns: minmax(0, 1fr);
     }
     
-    /* --- FIM DA CORREÇÃO PARA CELULAR --- */
+    /* --- INÍCIO DA CORREÇÃO PARA O ORÇAMENTO EM CELULAR --- */
+
+    /* Transforma a linha da tabela em um container flexível que quebra a linha */
+    #budget-items-table .item-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem; /* Ajusta o espaçamento interno para o novo layout */
+    }
+
+    /* Força a descrição a ocupar 100% da largura, empurrando os outros itens para baixo */
+    #budget-items-table .item-description {
+        width: 100%;
+        padding: 0 0 0.5rem 0; /* Remove padding lateral e adiciona espaço abaixo */
+        text-align: left;
+    }
+
+    /* Alinha o valor à esquerda e dá destaque */
+    #budget-items-table .item-value {
+        padding: 0;
+        text-align: left;
+        font-size: 1.15rem;
+        font-weight: 700;
+        /* Faz o valor crescer para ocupar o espaço disponível à esquerda dos botões */
+        flex-grow: 1; 
+    }
+
+    /* Remove o padding das colunas de ação para não ocupar espaço desnecessário */
+    #budget-items-table .actions-col {
+        padding: 0 0 0 0.25rem; /* Adiciona um pequeno espaçamento entre os botões */
+    }
+
+    /* --- FIM DA CORREÇÃO --- */
 }
 </style>
 <link rel="stylesheet" href="/index.css">
