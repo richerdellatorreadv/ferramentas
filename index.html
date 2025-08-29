@@ -303,6 +303,42 @@ select:disabled { background-color: var(--medium-gray); cursor: not-allowed; opa
 footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); color: #a0aec0; font-size: 0.9rem; }
 .author-credit { display: block; margin-top: 0.5rem; opacity: 0.7; }
 
+
+/* ESTILO PARA O GUIA DO USUÁRIO */
+.guide-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 1rem; /* Espaço para a barra de rolagem */
+    text-align: left;
+    line-height: 1.7;
+}
+.guide-content h5 {
+    font-size: 1.1rem;
+    color: var(--primary-color-dark);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid var(--medium-gray);
+}
+.guide-content p, .guide-content li {
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+.guide-content code {
+    background-color: var(--medium-gray);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+.guide-content ul {
+    padding-left: 20px;
+}
+.guide-content strong {
+    color: var(--dark-gray);
+}
+
+
 /* ESTILOS DE IMPRESSÃO */
 @media print {
     body { padding: 0; background-color: var(--white); font-size: 10pt; }
@@ -403,7 +439,15 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
 
         <main class="main-content">
             <section class="input-section">
-    <h2>Adicionar Ato ao Orçamento</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h2 style="margin: 0;">Adicionar Ato ao Orçamento</h2>
+    <button id="open-guide-btn" class="btn-icon no-print" title="Abrir Guia do Usuário">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+        </svg>
+    </button>
+</div>
     
     <div class="input-panel">
         <div class="tabs">
@@ -601,9 +645,19 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
         <select id="incra-value-column"></select>
     </div>
     <div id="incra-area-wrapper" class="form-group" style="display: none;">
-        <label for="incra-area">5. Área (em hectares)</label>
-        <input type="number" id="incra-area" placeholder="Ex: 50">
+    <label for="incra-area">5. Área (em hectares)</label>
+    <input type="number" id="incra-area" placeholder="Ex: 50">
+
+    <!-- NOVO: Ferramenta de Conversão de Alqueires -->
+    <div id="alqueires-converter" style="border: 1px solid var(--border-color); padding: 1rem; margin-top: 1rem; border-radius: var(--border-radius); background-color: var(--light-gray);">
+         <label for="incra-alqueires" style="font-weight: 500;">Não sabe a área em hectares? Converta de Alqueires:</label>
+         <div style="display: flex; gap: 0.75rem; align-items: center;">
+             <input type="number" id="incra-alqueires" placeholder="Ex: 20.66" style="flex-grow: 1;">
+             <button id="convert-alqueires-btn" class="btn btn-secondary" style="padding: 0.8rem; width: auto; flex-shrink: 0;">Converter</button>
+         </div>
+         <p style="font-size: 0.8rem; color: #6c757d; margin-top: 8px; margin-bottom: 0;">(Considerando 1 alqueire = 2,42 hectares)</p>
     </div>
+</div>
     <button id="calculate-incra-btn" class="btn btn-primary" style="display: none;">Calcular Valor de Referência</button>
     <div id="incra-result-container" style="display: none;"></div>
 </div>
@@ -727,6 +781,83 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
         </div>
     </div>
 
+
+<!-- NOVO: Modal do Guia do Usuário -->
+<div id="user-guide-modal" class="modal-overlay no-print">
+    <div class="modal-box" style="max-width: 800px;">
+        <h4>Guia do Usuário - Calculadora de Custas</h4>
+        <div class="guide-content">
+            <p>Bem-vindo! Este guia explica como utilizar todas as funcionalidades da calculadora para criar orçamentos precisos e rápidos.</p>
+
+            <h5>Painel Principal (Abas)</h5>
+            <p>A calculadora é dividida em abas, cada uma para um tipo específico de cálculo:</p>
+            <ul>
+                <li><strong>Valor Variável:</strong> Use para atos cujo valor depende de uma base de cálculo, como escrituras, registros e averbações com valor declarado.</li>
+                <li><strong>Valor Fixo:</strong> Para atos com preço tabelado, como reconhecimento de firma, autenticações e procurações.</li>
+                <li><strong>Inventário:</strong> Ferramenta completa para calcular os custos totais de um inventário, incluindo escritura, registros e ITCMD.</li>
+                <li><strong>Manual:</strong> Permite adicionar qualquer item com valor livre ao orçamento, como honorários, despesas de diligência, etc.</li>
+                <li><strong>INCRA:</strong> Uma ferramenta para consultar o valor de referência de imóveis rurais conforme a Tabela do INCRA, útil para definir a base de cálculo.</li>
+                <li><strong>ITCMD Avulso:</strong> Para calcular apenas o valor do ITCMD sobre um bem, ideal para doações simples ou conferências.</li>
+            </ul>
+
+            <h5>Funções Detalhadas</h5>
+
+            <h5>1. Aba "Valor Variável"</h5>
+            <p>Esta é a função mais utilizada. O fluxo é simples:</p>
+            <ol>
+                <li><strong>Tipo de Ato:</strong> Selecione o ato desejado (ex: Escritura com valor, Registro com valor).</li>
+                <li><strong>Identificação (Opcional):</strong> Dê um nome ao ato para facilitar a identificação no orçamento (ex: "Lote 12", "Apto 101").</li>
+                <li><strong>Valor do Ato/Imóvel:</strong> Insira a base de cálculo. <strong>Lembre-se da regra do Art. 113 (explicada abaixo)!</strong></li>
+            </ol>
+            <p><strong>Opções Adicionais:</strong></p>
+            <ul>
+                <li><strong>É averbação de construção?:</strong> Se marcado, abre uma sub-ferramenta para calcular o valor da obra com base na área (m²) e no CUB/m², preenchendo o campo "Valor do Ato" automaticamente.</li>
+                <li><strong>Natureza do Ato:</strong>
+                    <ul>
+                        <li><code>Ato Padrão</code>: Calcula sobre o valor total.</li>
+                        <li><code>Ato com Reserva de Usufruto</code>: Divide o ato em dois: a venda da "nua-propriedade" (valor total) e a instituição do "usufruto" (1/3 do valor total), adicionando ambos ao orçamento.</li>
+                        <li><code>Apenas o Usufruto</code>: Calcula o ato usando apenas 1/3 do valor informado como base.</li>
+                    </ul>
+                </li>
+                <li><strong>Adicionar ato correspondente:</strong> Se você calcula uma escritura, esta opção adiciona automaticamente o registro correspondente (e vice-versa), economizando tempo.</li>
+                <li><strong>Adicionar ITCMD/ITBI:</strong> Calcula e adiciona os impostos de transmissão ao orçamento. O ITBI é fixo em 2% (em geral), e o ITCMD usa a alíquota progressiva do estado (2%, 3% ou 4%).</li>
+            </ul>
+
+            <h5>2. Aba "Inventário"</h5>
+            <p>Esta aba automatiza o cálculo de inventários e partilhas. O sistema calcula a escritura (com base na soma de todos os bens) e os registros individuais de cada imóvel.</p>
+            <ul>
+                <li><strong>Calcular ITCMD:</strong> Se marcado, o sistema também calculará o imposto devido com base nos dados da sucessão que você informar (cônjuge, número de herdeiros).</li>
+                <li><strong>Lógica do ITCMD no Inventário:</strong> A calculadora assume uma partilha igualitária entre os herdeiros descendentes. A meação do cônjuge (50% dos bens comuns) não gera imposto. A herança (outros 50% e bens particulares) é dividida entre os herdeiros, e o imposto é calculado individualmente sobre a cota de cada um. <strong>Atenção:</strong> Para partilhas complexas, use a aba "ITCMD Avulso".</li>
+            </ul>
+
+            <h5>3. Aba "INCRA"</h5>
+            <p>Use esta ferramenta para obter uma avaliação oficial de um imóvel rural. Siga os passos, preenchendo Município, Nível, Tipologia, Coluna de Referência e Área (em hectares). O valor calculado pode ser usado como base de cálculo na aba "Valor Variável".</p>
+
+            <h5>Gerenciando o Orçamento (Painel da Direita)</h5>
+            <ul>
+                <li><strong>Detalhes (▼):</strong> Mostra a composição do valor do ato (emolumentos, fundos, selo).</li>
+                <li><strong>Editar (Lápis):</strong> Permite alterar a descrição e a identificação de um item já lançado.</li>
+                <li><strong>Remover (Lixeira):</strong> Exclui o item do orçamento.</li>
+                <li><strong>Limpar:</strong> Apaga todos os itens do orçamento (pede confirmação).</li>
+                <li><strong>Imprimir:</strong> Abre opções para gerar uma versão resumida ou detalhada do orçamento para impressão.</li>
+            </ul>
+
+            <h5 id="artigo-113">Entendendo a Base de Cálculo (Art. 113)</h5>
+            <p>A escolha do valor a ser inserido no campo <strong>"Valor do Ato/Imóvel"</strong> é crucial e segue uma regra legal estrita. Conforme o Art. 113 das Diretrizes Gerais Extrajudiciais do TJRO, a base de cálculo para os emolumentos deve ser sempre <strong>o maior valor</strong> dentre as seguintes opções:</p>
+            <ul>
+                <li><strong>I -</strong> O valor do negócio declarado pelas partes (ex: o preço de venda no contrato).</li>
+                <li><strong>II -</strong> O valor venal do imóvel para fins de IPTU (para imóveis urbanos).</li>
+                <li><strong>III -</strong> O valor total da declaração do ITR (terra nua + benfeitorias) (para imóveis rurais).</li>
+                <li><strong>IV -</strong> O valor de avaliação fiscal usado para o recolhimento do imposto de transmissão (ITBI ou ITCMD).</li>
+            </ul>
+            <p><strong>Na prática:</strong> Você deve verificar todos esses valores e inserir o maior deles na calculadora. A responsabilidade por informar a base de cálculo correta é do usuário.</p>
+
+        </div>
+        <div class="modal-actions">
+            <button id="guide-close-btn" class="btn btn-primary">Entendi, fechar</button>
+        </div>
+    </div>
+</div>
 
     <div id="incra-raw-data" style="display:none;">
     <!-- === INÍCIO: Mercado Regional de Terras Cone Sul === -->
@@ -2011,6 +2142,47 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
                             manualPanel.style.display = 'none';
                         }
                     });
+                });
+
+                // NOVO: Listeners para o Guia do Usuário
+                const openGuideBtn = document.getElementById('open-guide-btn');
+                const userGuideModal = document.getElementById('user-guide-modal');
+                const closeGuideBtn = document.getElementById('guide-close-btn');
+
+                openGuideBtn.addEventListener('click', () => {
+                    userGuideModal.classList.add('show');
+                });
+
+                closeGuideBtn.addEventListener('click', () => {
+                    userGuideModal.classList.remove('show');
+                });
+
+                // NOVO: Listeners para o Conversor de Alqueires
+                const convertAlqueiresBtn = document.getElementById('convert-alqueires-btn');
+                const incraAlqueiresInput = document.getElementById('incra-alqueires');
+                // A referência para 'incraAreaInput' já foi criada no início do script, então podemos reutilizá-la.
+
+                convertAlqueiresBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Impede o comportamento padrão de um botão em um formulário
+
+                    const alqueires = parseFloat(incraAlqueiresInput.value);
+
+                    if (isNaN(alqueires) || alqueires <= 0) {
+                        alert('Por favor, insira um valor válido no campo de alqueires.');
+                        return;
+                    }
+
+                    // A conversão: 1 alqueire = 2.42 hectares
+                    const hectares = alqueires * 2.42;
+                    
+                    // Usamos a função round() que já existe para um resultado mais limpo (4 casas decimais é bom para áreas)
+                    const roundedHectares = round(hectares, 4);
+
+                    // Preenche o campo principal de hectares com o valor convertido
+                    incraAreaInput.value = roundedHectares;
+
+                    // Opcional: Limpa o campo de alqueires após a conversão
+                    incraAlqueiresInput.value = '';
                 });
             }; 
 
