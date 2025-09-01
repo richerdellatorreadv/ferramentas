@@ -700,18 +700,33 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
             <section class="budget-section">
                 <div class="budget-header">
                     <h2>Meu Orçamento</h2>
-                    <div class="no-print" style="display: flex; gap: 0.5rem;">
-                        <button id="clear-budget-button" class="btn btn-danger-outline no-print" style="display: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3V2h11v1z"/></svg>
-    Limpar
-</button>
-                        <button id="print-button" class="btn btn-print no-print" style="display: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
-        <path d="M210.6665,76H196V40a4.0002,4.0002,0,0,0-4-4H64a4.0002,4.0002,0,0,0-4,4V76H45.3335C33.57031,76,24,84.97168,24,96v80a4.0002,4.0002,0,0,0,4,4H60v40a4.0002,4.0002,0,0,0,4,4H192a4.0002,4.0002,0,0,0,4-4V180h32a4.0002,4.0002,0,0,0,4-4V96C232,84.97168,222.42969,76,210.6665,76ZM68,44H188V76H68ZM188,216H68V156H188Zm36-44H196V152a4.0002,4.0002,0,0,0-4-4H64a4.0002,4.0002,0,0,0-4,4v20H32V96c0-6.61719,5.98145-12,13.3335-12h165.333C218.01855,84,224,89.38281,224,96Zm-27.99414-56a8,8,0,1,1-8-8A8.00917,8.00917,0,0,1,196.00586,116Z"/>
-    </svg>
-    Imprimir
-</button>
-                    </div>
+                    <div class="no-print" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+    <button id="import-budget-button" class="btn btn-secondary no-print">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+        </svg>
+        Importar
+    </button>
+    <button id="export-budget-button" class="btn btn-secondary no-print" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+        </svg>
+        Exportar
+    </button>
+    <button id="clear-budget-button" class="btn btn-danger-outline no-print" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3V2h11v1z"/></svg>
+        Limpar
+    </button>
+    <button id="print-button" class="btn btn-print no-print" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M210.6665,76H196V40a4.0002,4.0002,0,0,0-4-4H64a4.0002,4.0002,0,0,0-4,4V76H45.3335C33.57031,76,24,84.97168,24,96v80a4.0002,4.0002,0,0,0,4,4H60v40a4.0002,4.0002,0,0,0,4,4H192a4.0002,4.0002,0,0,0,4-4V180h32a4.0002,4.0002,0,0,0,4-4V96C232,84.97168,222.42969,76,210.6665,76ZM68,44H188V76H68ZM188,216H68V156H188Zm36-44H196V152a4.0002,4.0002,0,0,0-4-4H64a4.0002,4.0002,0,0,0-4,4v20H32V96c0-6.61719,5.98145-12,13.3335-12h165.333C218.01855,84,224,89.38281,224,96Zm-27.99414-56a8,8,0,1,1-8-8A8.00917,8.00917,0,0,1,196.00586,116Z"/>
+        </svg>
+        Imprimir
+    </button>
+</div>
+<input type="file" id="import-file-input" class="no-print" accept=".tjrocalc,.json" style="display: none;">
                 </div>
                 
                 <div class="form-group no-print" id="budgeter-name-group">
@@ -1366,6 +1381,9 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
             const editItemIdHiddenInput = document.getElementById('edit-item-id-hidden');
             const editItemNameInput = document.getElementById('edit-item-name');
             const editItemIdentifierInput = document.getElementById('edit-item-identifier');
+	    const importBudgetButton = document.getElementById('import-budget-button');
+            const exportBudgetButton = document.getElementById('export-budget-button');
+            const importFileInput = document.getElementById('import-file-input');
 
             // --- DATA BUILDERS ---
             function buildIncraData() {
@@ -1484,12 +1502,14 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
                     budgetSummaryContainer.innerHTML = '';
                     printButton.style.display = 'none';
                     clearBudgetButton.style.display = 'none';
+                    exportBudgetButton.style.display = 'none';
                     return;
                 }
 
                 // O resto da função permanece igual
                 printButton.style.display = 'inline-flex';
                 clearBudgetButton.style.display = 'inline-flex';
+                exportBudgetButton.style.display = 'inline-flex';
 
                 let itemsHtml = `
                     <table id="budget-items-table">
@@ -1586,6 +1606,74 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
 
             // --- INITIALIZATION AND EVENT LISTENERS ---
 
+const exportBudget = () => {
+                if (budgetItems.length === 0) {
+                    alert("O orçamento está vazio. Adicione itens para exportar.");
+                    return;
+                }
+
+                const budgetData = {
+                    budgeterName: budgeterNameInput.value.trim(),
+                    items: budgetItems,
+                    createdAt: new Date().toISOString()
+                };
+
+                const jsonString = JSON.stringify(budgetData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                const date = new Date().toISOString().slice(0, 10);
+                const name = budgeterNameInput.value.trim().replace(/\s+/g, '_') || 'orcamento';
+                a.href = url;
+                a.download = `orcamento-tjro-${name}_${date}.tjrocalc`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
+            const handleFileImport = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (!importedData || !Array.isArray(importedData.items)) {
+                            throw new Error("Formato de arquivo inválido ou corrompido.");
+                        }
+
+                        if (budgetItems.length > 0) {
+                           const confirmed = confirm("Atenção: Importar este arquivo substituirá o orçamento atual. Deseja continuar?");
+                           if (!confirmed) return;
+                        }
+
+                        budgetItems = importedData.items;
+                        budgeterNameInput.value = importedData.budgeterName || '';
+                        budgeterNameInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                        renderBudget();
+                        alert("Orçamento importado com sucesso!");
+
+                    } catch (error) {
+                        console.error("Erro ao importar o arquivo:", error);
+                        alert(`Não foi possível importar o arquivo. Erro: ${error.message}`);
+                    } finally {
+                        importFileInput.value = '';
+                    }
+                };
+                
+                reader.onerror = () => {
+                     alert('Ocorreu um erro ao ler o arquivo selecionado.');
+                     importFileInput.value = '';
+                };
+
+                reader.readAsText(file);
+            };
+
             const populateSelects = () => {
                 atoVariavelSelect.innerHTML = '<option value="">-- Selecione o ato --</option>';
                 atoFixoSelect.innerHTML = '<option value="">-- Selecione o ato --</option>';
@@ -1664,30 +1752,36 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
                     let timestamp = Date.now();
 
                     const createActPair = (name, baseValue, isUsufructFlag = false, isPrincipal = true) => {
-                        const { oficial, selo } = findVariableFee(atoInfo, baseValue);
-                        if (oficial > 0) {
-                            newItems.push({
-                                id: timestamp++, type: 'variavel', name: name,
-                                identifier, baseValue, costs: calculateCosts(oficial, selo), isUsufruct: isUsufructFlag
-                            });
-                        }
+    const { oficial, selo } = findVariableFee(atoInfo, baseValue);
+    if (oficial > 0) {
+        newItems.push({
+            id: timestamp++, type: 'variavel', name: name,
+            identifier, baseValue, costs: calculateCosts(oficial, selo), isUsufruct: isUsufructFlag
+        });
+    }
 
-                        if (addCombo && comboOptionContainer.style.display !== 'none') {
-                            const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
-                            const correspondingServentiaKey = correspondingKey.split('_')[0];
-                            const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
-                            const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, baseValue);
-                            if (corrOficial > 0) {
-                                const correspondingName = isPrincipal 
-                                    ? correspondingAtoInfo.name + ' (Nu-Propriedade)' 
-                                    : 'Registro de Usufruto';
-                                newItems.push({
-                                    id: timestamp++, type: 'variavel', name: correspondingName,
-                                    identifier, baseValue, costs: calculateCosts(corrOficial, corrSelo), isUsufruct: isUsufructFlag
-                                });
-                            }
-                        }
-                    };
+    if (addCombo && comboOptionContainer.style.display !== 'none') {
+        const correspondingKey = selectedKey === 'notas_escritura_valor' ? 'imoveis_registro_valor' : 'notas_escritura_valor';
+        const correspondingServentiaKey = correspondingKey.split('_')[0];
+        const correspondingAtoInfo = feeTables[correspondingServentiaKey].atosVariaveis[correspondingKey];
+        const { oficial: corrOficial, selo: corrSelo } = findVariableFee(correspondingAtoInfo, baseValue);
+        if (corrOficial > 0) {
+            // Lógica corrigida para nomear o ato correspondente
+            let correspondingName = correspondingAtoInfo.name;
+            if (naturezaAto === 'composto') {
+                correspondingName += isPrincipal ? ' (Nu-Propriedade)' : ' (Usufruto)';
+            } else if (naturezaAto === 'apenas_usufruto') {
+                correspondingName += ' (Usufruto)';
+            }
+            // Se for 'padrao', nenhum rótulo é adicionado.
+
+            newItems.push({
+                id: timestamp++, type: 'variavel', name: correspondingName,
+                identifier, baseValue, costs: calculateCosts(corrOficial, corrSelo), isUsufruct: isUsufructFlag
+            });
+        }
+    }
+};
 
                     switch (naturezaAto) {
                         case 'composto':
@@ -2157,6 +2251,7 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
                     userGuideModal.classList.remove('show');
                 });
 
+
                 // NOVO: Listeners para o Conversor de Alqueires
                 const convertAlqueiresBtn = document.getElementById('convert-alqueires-btn');
                 const incraAlqueiresInput = document.getElementById('incra-alqueires');
@@ -2184,6 +2279,9 @@ footer { text-align: center; padding: 2rem; background-color: var(--dark-gray); 
                     // Opcional: Limpa o campo de alqueires após a conversão
                     incraAlqueiresInput.value = '';
                 });
+		exportBudgetButton.addEventListener('click', exportBudget);
+                importBudgetButton.addEventListener('click', () => importFileInput.click());
+                importFileInput.addEventListener('change', handleFileImport);
             }; 
 
             function addInventoryAssetRow() {
